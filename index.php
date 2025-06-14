@@ -8,7 +8,9 @@
 </head>
 
 <body>
-
+    <?php
+    include 'conexion/cone.php';
+    ?>
 </body>
 
 </html>
