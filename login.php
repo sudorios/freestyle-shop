@@ -6,18 +6,18 @@ include_once 'includes/head.php';
     <div class="bg-white p-8 w-96 border-2 border-black">
         <h2 class="text-3xl font-black mb-8 text-center tracking-wider">INICIAR SESIÓN</h2>
 
-        <form action="validar_login.php" method="POST" class="space-y-6">
+        <form action="conexion/validar.php" method="POST" class="space-y-6">
             <div>
                 <label for="email" class="block text-sm font-bold uppercase tracking-wider text-black">Correo
                     electrónico</label>
-                <input type="email" id="email" name="email" required
+                <input type="text" id="email" name="txtusu" required
                     class="mt-1 block w-full px-3 py-3 border-2 border-black bg-white focus:outline-none focus:border-black">
             </div>
 
             <div>
                 <label for="password"
                     class="block text-sm font-bold uppercase tracking-wider text-black">Contraseña</label>
-                <input type="password" id="password" name="password" required
+                <input type="password" id="password" name="txtpass" required
                     class="mt-1 block w-full px-3 py-3 border-2 border-black bg-white focus:outline-none focus:border-black">
             </div>
 
@@ -34,7 +34,7 @@ include_once 'includes/head.php';
 
         <p class="mt-6 text-center text-sm font-bold uppercase tracking-wider text-black">
             ¿No tienes una cuenta?
-            <a href="registro.php" class="underline hover:no-underline">Regístrate aquí</a>
+            <a href="login_add.php" class="underline hover:no-underline">Regístrate aquí</a>
         </p>
     </div>
 </body>
