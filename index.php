@@ -1,6 +1,7 @@
 <?php
 include_once 'conexion/cone.php';
 include_once 'includes/head.php';
+include_once 'includes/header.php';
 ?>
 
 <body>
