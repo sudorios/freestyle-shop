@@ -1,16 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+<?php
+include_once 'conexion/cone.php';
+include_once 'includes/head.php';
+?>
 
 <body>
-    <?php
-    include 'conexion/cone.php';
-    ?>
+    <h1>Hola Mundo</h1>
+    <a href="login.php">Admin</a>
 </body>
 
 </html>
