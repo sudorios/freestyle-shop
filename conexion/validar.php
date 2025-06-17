@@ -5,7 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $usuario = trim($_POST['txtusu']);
     $contrasenia = trim($_POST['txtpass']);
 
-    $query = "SELECT id_usuario, ref_usuario, pass_usuario FROM usuario WHERE ref_usuario = $1 LIMIT 1";
+    $query = "SELECT id_usuario, ref_usuario, pass_usuario, rol_usuario FROM usuario WHERE ref_usuario = $1 LIMIT 1";
     $result = pg_query_params($conn, $query, array($usuario));
 
     if ($result) {
@@ -15,7 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if (password_verify($contrasenia, $hash)) {
                 $_SESSION['usuario'] = $usuario;
-                $_SESSION['id'] = $row['codigo_usuario'];
+                $_SESSION['id'] = $row['id_usuario'];
+                $_SESSION['rol'] = $row['rol_usuario'];
                 header('Location: ../index.php');
                 exit();
             } else {
