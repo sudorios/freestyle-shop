@@ -114,7 +114,6 @@ session_start();
     </div>
 </aside>
 
-<main id="main-content" class="ml-64 pt-16">
     <div class="p-6">
     </div>
 </main>
