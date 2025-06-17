@@ -1,7 +1,7 @@
 <?php
 session_start();
 ?>
-<header class="bg-gray-900 text-white">
+<header class="bg-gray-900 text-white fixed top-0 left-0 right-0 z-50">
     <div class="container mx-auto px-4">
         <div class="flex items-center justify-between h-16">
             <div class="flex items-center space-x-4">
@@ -13,6 +13,7 @@ session_start();
             <div class="flex items-center space-x-4">
                 <div class="relative group">
                     <button class="flex items-center space-x-2 text-sm font-bold uppercase tracking-wider hover:text-gray-300 transition-colors">
+                        <i class="fas fa-user-circle text-lg"></i>
                         <span class="hidden md:inline">Admin</span>
                     </button>
                     <div class="absolute right-0 w-48 mt-2 py-2 bg-white text-black rounded-lg shadow-xl hidden group-hover:block">
@@ -29,36 +30,93 @@ session_start();
                     </div>
                 </div>
             </div>
-
-            <button class="md:hidden text-white focus:outline-none">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-    </div>
-
-    <div class="md:hidden hidden">
-        <div class="px-2 pt-2 pb-3 space-y-1">
-            <a href="dashboard.php" class="block px-3 py-2 text-sm font-bold uppercase tracking-wider hover:bg-gray-800">
-                <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
-            </a>
-            <a href="productos_admin.php" class="block px-3 py-2 text-sm font-bold uppercase tracking-wider hover:bg-gray-800">
-                <i class="fas fa-box mr-2"></i>Productos
-            </a>
-            <a href="pedidos_admin.php" class="block px-3 py-2 text-sm font-bold uppercase tracking-wider hover:bg-gray-800">
-                <i class="fas fa-shopping-bag mr-2"></i>Pedidos
-            </a>
-            <a href="usuarios_admin.php" class="block px-3 py-2 text-sm font-bold uppercase tracking-wider hover:bg-gray-800">
-                <i class="fas fa-users mr-2"></i>Usuarios
-            </a>
-            <a href="reportes.php" class="block px-3 py-2 text-sm font-bold uppercase tracking-wider hover:bg-gray-800">
-                <i class="fas fa-chart-bar mr-2"></i>Reportes
-            </a>
         </div>
     </div>
 </header>
+<aside id="sidebar" class="fixed left-0 top-16 h-full w-64 bg-gray-800 text-white z-40">
+    <div class="p-4">
+        <nav class="space-y-2">
+            <a href="dashboard.php" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors">
+                <i class="fas fa-tachometer-alt w-5 h-5 mr-3"></i>
+                <span class="font-medium">Dashboard</span>
+            </a>
+            <div class="space-y-1">
+                <a href="productos_admin.php" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors">
+                    <i class="fas fa-box w-5 h-5 mr-3"></i>
+                    <span class="font-medium">Productos</span>
+                </a>
+                <div class="ml-8 space-y-1">
+                    <a href="agregar_producto.php" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">
+                        <i class="fas fa-plus w-4 h-4 mr-2"></i>
+                        <span>Agregar Producto</span>
+                    </a>
+                    <a href="categorias.php" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">
+                        <i class="fas fa-tags w-4 h-4 mr-2"></i>
+                        <span>Categorías</span>
+                    </a>
+                </div>
+            </div>
+            <div class="space-y-1">
+                <a href="pedidos_admin.php" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors">
+                    <i class="fas fa-shopping-bag w-5 h-5 mr-3"></i>
+                    <span class="font-medium">Pedidos</span>
+                </a>
+                <div class="ml-8 space-y-1">
+                    <a href="pedidos_pendientes.php" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">
+                        <i class="fas fa-clock w-4 h-4 mr-2"></i>
+                        <span>Pendientes</span>
+                    </a>
+                    <a href="pedidos_completados.php" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">
+                        <i class="fas fa-check-circle w-4 h-4 mr-2"></i>
+                        <span>Completados</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="space-y-1">
+                <a href="usuarios_admin.php" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors">
+                    <i class="fas fa-users w-5 h-5 mr-3"></i>
+                    <span class="font-medium">Usuarios</span>
+                </a>
+                <div class="ml-8 space-y-1">
+                    <a href="clientes.php" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">
+                        <i class="fas fa-user w-4 h-4 mr-2"></i>
+                        <span>Clientes</span>
+                    </a>
+                    <a href="administradores.php" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">
+                        <i class="fas fa-user-shield w-4 h-4 mr-2"></i>
+                        <span>Administradores</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="space-y-1">
+                <a href="reportes.php" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors">
+                    <i class="fas fa-chart-bar w-5 h-5 mr-3"></i>
+                    <span class="font-medium">Reportes</span>
+                </a>
+                <div class="ml-8 space-y-1">
+                    <a href="ventas.php" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">
+                        <i class="fas fa-chart-line w-4 h-4 mr-2"></i>
+                        <span>Ventas</span>
+                    </a>
+                    <a href="inventario.php" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">
+                        <i class="fas fa-warehouse w-4 h-4 mr-2"></i>
+                        <span>Inventario</span>
+                    </a>
+                </div>
+            </div>                
+            <div class="pt-4 border-t border-gray-700">
+                <a href="configuracion.php" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors">
+                    <i class="fas fa-cog w-5 h-5 mr-3"></i>
+                    <span class="font-medium">Configuración</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+</aside>
 
-<script>
-    document.querySelector('button.md\\:hidden').addEventListener('click', function() {
-        document.querySelector('.md\\:hidden.hidden').classList.toggle('hidden');
-    });
-</script>
+<main id="main-content" class="ml-64 pt-16">
+    <div class="p-6">
+    </div>
+</main>
