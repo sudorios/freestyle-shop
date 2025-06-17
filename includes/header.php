@@ -14,7 +14,7 @@ session_start();
                 <div class="relative group">
                     <button class="flex items-center space-x-2 text-sm font-bold uppercase tracking-wider hover:text-gray-300 transition-colors">
                         <i class="fas fa-user-circle text-lg"></i>
-                        <span class="hidden md:inline">Admin</span>
+                        <span class="hidden md:inline"><?php echo isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario'; ?></span>
                     </button>
                     <div class="absolute right-0 w-48 mt-2 py-2 bg-white text-black rounded-lg shadow-xl hidden group-hover:block">
                         <a href="perfil_admin.php" class="block px-4 py-2 text-sm hover:bg-gray-100">
@@ -36,10 +36,6 @@ session_start();
 <aside id="sidebar" class="fixed left-0 top-16 h-full w-64 bg-gray-800 text-white z-40">
     <div class="p-4">
         <nav class="space-y-2">
-            <a href="dashboard.php" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors">
-                <i class="fas fa-tachometer-alt w-5 h-5 mr-3"></i>
-                <span class="font-medium">Dashboard</span>
-            </a>
             <div class="space-y-1">
                 <a href="productos_admin.php" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors">
                     <i class="fas fa-box w-5 h-5 mr-3"></i>
@@ -73,8 +69,9 @@ session_start();
                 </div>
             </div>
             
+            <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'admin'): ?>
             <div class="space-y-1">
-                <a href="usuarios_admin.php" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors">
+                <a href="usuario.php" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors">
                     <i class="fas fa-users w-5 h-5 mr-3"></i>
                     <span class="font-medium">Usuarios</span>
                 </a>
@@ -89,6 +86,7 @@ session_start();
                     </a>
                 </div>
             </div>
+            <?php endif; ?>
             
             <div class="space-y-1">
                 <a href="reportes.php" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors">
