@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 include_once './conexion/cone.php';
 
 if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
@@ -23,10 +25,10 @@ if (!$result) {
 
 <?php include_once './includes/head.php'; ?>
 
-<body>
+<body id="main-content" class="ml-72 mt-20">
     <?php include_once './includes/header.php'; ?>
-    <main id="main-content" class="ml-64">
-    <div class="container mx-auto px-4 mt-6">
+    <main >
+        <div class="container mx-auto px-4 mt-6">
             <?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
                 <div class='bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4'>
                     <span class="block sm:inline">Usuario registrado correctamente</span>
@@ -131,7 +133,7 @@ if (!$result) {
                 </table>
             </div>
         </div>
-    </div>
+        </div>
     </main>
 
     <div id="modalEditar" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">

@@ -14,7 +14,7 @@ function cerrarModalPassword() {
     document.getElementById('modalPassword').classList.add('hidden');
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+function initEditarUsuario() {
     document.querySelectorAll('.btn-editar').forEach(button => {
         button.addEventListener('click', function() {
             const id = this.dataset.id;
@@ -38,7 +38,9 @@ document.addEventListener('DOMContentLoaded', function() {
             abrirModal();
         });
     });
+}
 
+function initCambiarPassword() {
     document.querySelectorAll('.btn-cambiar-password').forEach(button => {
         button.addEventListener('click', function() {
             const id = this.dataset.id;
@@ -50,19 +52,25 @@ document.addEventListener('DOMContentLoaded', function() {
             abrirModalPassword();
         });
     });
+}
 
+function initCerrarModal() {
     document.getElementById('modalEditar').addEventListener('click', function(e) {
         if (e.target === this) {
             cerrarModal();
         }
     });
+}
 
+function initCerrarModalPassword() {
     document.getElementById('modalPassword').addEventListener('click', function(e) {
         if (e.target === this) {
             cerrarModalPassword();
         }
     });
+}
 
+function initValidarPassword() {
     document.getElementById('formCambiarPassword').addEventListener('submit', function(e) {
         const password = document.getElementById('password_nueva').value;
         const confirmar = document.getElementById('password_confirmar').value;
@@ -72,4 +80,14 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Las contraseñas no coinciden');
         }
     });
-}); 
+}
+
+function usuariosInit() {
+    initEditarUsuario();
+    initCambiarPassword();
+    initCerrarModal();
+    initCerrarModalPassword();
+    initValidarPassword();
+}
+
+document.addEventListener('DOMContentLoaded', usuariosInit);

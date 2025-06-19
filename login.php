@@ -9,7 +9,7 @@ include_once 'includes/head.php';
         <form action="conexion/validar.php" method="POST" class="space-y-6">
             <div>
                 <label for="email" class="block text-sm font-bold uppercase tracking-wider text-black">Correo
-                    electrónico</label>
+                    electrónico o nickname</label>
                 <input type="text" id="email" name="txtusu" required
                     class="mt-1 block w-full px-3 py-3 border-2 border-black bg-white focus:outline-none focus:border-black">
             </div>
