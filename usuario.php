@@ -37,22 +37,37 @@ if (!$result) {
                     <span class="block sm:inline">Usuario actualizado correctamente</span>
                 </div>
             <?php endif; ?>
+            <?php if (isset($_GET['success']) && $_GET['success'] == 3): ?>
+                <div class='bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4'>
+                    <span class="block sm:inline">Contraseña cambiada correctamente</span>
+                </div>
+            <?php endif; ?>
             <?php if (isset($_GET['error'])): ?>
                 <div class='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4'>
                     <span class="block sm:inline">
                         <?php
-                        switch ($_GET['error']) {
-                            case 1:
-                                echo "Error al actualizar el usuario";
-                                break;
-                            case 2:
-                                echo "ID de usuario no válido";
-                                break;
-                            case 3:
-                                echo "El usuario no existe";
-                                break;
-                            default:
-                                echo "Error desconocido";
+                        if (isset($_GET['msg'])) {
+                            echo htmlspecialchars($_GET['msg']);
+                        } else {
+                            switch ($_GET['error']) {
+                                case 1:
+                                    echo "Error al actualizar el usuario";
+                                    break;
+                                case 2:
+                                    echo "ID de usuario no válido";
+                                    break;
+                                case 3:
+                                    echo "El usuario no existe";
+                                    break;
+                                case 4:
+                                    echo "Las contraseñas no coinciden";
+                                    break;
+                                case 5:
+                                    echo "Error al cambiar la contraseña";
+                                    break;
+                                default:
+                                    echo "Error desconocido";
+                            }
                         }
                         ?>
                     </span>
