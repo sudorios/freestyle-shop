@@ -5,7 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $usuario = trim($_POST['txtusu']);
     $contrasenia = trim($_POST['txtpass']);
 
-    $query = "SELECT id_usuario, ref_usuario, pass_usuario, rol_usuario FROM usuario WHERE ref_usuario = $1 LIMIT 1";
+    $query = "SELECT id_usuario, ref_usuario, pass_usuario, rol_usuario FROM usuario WHERE ref_usuario = $1 OR email_usuario = $1 LIMIT 1";
     $result = pg_query_params($conn, $query, array($usuario));
 
     if ($result) {
