@@ -1,16 +1,20 @@
 function abrirModal() {
     document.getElementById('modalEditar').classList.remove('hidden');
+    document.getElementById('modalBackground').classList.remove('hidden');
 }
 
 function cerrarModal() {
     document.getElementById('modalEditar').classList.add('hidden');
+    document.getElementById('modalBackground').classList.add('hidden');
 }
 
 function abrirModalPassword() {
+    document.getElementById('modalBackground').classList.remove('hidden');
     document.getElementById('modalPassword').classList.remove('hidden');
 }
 
 function cerrarModalPassword() {
+    document.getElementById('modalBackground').classList.add('hidden');
     document.getElementById('modalPassword').classList.add('hidden');
 }
 
