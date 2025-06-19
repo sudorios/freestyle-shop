@@ -13,10 +13,12 @@ if (session_status() === PHP_SESSION_NONE) {
                 <span class="text-sm text-gray-400">| Panel de Control</span>
             </div>
             <div class="flex items-center space-x-4">
-                <div class="flex items-center space-x-2 text-sm font-bold uppercase tracking-wider">
-                    <i class="fas fa-user-circle text-lg"></i>
-                    <span class="hidden md:inline"><?php echo isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario'; ?></span>
-                </div>
+                <a href="perfil.php">
+                    <div class="flex items-center space-x-2 text-sm font-bold uppercase tracking-wider">
+                        <i class="fas fa-user-circle text-lg"></i>
+                        <span class="hidden md:inline"><?php echo isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario'; ?></span>
+                    </div>
+                </a>
             </div>
         </div>
     </div>
@@ -83,9 +85,8 @@ if (session_status() === PHP_SESSION_NONE) {
             <i class="fas fa-chevron-down text-gray-400 arrow transition-all rotate-90"></i>
         </div>
         <ul class="space-y-1 mt-2 pl-7 max-h-[500px] overflow-hidden transition-all duration-300">
-            <li><a href="perfil_admin.php" class="flex items-center text-gray-300 hover:text-blue-400 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i class="fas fa-user-cog w-4 h-4 mr-2"></i>Mi Perfil</a></li>
-            <li><a href="configuracion.php" class="flex items-center text-gray-300 hover:text-blue-400 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i class="fas fa-cog w-4 h-4 mr-2"></i>Configuración</a></li>
-            <li><a href="#" id="cerrarSesionBtn" class="flex items-center text-red-600 hover:text-red-700 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i class="fas fa-sign-out-alt w-4 h-4 mr-2"></i>Cerrar Sesión</a></li>
+            <li><a href="perfil.php" class="flex items-center text-gray-300 hover:text-blue-400 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i class="fas fa-user-cog w-4 h-4 mr-2"></i>Mi Perfil</a></li>
+            <li><a id="cerrarSesionBtn" class="flex items-center text-red-600 hover:text-red-700 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i class="fas fa-sign-out-alt w-4 h-4 mr-2"></i>Cerrar Sesión</a></li>
         </ul>
     </div>
 </nav>
@@ -102,21 +103,21 @@ if (session_status() === PHP_SESSION_NONE) {
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      document.querySelectorAll(".collapsible-toggle").forEach((toggle) => {
-        toggle.addEventListener("click", function () {
-          let menu = this.nextElementSibling; // The submenu <ul>
-          let arrowIcon = this.querySelector(".arrow");
-  
-          if (menu.offsetHeight !== 0) {
-            menu.style.maxHeight = '0px';
-            arrowIcon.classList.remove("rotate-90");
-          } else {
-            menu.style.maxHeight = menu.scrollHeight + "px";
-            arrowIcon.classList.add("rotate-90");
-          }
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".collapsible-toggle").forEach((toggle) => {
+            toggle.addEventListener("click", function() {
+                let menu = this.nextElementSibling; // The submenu <ul>
+                let arrowIcon = this.querySelector(".arrow");
+
+                if (menu.offsetHeight !== 0) {
+                    menu.style.maxHeight = '0px';
+                    arrowIcon.classList.remove("rotate-90");
+                } else {
+                    menu.style.maxHeight = menu.scrollHeight + "px";
+                    arrowIcon.classList.add("rotate-90");
+                }
+            });
         });
-      });
     });
 
     document.addEventListener('DOMContentLoaded', function() {
