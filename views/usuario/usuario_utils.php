@@ -69,6 +69,28 @@ function validarCamposUsuario($nombre_usuario, $email_usuario, $ref_usuario, $te
     return $errores;
 }
 
+function validarCamposPassword($password_nueva, $password_confirmar)
+{
+    $errores = array();
+    if (empty($password_nueva)) {
+        $errores[] = "La nueva contraseña es obligatoria";
+    }
+    
+    if (strlen($password_nueva) < 6) {
+        $errores[] = "La contraseña debe tener al menos 6 caracteres";
+    }
+    
+    if ($password_nueva !== $password_confirmar) {
+        $errores[] = "Las contraseñas no coinciden";
+    }
+    
+    if (!empty($errores)) {
+        $error_msg = implode(', ', $errores);
+        header('Location: usuario.php?error=1&msg=' . urlencode($error_msg));
+        exit();
+    }    
+}
+
 function manejarResultadoConsulta($result, $conn, $success_url = 'usuario.php?success=2', $error_url = 'usuario.php?error=1')
 {
     if ($result) {
