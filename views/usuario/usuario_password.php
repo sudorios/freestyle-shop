@@ -1,6 +1,7 @@
 <?php
 session_start();
-include_once './conexion/cone.php';
+include_once __DIR__ . '/../../conexion/cone.php';
+include_once __DIR__ . '/usuario_queries.php';
 
 if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
     header('Location: login.php');
@@ -59,7 +60,7 @@ if (!empty($errores)) {
 
 $password_hash = password_hash($password_nueva, PASSWORD_DEFAULT);
 
-$sql = "UPDATE usuario SET pass_usuario = $1 WHERE id_usuario = $2";
+$sql = updateUsuarioPassword();
 
 $params = array($password_hash, $id_usuario);
 
