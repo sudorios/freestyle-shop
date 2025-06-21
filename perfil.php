@@ -66,9 +66,9 @@ $row = pg_fetch_assoc($result);
             </div>
         </div>
     </main>
-    <?php include_once './includes/modal_editar_usuario.php'; ?>
-    <?php include_once './includes/modal_cambiar_password.php'; ?>
-    <script src="assets/js/usuarios.js"></script>
+    <?php include_once 'views/usuario/modals/modal_editar_usuario.php'; ?>
+    <?php include_once 'views/usuario/modals/modal_cambiar_password.php'; ?>
+    <script src="views/usuario/usuarios.js"></script>
     <?php include_once './includes/footer.php'; ?>
 </body>
 

@@ -7,7 +7,7 @@ include_once 'includes/head.php';
     <div class="bg-white p-8 w-[600px] border-2 border-black">
         <h2 class="text-3xl font-black mb-8 text-center tracking-wider">CREAR CUENTA</h2>
 
-        <form action="registrar.php" method="POST" class="space-y-6">
+        <form action="views/usuario/registrar.php" method="POST" class="space-y-6">
             <div class="grid grid-cols-2 gap-6">
                 <div>
                     <label for="name" class="block text-sm font-bold uppercase tracking-wider text-black">Nombre</label>
