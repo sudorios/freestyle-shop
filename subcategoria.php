@@ -13,7 +13,11 @@ if (!$conn) {
     die('Error de conexión: ' . pg_last_error($conn));
 }
 
-$sql = "SELECT s.*, c.nombre_categoria FROM subcategoria s JOIN categoria c ON s.id_categoria = c.id_categoria ORDER BY s.id_subcategoria ASC";
+$sql = "SELECT s.*, c.nombre_categoria 
+        FROM subcategoria s 
+        JOIN categoria c ON s.id_categoria = c.id_categoria 
+        WHERE s.estado = true 
+        ORDER BY s.id_subcategoria ASC";
 $result = pg_query($conn, $sql);
 
 if (!$result) {
