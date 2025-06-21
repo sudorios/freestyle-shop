@@ -38,6 +38,7 @@ if (!$result) {
                 <div class='bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4'>
                     <span class="block sm:inline">Usuario actualizado correctamente</span>
                 </div>
+                <meta http-equiv="refresh" content="3;url=usuario.php">
             <?php endif; ?>
             <?php if (isset($_GET['success']) && $_GET['success'] == 3): ?>
                 <div class='bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4'>
