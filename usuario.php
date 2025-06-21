@@ -135,10 +135,10 @@ if (!$result) {
         </div>
         </div>
     </main>
-    <?php include_once './includes/modal_editar_usuario.php'; ?>
-    <?php include_once './includes/modal_cambiar_password.php'; ?>
+    <?php include_once 'views/usuario/modals/modal_editar_usuario.php'; ?>
+    <?php include_once 'views/usuario/modals/modal_cambiar_password.php'; ?>
     <?php include_once './includes/footer.php'; ?>
 
-    <script src="assets/js/usuarios.js"></script>
+    <script src="views/usuario/usuarios.js"></script>
 </body>
 </html>

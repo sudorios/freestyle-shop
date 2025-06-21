@@ -1,6 +1,7 @@
 <?php
 
-include_once 'conexion/cone.php';
+include_once __DIR__ . '/../../conexion/cone.php';
+include_once __DIR__ . '/usuario_queries.php';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $nombre = trim($_POST["txtname"]);
@@ -15,21 +16,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $rol = 'cliente';
     $creado_en = date('Y-m-d H:i:s');
 
-    $query = "SELECT id_usuario FROM usuario WHERE email_usuario = $1";
+    $query = getUsuarioByEmail();
     $result = pg_query_params($conn, $query, array($correo));
 
     if (pg_num_rows($result) > 0) {
         echo "El correo electrónico ya está registrado...";
     } else {
-        $query2 = "SELECT id_usuario FROM usuario WHERE ref_usuario = $1";
+        $query2 = getUsuarioByNickname();
         $result2 = pg_query_params($conn, $query2, array($nickname));
 
         if (pg_num_rows($result2) > 0) {
             echo "El nickname ya está en uso...";
         } else {
-            $query3 = "INSERT INTO usuario(nombre_usuario, email_usuario, ref_usuario, pass_usuario, telefono_usuario, direccion_usuario, estado_usuario, rol_usuario, creado_en) 
-                      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)";
-            
+            $query3 = insertUsuario();
             $result3 = pg_query_params($conn, $query3, array(
                 $nombre,
                 $correo, 
