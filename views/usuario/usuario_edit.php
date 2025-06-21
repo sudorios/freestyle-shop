@@ -44,5 +44,4 @@ $params = array(
 
 $result = pg_query_params($conn, $sql, $params);
 manejarResultadoConsulta($result, $conn, '../../usuario.php?success=2', '../../usuario.php?error=1');
-
 ?>

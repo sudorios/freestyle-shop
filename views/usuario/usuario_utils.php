@@ -1,34 +1,39 @@
 <?php
 
-function verificarSesionAdmin() {
+function verificarSesionAdmin()
+{
     if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
         header('Location: login.php');
         exit();
     }
 }
 
-function verificarMetodoPost() {
+function verificarMetodoPost()
+{
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         header('Location: usuario.php?error=2');
         exit();
     }
 }
 
-function verificarIdUsuario($id_usuario) {
+function verificarIdUsuario($id_usuario)
+{
     if (empty($id_usuario) || !is_numeric($id_usuario)) {
         header('Location: usuario.php?error=2');
         exit();
     }
 }
 
-function verificarResultadoConsulta($result, $redirect_url = 'usuario.php', $error_code = 3) {
+function verificarResultadoConsulta($result, $redirect_url = 'usuario.php', $error_code = 3)
+{
     if (!$result || pg_num_rows($result) == 0) {
         header("Location: $redirect_url?error=$error_code");
         exit();
     }
 }
 
-function validarCamposUsuario($nombre_usuario, $email_usuario, $ref_usuario, $telefono_usuario, $direccion_usuario, $rol_usuario, $estado_usuario) {
+function validarCamposUsuario($nombre_usuario, $email_usuario, $ref_usuario, $telefono_usuario, $direccion_usuario, $rol_usuario, $estado_usuario)
+{
     $errores = array();
 
     if (empty($nombre_usuario)) {
@@ -64,7 +69,8 @@ function validarCamposUsuario($nombre_usuario, $email_usuario, $ref_usuario, $te
     return $errores;
 }
 
-function manejarResultadoConsulta($result, $conn, $success_url = 'usuario.php?success=2', $error_url = 'usuario.php?error=1') {
+function manejarResultadoConsulta($result, $conn, $success_url = 'usuario.php?success=2', $error_url = 'usuario.php?error=1')
+{
     if ($result) {
         header("Location: $success_url");
         exit();
@@ -74,5 +80,3 @@ function manejarResultadoConsulta($result, $conn, $success_url = 'usuario.php?su
         exit();
     }
 }
-
-?>
