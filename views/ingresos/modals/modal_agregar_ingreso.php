@@ -1,4 +1,3 @@
-
 <div id="modal_agregar_ingreso" class="fixed inset-0 hidden overflow-y-auto h-full w-full z-30">
     <div class="relative top-20 mx-auto p-5 border w-[800px] shadow-lg rounded-md bg-white">
         <div class="mt-3">
@@ -9,6 +8,20 @@
             </div>
             <form id="formAgregarIngreso" action="views/ingresos/ingreso_registrar.php" method="POST">
                 <div class="grid grid-cols-3 gap-4">
+                    <div class="mb-4">
+                        <label for="id_sucursal" class="block text-sm font-medium text-gray-700">Sucursal</label>
+                        <select id="id_sucursal" name="id_sucursal" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" required>
+                            <option value="">Seleccione...</option>
+                            <?php
+                            include_once '../../../conexion/cone.php';
+                            $sql_suc = "SELECT id_sucursal, nombre_sucursal FROM sucursal WHERE estado_sucursal = true ORDER BY nombre_sucursal ASC";
+                            $res_suc = pg_query($conn, $sql_suc);
+                            while ($suc = pg_fetch_assoc($res_suc)) {
+                                echo '<option value="' . $suc['id_sucursal'] . '">' . htmlspecialchars($suc['nombre_sucursal']) . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
                     <div class="mb-4">
                         <label for="ref" class="block text-sm font-medium text-gray-700">Referencia</label>
                         <input type="text" id="ref" name="ref" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" required>
