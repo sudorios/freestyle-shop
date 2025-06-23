@@ -52,7 +52,7 @@ if (!$result) {
             <?php endif; ?>
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Transferencias entre Sucursales</h3>
-                <a href="#" onclick="abrirModalAgregarTransferencia()" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">
+                <a href="transferencia_agregar.php" onclick="abrirModalAgregarTransferencia()" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">
                     Nueva Transferencia
                 </a>
             </div>
@@ -96,8 +96,6 @@ if (!$result) {
             </div>
         </div>
     </main>
-    <?php include 'views/transferencias/modals/modal_agregar_transferencia.php'; ?>
-    <div id="modalBackground" class="fixed inset-0 bg-black opacity-75 hidden z-20"></div>
     <script>
     function abrirModalAgregarTransferencia() {
         document.getElementById('modal_agregar_transferencia').classList.remove('hidden');

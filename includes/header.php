@@ -59,13 +59,14 @@ if (session_status() === PHP_SESSION_NONE) {
         </ul>
         <div class="flex items-center cursor-pointer group collapsible-toggle mt-4">
             <i class="fas fa-clipboard-list text-white w-5 h-5 mr-2"></i>
-            <h6 class="text-white group-hover:text-blue-400 text-[15px] font-semibold px-2 flex-1">Kardex</h6>
+            <h6 class="text-white group-hover:text-blue-400 text-[15px] font-semibold px-2 flex-1">Movimientos</h6>
             <i class="fas fa-chevron-down text-gray-400 arrow transition-all rotate-90"></i>
         </div>
         <ul class="space-y-1 mt-2 pl-7 max-h-[500px] overflow-hidden transition-all duration-300">
             <li><a href="kardex.php" class="flex items-center text-gray-300 hover:text-blue-400 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i class="fas fa-clipboard-list w-4 h-4 mr-2"></i>Movimientos</a></li>
             <li><a href="ingreso.php" class="flex items-center text-gray-300 hover:text-blue-400 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i class="fas fa-truck w-4 h-4 mr-2"></i>Ingreso de Productos</a></li>
             <li><a href="transferencia.php" class="flex items-center text-gray-300 hover:text-blue-400 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i class="fas fa-exchange-alt w-4 h-4 mr-2"></i>Transferencias</a></li>
+            <li><a href="inventario.php" class="flex items-center text-gray-300 hover:text-blue-400 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i class="fas fa-warehouse w-4 h-4 mr-2"></i>Inventario</a></li>
         </ul>
         <div class="flex items-center cursor-pointer group collapsible-toggle mt-4">
             <i class="fas fa-shopping-bag text-white w-5 h-5 mr-2"></i>
