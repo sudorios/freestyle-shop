@@ -13,9 +13,10 @@ if (!$conn) {
     die('Error de conexión: ' . pg_last_error($conn));
 }
 
-$sql = "SELECT i.*, p.nombre_producto, u.nombre_usuario AS usuario
+$sql = "SELECT i.*, p.nombre_producto, s.nombre_sucursal, u.nombre_usuario AS usuario
         FROM ingreso i
         JOIN producto p ON i.id_producto = p.id_producto
+        LEFT JOIN sucursal s ON i.id_sucursal = s.id_sucursal
         JOIN usuario u ON i.id_usuario = u.id_usuario
         ORDER BY i.fecha_ingreso DESC";
 
@@ -58,6 +59,7 @@ if (!$result) {
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Referencia</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sucursal</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Costo Total (c/IGV)</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio Venta Unidad</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilidad Esperada</th>
@@ -72,6 +74,7 @@ if (!$result) {
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['ref']); ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_producto']); ?></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_sucursal'] ?? 'Sin sucursal'); ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo number_format($row['precio_costo_igv'], 2); ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo number_format($row['precio_venta'], 2); ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo number_format($row['utilidad_esperada'], 2); ?></td>
