@@ -80,6 +80,9 @@ if (!$result) {
                                         <button type="button" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded ml-2" onclick="mostrarCodigoBarrasProducto('<?php echo htmlspecialchars($row['ref_producto']); ?>')" title="Código de Barras">
                                             <i class="fas fa-barcode"></i>
                                         </button>
+                                        <button type="button" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded ml-2" onclick="abrirModalImagenesProducto(<?php echo $row['id_producto']; ?>)" title="Imágenes">
+                                            <i class="fas fa-image"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             <?php } ?>
@@ -129,7 +132,18 @@ if (!$result) {
         document.getElementById('modalBackground').classList.add('hidden');
         document.getElementById('barcode').innerHTML = '';
     }
+    function abrirModalImagenesProducto(idProducto) {
+        document.getElementById('modalImagenesProducto').classList.remove('hidden');
+        document.getElementById('modalBackgroundImagenesProducto').classList.remove('hidden');
+        document.getElementById('idProductoImagen').value = idProducto;
+        // Aquí podrías cargar las imágenes vía AJAX si lo deseas
+    }
+    function cerrarModalImagenesProducto() {
+        document.getElementById('modalImagenesProducto').classList.add('hidden');
+        document.getElementById('modalBackgroundImagenesProducto').classList.add('hidden');
+    }
     </script>
+    <?php include 'views/productos/modals/modal_imagenes_producto.php'; ?>
     <?php include_once './includes/footer.php'; ?>
 </body>
 </html> 
