@@ -56,6 +56,7 @@ if (!$result) {
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Codigo</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Referencia</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subcategoría</th>
@@ -66,6 +67,7 @@ if (!$result) {
                         <tbody class="bg-white divide-y divide-gray-200">
                             <?php while ($row = pg_fetch_assoc($result)) { ?>
                                 <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['id_producto']); ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['ref_producto']); ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_producto']); ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_subcategoria']); ?></td>
@@ -135,14 +137,34 @@ if (!$result) {
     function abrirModalImagenesProducto(idProducto) {
         document.getElementById('modalImagenesProducto').classList.remove('hidden');
         document.getElementById('modalBackgroundImagenesProducto').classList.remove('hidden');
-        document.getElementById('idProductoImagen').value = idProducto;
-        // Aquí podrías cargar las imágenes vía AJAX si lo deseas
+        document.getElementById('listaImagenesProducto').innerHTML = '<p class="text-gray-500">Cargando imágenes...</p>';
+        document.getElementById('formNuevaImagenProducto').classList.add('hidden');
+        document.getElementById('btnMostrarFormImagen').classList.add('hidden');
+        fetch('views/productos/obtener_imagenes_producto.php?id_producto=' + idProducto)
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('listaImagenesProducto').innerHTML = html;
+                document.getElementById('idProductoImagenForm').value = idProducto;
+                if (html.includes('No hay imágenes para este producto')) {
+                    document.getElementById('formNuevaImagenProducto').classList.remove('hidden');
+                    document.getElementById('btnMostrarFormImagen').classList.add('hidden');
+                } else {
+                    document.getElementById('formNuevaImagenProducto').classList.add('hidden');
+                    document.getElementById('btnMostrarFormImagen').classList.remove('hidden');
+                }
+            })
+            .catch(() => {
+                document.getElementById('listaImagenesProducto').innerHTML = '<p class="text-red-500">Error al cargar las imágenes.</p>';
+                document.getElementById('formNuevaImagenProducto').classList.add('hidden');
+                document.getElementById('btnMostrarFormImagen').classList.add('hidden');
+            });
     }
     function cerrarModalImagenesProducto() {
         document.getElementById('modalImagenesProducto').classList.add('hidden');
         document.getElementById('modalBackgroundImagenesProducto').classList.add('hidden');
     }
     </script>
+    
     <?php include 'views/productos/modals/modal_imagenes_producto.php'; ?>
     <?php include_once './includes/footer.php'; ?>
 </body>
