@@ -3,7 +3,7 @@
     <div class="relative top-20 mx-auto p-5 border w-[600px] shadow-lg rounded-md bg-white">
         <div class="mt-3">
             <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Editar Categoría</h3>
-            <form id="formEditarCategoria" action="categoria_edit.php" method="POST">
+            <form id="formEditarCategoria" action="views/categorias/categoria_edit.php" method="POST">
                 <input type="hidden" id="edit_id" name="id_categoria">
                 <div class="mb-4">
                     <label for="edit_nombre" class="block text-sm font-medium text-gray-700">Nombre de la Categoría</label>

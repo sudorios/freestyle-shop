@@ -3,6 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 include_once './conexion/cone.php';
+include_once './views/categorias/categoria_queries.php';
 
 if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
     header('Location: login.php');
@@ -13,7 +14,7 @@ if (!$conn) {
     die('Error de conexión: ' . pg_last_error($conn));
 }
 
-$sql = "SELECT * FROM categoria ORDER BY id_categoria ASC ";
+$sql = getAllCategoriasQuery();
 $result = pg_query($conn, $sql);
 
 if (!$result) {
@@ -66,7 +67,7 @@ if (!$result) {
             <?php endif; ?>
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Listado de Categorías</h3>
-                <a href="categoria_add.php" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                <a href="#" onclick="abrirModalAgregarCategoria()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
                     Agregar Categoría
                 </a>
             </div>
@@ -109,7 +110,19 @@ if (!$result) {
         </div>
         </div>
     </main>
-    <?php include_once './includes/modal_editar_categoria.php'; ?>
+    <?php include_once './views/categorias/modals/modal_editar_categoria.php'; ?>
+    <?php include_once './views/categorias/modals/modal_agregar_categoria.php'; ?>
+    <div id="modalBackground" class="fixed inset-0 bg-black opacity-75 hidden z-20"></div>
+    <script>
+    function abrirModalAgregarCategoria() {
+        document.getElementById('modal_agregar_categoria').classList.remove('hidden');
+        document.getElementById('modalBackground').classList.remove('hidden');
+    }
+    function cerrarModalAgregarCategoria() {
+        document.getElementById('modal_agregar_categoria').classList.add('hidden');
+        document.getElementById('modalBackground').classList.add('hidden');
+    }
+    </script>
     <?php include_once './includes/footer.php'; ?>
 
     <script src="assets/js/categorias.js"></script>

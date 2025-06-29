@@ -8,6 +8,16 @@ function cerrarModal() {
     document.getElementById('modalBackground').classList.add('hidden');
 }
 
+function abrirModalAgregarCategoria() {
+    document.getElementById('modal_agregar_categoria').classList.remove('hidden');
+    document.getElementById('modalBackground').classList.remove('hidden');
+}
+
+function cerrarModalAgregarCategoria() {
+    document.getElementById('modal_agregar_categoria').classList.add('hidden');
+    document.getElementById('modalBackground').classList.add('hidden');
+}
+
 function initEditarCategoria() {
     document.querySelectorAll('.btn-editar').forEach(button => {
         button.addEventListener('click', function() {
@@ -30,6 +40,12 @@ function initCerrarModal() {
     document.getElementById('modalEditar').addEventListener('click', function(e) {
         if (e.target === this) {
             cerrarModal();
+        }
+    });
+    
+    document.getElementById('modal_agregar_categoria').addEventListener('click', function(e) {
+        if (e.target === this) {
+            cerrarModalAgregarCategoria();
         }
     });
 }
