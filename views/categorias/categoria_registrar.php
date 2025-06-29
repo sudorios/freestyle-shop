@@ -14,11 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
-$nombre       = trim(filter_input(INPUT_POST, 'txtnombre'));
-$descripcion  = trim(filter_input(INPUT_POST, 'txtdescripcion'));
-$estadoInput  = filter_input(INPUT_POST, 'txtestado');
-$estado       = $estadoInput === null ? false : $estadoInput;
-$creado_en    = date('Y-m-d H:i:s');
+$nombre          = trim($_POST['txtnombre']        ?? '');
+$descripcion     = trim($_POST['txtdescripcion']   ?? '');
+$estadoInput     = $_POST['txtestado']            ?? null;
+$estado          = ($estadoInput === '1');
+$creado_en       = date('Y-m-d H:i:s');
 
 $errores = validarCamposCategoria($nombre, $descripcion, $estadoInput ? 'true' : 'false');
 if ($errores) {

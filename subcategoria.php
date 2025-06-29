@@ -3,6 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 include_once './conexion/cone.php';
+include_once './views/subcategorias/subcategoria_queries.php';
 
 if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
     header('Location: login.php');
@@ -13,11 +14,7 @@ if (!$conn) {
     die('Error de conexión: ' . pg_last_error($conn));
 }
 
-$sql = "SELECT s.*, c.nombre_categoria 
-        FROM subcategoria s 
-        JOIN categoria c ON s.id_categoria = c.id_categoria 
-        WHERE s.estado = true 
-        ORDER BY s.id_subcategoria ASC";
+$sql = getAllSubcategoriasQuery();
 $result = pg_query($conn, $sql);
 
 if (!$result) {
@@ -69,9 +66,13 @@ if (!$result) {
                                 <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['descripcion_subcategoria']); ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_categoria']); ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <a href="#" class="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-2" data-toggle="modal" data-target="#modalEditarSubcategoria" data-id="<?php echo $row['id_subcategoria']; ?>">
+                                    <button class="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-2 btn-editar-subcategoria"
+                                        data-id="<?php echo $row['id_subcategoria']; ?>"
+                                        data-nombre="<?php echo htmlspecialchars($row['nombre_subcategoria']); ?>"
+                                        data-descripcion="<?php echo htmlspecialchars($row['descripcion_subcategoria']); ?>"
+                                        data-categoria="<?php echo $row['id_categoria']; ?>">
                                         <i class="fas fa-edit"></i> Editar
-                                    </a>
+                                    </button>
                                     <a href="subcategoria_registrar.php?eliminar=<?php echo $row['id_subcategoria']; ?>" class="cursor-pointer bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded" onclick="return confirm('¿Seguro que deseas eliminar esta subcategoría?');">
                                         <i class="fas fa-trash"></i> Eliminar
                                     </a>
@@ -85,11 +86,49 @@ if (!$result) {
     </main>
     <?php include 'includes/footer.php'; ?>
     <?php include 'views/subcategorias/modals/modal_agregar_subcategoria.php'; ?>
+    <?php include 'views/subcategorias/modals/modal_editar_subcategoria.php'; ?>
     <script>
     function abrirModalAgregarSubcategoria() {
         document.getElementById('modalAgregarSubcategoria').classList.remove('hidden');
         document.getElementById('modalBackgroundAgregar').classList.remove('hidden');
     }
+    function cerrarModalAgregarSubcategoria() {
+        document.getElementById('modalAgregarSubcategoria').classList.add('hidden');
+        document.getElementById('modalBackgroundAgregar').classList.add('hidden');
+    }
+    
+    function abrirModalEditarSubcategoria() {
+        document.getElementById('modalEditarSubcategoria').classList.remove('hidden');
+        document.getElementById('modalBackgroundEditar').classList.remove('hidden');
+    }
+    function cerrarModalEditarSubcategoria() {
+        document.getElementById('modalEditarSubcategoria').classList.add('hidden');
+        document.getElementById('modalBackgroundEditar').classList.add('hidden');
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.btn-editar-subcategoria').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.dataset.id;
+                const nombre = this.dataset.nombre;
+                const descripcion = this.dataset.descripcion;
+                const categoria = this.dataset.categoria;
+
+                document.getElementById('edit_id_subcategoria').value = id;
+                document.getElementById('edit_nombre_subcategoria').value = nombre;
+                document.getElementById('edit_descripcion_subcategoria').value = descripcion;
+                document.getElementById('edit_id_categoria').value = categoria;
+
+                abrirModalEditarSubcategoria();
+            });
+        });
+        
+        document.getElementById('modalEditarSubcategoria').addEventListener('click', function(e) {
+            if (e.target === this) {
+                cerrarModalEditarSubcategoria();
+            }
+        });
+    });
     </script>
 </body>
 </html>

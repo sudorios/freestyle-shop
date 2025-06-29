@@ -1,33 +1,51 @@
 <!-- Modal Editar Subcategoría -->
-<div class="modal fade" id="modalEditarSubcategoria" tabindex="-1" role="dialog" aria-labelledby="modalEditarSubcategoriaLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalEditarSubcategoriaLabel">Editar Subcategoría</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form id="formEditarSubcategoria">
-          <input type="hidden" id="edit_id_subcategoria" name="id_subcategoria">
-          <div class="form-group">
-            <label for="edit_nombre_subcategoria">Nombre</label>
-            <input type="text" class="form-control" id="edit_nombre_subcategoria" name="nombre_subcategoria" required>
-          </div>
-          <div class="form-group">
-            <label for="edit_descripcion_subcategoria">Descripción</label>
-            <textarea class="form-control" id="edit_descripcion_subcategoria" name="descripcion_subcategoria"></textarea>
-          </div>
-          <div class="form-group">
-            <label for="edit_id_categoria">Categoría</label>
-            <select class="form-control" id="edit_id_categoria" name="id_categoria" required>
-              <!-- Opciones cargadas por JS -->
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-        </form>
-      </div>
+<div id="modalBackgroundEditar" class="fixed inset-0 bg-black opacity-75 hidden z-20"></div>
+<div id="modalEditarSubcategoria" class="fixed inset-0 hidden overflow-y-auto h-full w-full z-30">
+    <div class="relative top-20 mx-auto p-5 border w-[600px] shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Editar Subcategoría</h3>
+            <form id="formEditarSubcategoria" action="views/subcategorias/subcategoria_edit.php" method="POST">
+                <input type="hidden" id="edit_id_subcategoria" name="id_subcategoria">
+                <div class="mb-4">
+                    <label for="edit_nombre_subcategoria" class="block text-sm font-medium text-gray-700">Nombre de la Subcategoría</label>
+                    <input type="text" id="edit_nombre_subcategoria" name="nombre_subcategoria" required
+                        class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50">
+                </div>
+                <div class="mb-4">
+                    <label for="edit_descripcion_subcategoria" class="block text-sm font-medium text-gray-700">Descripción</label>
+                    <textarea id="edit_descripcion_subcategoria" name="descripcion_subcategoria" rows="4" required
+                        class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50"></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="edit_id_categoria" class="block text-sm font-medium text-gray-700">Categoría</label>
+                    <select id="edit_id_categoria" name="id_categoria" required
+                        class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50">
+                        <option value="">Seleccione una categoría</option>
+                        <?php
+                        include_once '../../../conexion/cone.php';
+                        $categorias = pg_query($conn, "SELECT * FROM categoria ORDER BY nombre_categoria");
+                        while ($cat = pg_fetch_assoc($categorias)):
+                        ?>
+                            <option value="<?php echo $cat['id_categoria']; ?>"><?php echo htmlspecialchars($cat['nombre_categoria']); ?></option>
+                        <?php endwhile; ?>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="cerrarModalEditarSubcategoria()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
-</div> 
+</div>
+
+<script>
+function cerrarModalEditarSubcategoria() {
+    document.getElementById('modalEditarSubcategoria').classList.add('hidden');
+    document.getElementById('modalBackgroundEditar').classList.add('hidden');
+}
+</script> 

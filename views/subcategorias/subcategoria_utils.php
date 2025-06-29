@@ -54,4 +54,28 @@ function manejarResultadoConsulta($result, $conn, $success_url = 'subcategoria.p
         header("Location: $error_url&msg=" . urlencode('Error al actualizar: ' . $error_msg));
         exit();
     }
+}
+
+function manejarErrores($errores, $redirect_url = 'subcategoria.php?error=1')
+{
+    if (!empty($errores)) {
+        $error_msg = implode(', ', $errores);
+        header("Location: $redirect_url&msg=" . urlencode($error_msg));
+        exit();
+    }
+}
+
+function verificarExistenciaSubcategoria($conn, $nombre_subcategoria, $id_excluir = null)
+{
+    require_once __DIR__ . '/subcategoria_queries.php';
+    
+    if ($id_excluir) {
+        $query = getSubcategoriaByNombreExcludeIdQuery();
+        $result = pg_query_params($conn, $query, array($nombre_subcategoria, $id_excluir));
+    } else {
+        $query = getSubcategoriaByNombreQuery();
+        $result = pg_query_params($conn, $query, array($nombre_subcategoria));
+    }
+    
+    return pg_num_rows($result) > 0;
 } 
