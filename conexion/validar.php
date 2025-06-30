@@ -20,10 +20,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 header('Location: ../index.php');
                 exit();
             } else {
-                echo "Contraseña incorrecta";
+                header("Location: ../login.php?error=1");
+                exit();
             }
         } else {
-            echo "Usuario no encontrado";
+            header("Location: ../login.php?error=1");
         }
     } else {
         echo "Error en la consulta: " . pg_last_error($conn);
