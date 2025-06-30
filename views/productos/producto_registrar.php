@@ -31,7 +31,7 @@ if (!empty($errores)) {
     exit();
 }
 
-$sql = $sql_insertar_producto;
+$sql = insertProductQuery();
 $params = array($ref, $nombre, $descripcion, $id_subcategoria, $talla);
 $result = pg_query_params($conn, $sql, $params);
 manejarResultadoConsulta($result, $conn, '../../producto.php?success=2', '../../producto.php?error=1');

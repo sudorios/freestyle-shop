@@ -58,7 +58,6 @@
 function abrirModalAgregarProducto() {
     document.getElementById('modalAgregarProducto').classList.remove('hidden');
     document.getElementById('modalBackgroundAgregarProducto').classList.remove('hidden');
-    // Obtener referencia única desde el backend
     fetch('views/productos/generar_referencia.php')
         .then(response => response.json())
         .then(data => {
