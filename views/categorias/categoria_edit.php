@@ -19,12 +19,12 @@ verificarResultadoConsulta($result_check, '../../categoria.php', 3);
 
 $nombre_categoria      = trim(filter_input(INPUT_POST, 'nombre_categoria') ?? '');
 $descripcion_categoria = trim(filter_input(INPUT_POST, 'descripcion_categoria') ?? '');
-$estado_categoria      = filter_input(INPUT_POST, 'estado_categoria');
+$estado_categoria      = true; // Siempre activo al editar
 
 $errores = validarCamposCategoria(
     $nombre_categoria,
     $descripcion_categoria,
-    $estado_categoria === null ? '' : ($estado_categoria ? 'true' : 'false')
+    'true'
 );
 manejarErrores($errores);
 

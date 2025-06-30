@@ -16,11 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $nombre          = trim($_POST['txtnombre']        ?? '');
 $descripcion     = trim($_POST['txtdescripcion']   ?? '');
-$estadoInput     = $_POST['txtestado']            ?? null;
-$estado          = ($estadoInput === '1');
+$estado          = true; 
 $creado_en       = date('Y-m-d H:i:s');
 
-$errores = validarCamposCategoria($nombre, $descripcion, $estadoInput ? 'true' : 'false');
+$errores = validarCamposCategoria($nombre, $descripcion, 'true');
 if ($errores) {
     manejarErrores($errores, '../../categoria_add.php?error=1');
 }
