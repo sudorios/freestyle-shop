@@ -1,3 +1,4 @@
+<div id="modalBackground" class="fixed inset-0 bg-black opacity-75 hidden z-20"></div>
 <div id="modal_agregar_sucursal" class="fixed inset-0 hidden overflow-y-auto h-full w-full z-30">
     <div class="relative top-20 mx-auto p-5 border w-[500px] shadow-lg rounded-md bg-white">
         <div class="mt-3">

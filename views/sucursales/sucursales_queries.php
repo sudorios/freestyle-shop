@@ -1,13 +1,34 @@
 <?php
 
-$sql_obtener_sucursales = "SELECT * FROM sucursal ORDER BY nombre_sucursal ASC";
+function getAllSucursalesQuery() {
+    return "SELECT s.*, u.nombre_usuario AS supervisor_nombre, u.telefono_usuario AS supervisor_telefono, u.email_usuario AS supervisor_email
+        FROM sucursal s
+        LEFT JOIN usuario u ON s.id_supervisor = u.id_usuario
+        ORDER BY s.nombre_sucursal ASC";
+}
 
-$sql_obtener_sucursal_por_id = "SELECT * FROM sucursal WHERE id_sucursal = $1";
+function getSucursalByIdQuery() {
+    return "SELECT * FROM sucursal WHERE id_sucursal = $1";
+}
 
-$sql_insertar_sucursal = "INSERT INTO sucursal (nombre_sucursal, direccion_sucursal, tipo_sucursal, estado_sucursal, id_supervisor) VALUES ($1, $2, $3, $4, $5)";
+function insertSucursalQuery() {
+    return "INSERT INTO sucursal (nombre_sucursal, direccion_sucursal, tipo_sucursal, estado_sucursal, id_supervisor) VALUES ($1, $2, $3, $4, $5)";
+}
 
-$sql_actualizar_sucursal = "UPDATE sucursal SET nombre_sucursal = $1, direccion_sucursal = $2, tipo_sucursal = $3, estado_sucursal = $4, id_supervisor = $5 WHERE id_sucursal = $6";
+function updateSucursalQuery() {
+    return "UPDATE sucursal SET nombre_sucursal = $1, direccion_sucursal = $2, tipo_sucursal = $3, estado_sucursal = $4, id_supervisor = $5 WHERE id_sucursal = $6";
+}
 
-$sql_eliminar_sucursal = "DELETE FROM sucursal WHERE id_sucursal = $1";
+function deleteSucursalQuery() {
+    return "DELETE FROM sucursal WHERE id_sucursal = $1";
+}
+
+function getSucursalByNombreQuery() {
+    return "SELECT id_sucursal FROM sucursal WHERE nombre_sucursal = $1";
+}
+
+function getSucursalByNombreExcludeIdQuery() {
+    return "SELECT id_sucursal FROM sucursal WHERE nombre_sucursal = $1 AND id_sucursal != $2";
+}
 
 ?> 

@@ -45,4 +45,33 @@ function manejarResultadoConsulta($result, $conn, $success_url = '../../sucursal
         exit();
     }
 }
+
+function verificarIdSucursal($id_sucursal)
+{
+    if (empty($id_sucursal) || !is_numeric($id_sucursal)) {
+        header('Location: ../../sucursales.php?error=2');
+        exit();
+    }
+}
+
+function verificarExistenciaSucursal($conn, $nombre_sucursal, $id_excluir = null)
+{
+    include_once __DIR__ . '/sucursales_queries.php';
+    if ($id_excluir) {
+        $query = getSucursalByNombreExcludeIdQuery();
+        $result = pg_query_params($conn, $query, array($nombre_sucursal, $id_excluir));
+    } else {
+        $query = getSucursalByNombreQuery();
+        $result = pg_query_params($conn, $query, array($nombre_sucursal));
+    }
+    return pg_num_rows($result) > 0;
+}
+
+function verificarResultadoConsulta($result, $redirect_url = '../../sucursales.php', $error_code = 3)
+{
+    if (!$result || pg_num_rows($result) == 0) {
+        header("Location: $redirect_url?error=$error_code");
+        exit();
+    }
+}
 ?> 
