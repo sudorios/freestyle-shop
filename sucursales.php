@@ -41,14 +41,20 @@ if (!$result) {
                 <div class='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4'>
                     <span class="block sm:inline">Ocurrió un error. Código: <?php echo htmlspecialchars($_GET['error']); ?></span>
                 </div>
+                <meta http-equiv="refresh" content="3;url=sucursales.php">
             <?php endif; ?>
+            <hr class="my-4 border-t-2 border-gray-200 rounded-full opacity-80">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Gestión de Sucursales</h3>
-                <a href="#" onclick="abrirModalAgregarSucursal()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-                    Agregar Sucursal
-                </a>
+                <div class="flex gap-2 items-center">
+                    <input type="text" id="buscadorSucursal" class="border rounded px-3 py-2" placeholder="Buscar sucursal...">
+                    <a href="#" onclick="abrirModalAgregarSucursal()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                        Agregar Sucursal
+                    </a>
+                </div>
             </div>
-            <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <hr class="my-4 border-t-2 border-gray-200 rounded-full opacity-80">
+            <div class="bg-white rounded-lg overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -59,13 +65,13 @@ if (!$result) {
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
+                        <tbody id="tablaSucursalesBody" class="bg-white divide-y divide-gray-200">
                             <?php while ($row = pg_fetch_assoc($result)) { 
                                 $activa = ($row['estado_sucursal'] === true || $row['estado_sucursal'] === 't' || $row['estado_sucursal'] === 1 || $row['estado_sucursal'] === '1');
                             ?>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['id_sucursal']); ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_sucursal']); ?></td>
+                                <tr class="sucursal-row">
+                                    <td class="px-6 py-4 whitespace-nowrap nombre-sucursal"><?php echo htmlspecialchars($row['id_sucursal']); ?></td>
+                                    <td class="px-6 py-4 whitespace-nowrap nombre-sucursal"><?php echo htmlspecialchars($row['nombre_sucursal']); ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                             <?php echo $activa ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'; ?>">
@@ -81,9 +87,15 @@ if (!$result) {
                                             data-supervisor="<?php echo htmlspecialchars($row['id_supervisor']); ?>">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button class="cursor-pointer bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded" onclick="eliminarSucursal(<?php echo $row['id_sucursal']; ?>);">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                        <?php if ($activa) { ?>
+                                            <button class="cursor-pointer bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded" onclick="eliminarSucursal(<?php echo $row['id_sucursal']; ?>);">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        <?php } else { ?>
+                                            <button class="cursor-pointer bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded" onclick="activarSucursal(<?php echo $row['id_sucursal']; ?>);" title="Activar">
+                                                <i class="fas fa-toggle-on"></i>
+                                            </button>
+                                        <?php } ?>
                                         <button class="cursor-pointer bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded btn-detalle"
                                             title="Ver Detalle"
                                             data-id="<?php echo htmlspecialchars($row['id_sucursal']); ?>"
@@ -103,6 +115,7 @@ if (!$result) {
                     </table>
                 </div>
             </div>
+            <div class="flex justify-center mt-4" id="paginacionSucursales"></div>
         </div>
     </main>
     <?php include 'views/sucursales/modals/modal_agregar_sucursal.php'; ?>
@@ -172,111 +185,68 @@ if (!$result) {
             </div>
         </div>
     </div>
-    <script>
-        function abrirModalAgregarSucursal() {
-            document.getElementById('modal_agregar_sucursal').classList.remove('hidden');
-            document.getElementById('modalBackground').classList.remove('hidden');
-        }
-
-        function cerrarModalAgregarSucursal() {
-            document.getElementById('modal_agregar_sucursal').classList.add('hidden');
-            document.getElementById('modalBackground').classList.add('hidden');
-        }
-
-        function editarSucursal(id) {
-            console.log('Editar sucursal:', id);
-        }
-
-        let sucursalAEliminar = null;
-        function eliminarSucursal(id) {
-            sucursalAEliminar = id;
-            document.getElementById('inputPasswordConfirm').value = '';
-            document.getElementById('errorPasswordConfirm').classList.add('hidden');
-            document.getElementById('modalConfirmarDesactivacion').classList.remove('hidden');
-            document.getElementById('modalBackground').classList.remove('hidden');
-        }
-
-        function cerrarModalConfirmarDesactivacion() {
-            sucursalAEliminar = null;
-            document.getElementById('modalConfirmarDesactivacion').classList.add('hidden');
-            document.getElementById('modalBackground').classList.add('hidden');
-        }
-
-        function confirmarDesactivacionSucursal() {
-            const password = document.getElementById('inputPasswordConfirm').value;
-            if (!password) {
-                mostrarErrorPassword('La contraseña es obligatoria');
-                return;
-            }
-            fetch('conexion/validar_password.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'password=' + encodeURIComponent(password)
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.valido) {
-                    document.getElementById('inputEliminarSucursalId').value = sucursalAEliminar;
-                    document.getElementById('formEliminarSucursal').submit();
-                } else {
-                    mostrarErrorPassword('Contraseña incorrecta');
-                }
-            })
-            .catch(() => mostrarErrorPassword('Error al validar la contraseña'));
-        }
-
-        function mostrarErrorPassword(msg) {
-            const errorDiv = document.getElementById('errorPasswordConfirm');
-            errorDiv.textContent = msg;
-            errorDiv.classList.remove('hidden');
-        }
-
-        // Modal Detalle Sucursal
-        function abrirModalDetalleSucursal(datos) {
-            document.getElementById('detalleNombreSucursal').textContent = datos.nombre;
-            document.getElementById('detalleDireccionSucursal').textContent = datos.direccion;
-            document.getElementById('detalleTipoSucursal').textContent = datos.tipo;
-            document.getElementById('detalleSupervisorNombre').textContent = datos.supervisorNombre;
-            document.getElementById('detalleSupervisorTelefono').textContent = datos.supervisorTelefono;
-            document.getElementById('detalleSupervisorEmail').textContent = datos.supervisorEmail;
-            // Estado visual mejorado sin ícono
-            var estadoSpan = document.getElementById('detalleEstadoSucursalSpan');
-            if (datos.estado === 'Activa') {
-                estadoSpan.textContent = 'Activa';
-                estadoSpan.className = 'block text-center text-base font-bold py-2 rounded-lg bg-green-200 text-green-900';
-            } else {
-                estadoSpan.textContent = 'Inactiva';
-                estadoSpan.className = 'block text-center text-base font-bold py-2 rounded-lg bg-red-200 text-red-900';
-            }
-            document.getElementById('modalDetalleSucursal').classList.remove('hidden');
-            document.getElementById('modalBackground').classList.remove('hidden');
-        }
-
-        function cerrarModalDetalleSucursal() {
-            document.getElementById('modalDetalleSucursal').classList.add('hidden');
-            document.getElementById('modalBackground').classList.add('hidden');
-
-        }
-        document.querySelectorAll('.btn-detalle').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                const datos = {
-                    nombre: btn.getAttribute('data-nombre'),
-                    direccion: btn.getAttribute('data-direccion'),
-                    tipo: btn.getAttribute('data-tipo'),
-                    supervisorNombre: btn.getAttribute('data-supervisor-nombre'),
-                    supervisorTelefono: btn.getAttribute('data-supervisor-telefono'),
-                    supervisorEmail: btn.getAttribute('data-supervisor-email'),
-                    estado: btn.getAttribute('data-estado')
-                };
-                abrirModalDetalleSucursal(datos);
-            });
-        });
-    </script>
+    <form id="formActivarSucursal" action="views/sucursales/sucursal_activar.php" method="POST" style="display:none;">
+        <input type="hidden" name="id_sucursal" id="inputActivarSucursalId">
+    </form>
+    <div id="modalConfirmarActivacion" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+        <div class="relative mx-auto p-6 border w-[350px] shadow-xl rounded-xl bg-white">
+            <h3 class="text-lg font-semibold mb-4 text-center">Confirmar activación</h3>
+            <p class="mb-4 text-center">Por favor, ingresa tu contraseña para confirmar la activación de la sucursal.</p>
+            <input type="password" id="inputPasswordConfirmActivar" class="w-full mb-4 px-3 py-2 border rounded focus:outline-none focus:ring" placeholder="Contraseña" autocomplete="current-password">
+            <div id="errorPasswordConfirmActivar" class="text-red-600 text-sm mb-2 hidden text-center"></div>
+            <div class="flex justify-end gap-2">
+                <button type="button" onclick="cerrarModalConfirmarActivacion()" class="bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2 px-4 rounded">Cancelar</button>
+                <button type="button" onclick="confirmarActivacionSucursal()" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded">Confirmar</button>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/sucursales.js"></script>
     <?php include_once './views/sucursales/modals/modal_editar_sucursal.php'; ?>
     <?php include_once './views/sucursales/modals/modal_agregar_sucursal.php'; ?>
     <?php include './includes/modal_confirmar.php'; ?>
     <?php include_once './includes/footer.php'; ?>
-    <script src="assets/js/sucursales.js"></script>
+    <script>
+    let sucursalAActivar = null;
+    function activarSucursal(id) {
+        sucursalAActivar = id;
+        document.getElementById('inputPasswordConfirmActivar').value = '';
+        document.getElementById('errorPasswordConfirmActivar').classList.add('hidden');
+        document.getElementById('modalConfirmarActivacion').classList.remove('hidden');
+        document.getElementById('modalBackground').classList.remove('hidden');
+    }
+    function cerrarModalConfirmarActivacion() {
+        sucursalAActivar = null;
+        document.getElementById('modalConfirmarActivacion').classList.add('hidden');
+        document.getElementById('modalBackground').classList.add('hidden');
+    }
+    function confirmarActivacionSucursal() {
+        const password = document.getElementById('inputPasswordConfirmActivar').value;
+        if (!password) {
+            mostrarErrorPasswordActivar('La contraseña es obligatoria');
+            return;
+        }
+        fetch('conexion/validar_password.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'password=' + encodeURIComponent(password)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.valido) {
+                document.getElementById('inputActivarSucursalId').value = sucursalAActivar;
+                document.getElementById('formActivarSucursal').submit();
+            } else {
+                mostrarErrorPasswordActivar('Contraseña incorrecta');
+            }
+        })
+        .catch(() => mostrarErrorPasswordActivar('Error al validar la contraseña'));
+    }
+    function mostrarErrorPasswordActivar(msg) {
+        const errorDiv = document.getElementById('errorPasswordConfirmActivar');
+        errorDiv.textContent = msg;
+        errorDiv.classList.remove('hidden');
+    }
+    </script>
 </body>
 
 </html>

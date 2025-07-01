@@ -21,14 +21,14 @@ if (!$id_sucursal || !is_numeric($id_sucursal)) {
     exit();
 }
 
-$sql = deleteSucursalQuery();
-$params = [$id_sucursal];
+$sql = updateEstadoSucursalQuery();
+$params = [true, $id_sucursal];
 $result = pg_query_params($conn, $sql, $params);
 
 if ($result) {
-    header('Location: ../../sucursales.php?success=3');
+    header('Location: ../../sucursales.php?success=4');
     exit();
 } else {
-    header('Location: ../../sucursales.php?error=4');
+    header('Location: ../../sucursales.php?error=5');
     exit();
 } 
