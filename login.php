@@ -36,8 +36,7 @@ $error = isset($_GET['error']) && $_GET['error'] == 1;
         <?php if ($error): ?>
             <div
                 id="login-error-msg"
-                class="flex items-center justify-center gap-2 text-red-600 text-center font-bold mt-4 mb-4 uppercase border-t-2 border-b-2 border-red-500"
-            >
+                class="flex items-center justify-center gap-2 text-red-600 text-center font-bold mt-4 mb-4 uppercase border-t-2 border-b-2 border-red-500">
                 Usuario o contraseña incorrectos
             </div>
         <?php endif; ?>
@@ -47,24 +46,9 @@ $error = isset($_GET['error']) && $_GET['error'] == 1;
             <a href="login_add.php" class="underline hover:no-underline">Regístrate aquí</a>
         </p>
     </div>
-<?php if ($error): ?>
-<script>
-    setTimeout(function() {
-        var div = document.querySelector('.bg-white.p-8.w-96');
-        if (div) {
-            div.classList.remove('border-red-500');
-            div.classList.add('border-black');
-            div.style.boxShadow = '';
-        }
-        var msg = document.getElementById('login-error-msg');
-        if (msg) msg.style.display = 'none';
-
-        if (window.history.replaceState) {
-            const url = window.location.origin + window.location.pathname;
-            window.history.replaceState({}, document.title, url);
-        }
-    }, 3000);
-</script>
-<?php endif; ?>
+    <?php if ($error): ?>
+        <meta http-equiv="refresh" content="3;url=login.php">
+    <?php endif; ?>
 </body>
+
 </html>

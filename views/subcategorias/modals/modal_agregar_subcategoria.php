@@ -19,7 +19,7 @@
                             <option value="">Seleccione una categoría</option>
                             <?php
                             global $conn;
-                            $categorias = pg_query($conn, "SELECT * FROM categoria ORDER BY nombre_categoria");
+                            $categorias = pg_query($conn, "SELECT * FROM categoria WHERE estado_categoria = true ORDER BY nombre_categoria ");
                             while ($cat = pg_fetch_assoc($categorias)):
                             ?>
                                 <option value="<?php echo $cat['id_categoria']; ?>"><?php echo htmlspecialchars($cat['nombre_categoria']); ?></option>
@@ -31,7 +31,7 @@
                     <button type="button" onclick="cerrarModalAgregarSubcategoria()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
                         Cancelar
                     </button>
-                    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
                         Registrar
                     </button>
                 </div>

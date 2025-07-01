@@ -13,18 +13,11 @@
                     <label for="edit_descripcion" class="block text-sm font-medium text-gray-700">Descripción</label>
                     <textarea id="edit_descripcion" name="descripcion_categoria" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required></textarea>
                 </div>
-                <div class="mb-4">
-                    <label for="edit_estado" class="block text-sm font-medium text-gray-700">Estado</label>
-                    <select id="edit_estado" name="estado_categoria" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
-                        <option value="true">Activa</option>
-                        <option value="false">Inactiva</option>
-                    </select>
-                </div>
                 <div class="flex justify-end space-x-3">
                     <button type="button" onclick="cerrarModal()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
                         Cancelar
                     </button>
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
                         Guardar Cambios
                     </button>
                 </div>

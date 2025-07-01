@@ -2,7 +2,7 @@
 
 function getAllCategoriasQuery()
 {
-    return "SELECT * FROM categoria ORDER BY id_categoria ASC";
+    return "SELECT * FROM categoria WHERE estado_categoria = true ORDER BY id_categoria ASC";
 }
 
 function getCategoriaByIdQuery()
@@ -32,7 +32,7 @@ function updateCategoriaQuery()
 
 function deleteCategoriaQuery()
 {
-    return "DELETE FROM categoria WHERE id_categoria = $1";
+    return "UPDATE categoria SET estado_categoria = false WHERE id_categoria = $1";
 }
 
 function getCategoriasActivasQuery()

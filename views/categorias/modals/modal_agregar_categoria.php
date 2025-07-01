@@ -15,15 +15,6 @@
                         class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50"></textarea>
                 </div>
 
-                <div class="mb-4">
-                    <label for="txtestado" class="block text-sm font-medium text-gray-700">Estado</label>
-                    <select id="txtestado" name="txtestado" required
-                        class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50">
-                        <option value="1">Activa</option>
-                        <option value="0">Inactiva</option>
-                    </select>
-                </div>
-
                 <div class="flex justify-end mt-6">
                     <button type="button" onclick="cerrarModalAgregarCategoria()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded mr-2">Cancelar</button>
                     <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">Guardar</button>
