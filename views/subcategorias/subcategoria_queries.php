@@ -2,7 +2,7 @@
 
 function getAllSubcategoriasQuery()
 {
-    return "SELECT s.*, c.nombre_categoria FROM subcategoria s JOIN categoria c ON s.id_categoria = c.id_categoria ORDER BY s.id_subcategoria DESC";
+    return "SELECT s.*, c.nombre_categoria FROM subcategoria s JOIN categoria c ON s.id_categoria = c.id_categoria WHERE s.estado = true ORDER BY s.id_subcategoria DESC";
 }
 
 function getSubcategoriaByIdQuery()
@@ -22,7 +22,7 @@ function getSubcategoriaByNombreExcludeIdQuery()
 
 function insertSubcategoriaQuery()
 {
-    return "INSERT INTO subcategoria (nombre_subcategoria, descripcion_subcategoria, id_categoria) VALUES ($1, $2, $3)";
+    return "INSERT INTO subcategoria (nombre_subcategoria, descripcion_subcategoria, id_categoria, estado) VALUES ($1, $2, $3, $4)";
 }
 
 function updateSubcategoriaQuery()
@@ -32,7 +32,7 @@ function updateSubcategoriaQuery()
 
 function deleteSubcategoriaQuery()
 {
-    return "DELETE FROM subcategoria WHERE id_subcategoria = $1";
+    return "UPDATE subcategoria SET estado = false WHERE id_subcategoria = $1";
 }
 
 function getSubcategoriasByCategoriaQuery()
@@ -44,4 +44,6 @@ function getSubcategoriasActivasQuery()
 {
     return "SELECT s.*, c.nombre_categoria FROM subcategoria s JOIN categoria c ON s.id_categoria = c.id_categoria WHERE s.estado_subcategoria = true ORDER BY s.nombre_subcategoria ASC";
 }
+
+
 ?> 
