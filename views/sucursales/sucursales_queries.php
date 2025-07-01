@@ -20,7 +20,11 @@ function updateSucursalQuery() {
 }
 
 function deleteSucursalQuery() {
-    return "DELETE FROM sucursal WHERE id_sucursal = $1";
+    return "UPDATE sucursal SET estado_sucursal = false WHERE id_sucursal = $1";
+}
+
+function updateEstadoSucursalQuery() {
+    return "UPDATE sucursal SET estado_sucursal = $1 WHERE id_sucursal = $2";
 }
 
 function getSucursalByNombreQuery() {
