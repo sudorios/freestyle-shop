@@ -2,7 +2,9 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
 include_once './conexion/cone.php';
+include_once './views/sucursales/sucursales_queries.php';
 
 if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
     header('Location: login.php');
@@ -13,11 +15,7 @@ if (!$conn) {
     die('Error de conexión: ' . pg_last_error($conn));
 }
 
-$sql = "SELECT s.*, u.nombre_usuario AS supervisor_nombre, u.telefono_usuario AS supervisor_telefono, u.email_usuario AS supervisor_email
-        FROM sucursal s
-        LEFT JOIN usuario u ON s.id_supervisor = u.id_usuario
-        ORDER BY s.nombre_sucursal ASC";
-
+$sql = getAllSucursalesQuery();
 $result = pg_query($conn, $sql);
 
 if (!$result) {
@@ -74,20 +72,34 @@ if (!$result) {
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['direccion_sucursal'] ?? ''); ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                            <?php 
-                                            switch($row['tipo_sucursal']) {
-                                                case 'almacen': echo 'bg-blue-100 text-blue-800'; break;
-                                                case 'fisica': echo 'bg-green-100 text-green-800'; break;
-                                                case 'online': echo 'bg-purple-100 text-purple-800'; break;
-                                                default: echo 'bg-gray-100 text-gray-800';
+                                            <?php
+                                            switch ($row['tipo_sucursal']) {
+                                                case 'almacen':
+                                                    echo 'bg-blue-100 text-blue-800';
+                                                    break;
+                                                case 'fisica':
+                                                    echo 'bg-green-100 text-green-800';
+                                                    break;
+                                                case 'online':
+                                                    echo 'bg-purple-100 text-purple-800';
+                                                    break;
+                                                default:
+                                                    echo 'bg-gray-100 text-gray-800';
                                             }
                                             ?>">
-                                            <?php 
-                                            switch($row['tipo_sucursal']) {
-                                                case 'almacen': echo 'Centro Distribución'; break;
-                                                case 'fisica': echo 'Tienda Física'; break;
-                                                case 'online': echo 'Tienda Online'; break;
-                                                default: echo htmlspecialchars($row['tipo_sucursal']);
+                                            <?php
+                                            switch ($row['tipo_sucursal']) {
+                                                case 'almacen':
+                                                    echo 'Centro Distribución';
+                                                    break;
+                                                case 'fisica':
+                                                    echo 'Tienda Física';
+                                                    break;
+                                                case 'online':
+                                                    echo 'Tienda Online';
+                                                    break;
+                                                default:
+                                                    echo htmlspecialchars($row['tipo_sucursal']);
                                             }
                                             ?>
                                         </span>
@@ -102,7 +114,12 @@ if (!$result) {
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <button onclick="editarSucursal(<?php echo $row['id_sucursal']; ?>)" class="text-indigo-600 hover:text-indigo-900 mr-3">
+                                        <button class="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-2 btn-editar"
+                                            data-id="<?php echo htmlspecialchars($row['id_sucursal']); ?>"
+                                            data-nombre="<?php echo htmlspecialchars($row['nombre_sucursal']); ?>"
+                                            data-direccion="<?php echo htmlspecialchars($row['direccion_sucursal']); ?>"
+                                            data-tipo="<?php echo htmlspecialchars($row['tipo_sucursal']); ?>"
+                                            data-supervisor="<?php echo htmlspecialchars($row['id_supervisor']); ?>">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         <button onclick="eliminarSucursal(<?php echo $row['id_sucursal']; ?>)" class="text-red-600 hover:text-red-900">
@@ -120,25 +137,33 @@ if (!$result) {
     <?php include 'views/sucursales/modals/modal_agregar_sucursal.php'; ?>
     <div id="modalBackground" class="fixed inset-0 bg-black opacity-75 hidden z-20"></div>
     <script>
-    function abrirModalAgregarSucursal() {
-        document.getElementById('modal_agregar_sucursal').classList.remove('hidden');
-        document.getElementById('modalBackground').classList.remove('hidden');
-    }
-    function cerrarModalAgregarSucursal() {
-        document.getElementById('modal_agregar_sucursal').classList.add('hidden');
-        document.getElementById('modalBackground').classList.add('hidden');
-    }
-    function editarSucursal(id) {
-        // Función para editar sucursal
-        console.log('Editar sucursal:', id);
-    }
-    function eliminarSucursal(id) {
-        // Función para eliminar sucursal
-        if (confirm('¿Estás seguro de que quieres eliminar esta sucursal?')) {
-            console.log('Eliminar sucursal:', id);
+        function abrirModalAgregarSucursal() {
+            document.getElementById('modal_agregar_sucursal').classList.remove('hidden');
+            document.getElementById('modalBackground').classList.remove('hidden');
         }
-    }
+
+        function cerrarModalAgregarSucursal() {
+            document.getElementById('modal_agregar_sucursal').classList.add('hidden');
+            document.getElementById('modalBackground').classList.add('hidden');
+        }
+
+        function editarSucursal(id) {
+            // Función para editar sucursal
+            console.log('Editar sucursal:', id);
+        }
+
+        function eliminarSucursal(id) {
+            // Función para eliminar sucursal
+            if (confirm('¿Estás seguro de que quieres eliminar esta sucursal?')) {
+                console.log('Eliminar sucursal:', id);
+            }
+        }
     </script>
+    <?php include_once './views/sucursales/modals/modal_editar_sucursal.php'; ?>
+    <?php include_once './views/sucursales/modals/modal_agregar_sucursal.php'; ?>
+    <?php include './includes/modal_confirmar.php'; ?>
     <?php include_once './includes/footer.php'; ?>
+    <script src="assets/js/sucursales.js"></script>
 </body>
-</html> 
+
+</html>
