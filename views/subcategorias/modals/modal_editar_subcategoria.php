@@ -22,7 +22,7 @@
                         <option value="">Seleccione una categoría</option>
                         <?php
                         include_once '../../../conexion/cone.php';
-                        $categorias = pg_query($conn, "SELECT * FROM categoria ORDER BY nombre_categoria");
+                        $categorias = pg_query($conn, "SELECT * FROM categoria  WHERE estado_categoria = true  ORDER BY nombre_categoria");
                         while ($cat = pg_fetch_assoc($categorias)):
                         ?>
                             <option value="<?php echo $cat['id_categoria']; ?>"><?php echo htmlspecialchars($cat['nombre_categoria']); ?></option>
