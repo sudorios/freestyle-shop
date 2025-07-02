@@ -1,5 +1,4 @@
 <?php
-// Archivo: views/productos/producto_utils.php
 
 function verificarSesionAdmin()
 {
@@ -20,6 +19,14 @@ function verificarMetodoPost()
 function verificarIdProducto($id_producto)
 {
     if (empty($id_producto) || !is_numeric($id_producto)) {
+        header('Location: producto.php?error=2');
+        exit();
+    }
+}
+
+function verificarRefProducto($ref_producto)
+{
+    if (empty($ref_producto)) {
         header('Location: producto.php?error=2');
         exit();
     }

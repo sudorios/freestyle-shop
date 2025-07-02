@@ -14,9 +14,8 @@ if (!$conn) {
 }
 
 if (isset($_GET['listar']) && $_GET['listar'] == 1) {
-    include_once '../../conexion/cone.php';
     header('Content-Type: application/json');
-    $sql = "SELECT id_subcategoria, nombre_subcategoria FROM subcategoria ORDER BY nombre_subcategoria ASC";
+    $sql = "SELECT id_subcategoria, nombre_subcategoria FROM subcategoria ORDER BY nombre_subcategoria ASC where estado = true";
     $result = pg_query($conn, $sql);
     $subcategorias = [];
     while ($row = pg_fetch_assoc($result)) {
@@ -60,9 +59,12 @@ if (!$result) {
             <?php endif; ?>
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Listado de Productos</h3>
-                <a href="#" onclick="abrirModalAgregarProducto()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
-                    Agregar Producto
-                </a>
+                <div class="flex gap-2 items-center">
+                    <input type="text" id="buscadorProducto" placeholder="Buscar Producto..." class="border rounded px-2 py-1">
+                    <a href="#" onclick="abrirModalAgregarProducto()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                        Agregar Producto
+                    </a>
+                </div>
             </div>
             <div class="bg-white shadow-md rounded-lg overflow-hidden">
                 <div class="overflow-x-auto">
@@ -86,12 +88,17 @@ if (!$result) {
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_subcategoria']); ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['talla_producto']); ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <button type="button" class="btn-editar-producto bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-2 cursor-pointer" title="Editar" data-id="<?php echo htmlspecialchars($row['id_producto']); ?>">
+                                        <button class="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded btn-editar"
+                                            data-id="<?php echo htmlspecialchars($row['id_producto']); ?>"
+                                            data-ref="<?php echo htmlspecialchars($row['ref_producto']); ?>"
+                                            data-nombre="<?php echo htmlspecialchars($row['nombre_producto']); ?>"
+                                            data-subcategoria="<?php echo htmlspecialchars($row['id_subcategoria']); ?>"
+                                            data-talla="<?php echo htmlspecialchars($row['talla_producto']); ?>">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <a href="#" class="cursor-pointer bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded" onclick="return confirm('¿Seguro que deseas eliminar este producto?');" title="Eliminar">
+                                        <button type="button" class="cursor-pointer bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ml-2" data-id="<?php echo $row['id_producto']; ?>" title="Eliminar" onclick="abrirModalConfirmar({mensaje: '¿Seguro que deseas eliminar este producto?', action: 'views/productos/producto_eliminar.php', id: '<?php echo $row['id_producto']; ?>', idField: 'id_producto'})">
                                             <i class="fas fa-trash"></i>
-                                        </a>
+                                        </button>
                                         <button type="button" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded ml-2" onclick="mostrarCodigoBarrasProducto('<?php echo htmlspecialchars($row['ref_producto']); ?>')" title="Código de Barras">
                                             <i class="fas fa-barcode"></i>
                                         </button>
@@ -114,100 +121,16 @@ if (!$result) {
             <button onclick="cerrarModalCodigoBarras()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">&times;</button>
             <h3 class="text-lg font-bold mb-4">Código de Barras</h3>
             <svg id="barcode"></svg>
-            <button id="descargarBarcode" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Descargar</button>
+            <button id="descargarBarcode" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Imprimir</button>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-    <script>
-    function mostrarCodigoBarrasProducto(ref) {
-        document.getElementById('modalCodigoBarras').classList.remove('hidden');
-        document.getElementById('modalBackground').classList.remove('hidden');
-        JsBarcode("#barcode", ref, {
-            format: "CODE128",
-            lineColor: "#000",
-            width: 2,
-            height: 80,
-            displayValue: true
-        });
-        // Descargar como imagen
-        document.getElementById('descargarBarcode').onclick = function() {
-            var svg = document.getElementById('barcode');
-            var serializer = new XMLSerializer();
-            var source = serializer.serializeToString(svg);
-            var image = new Image();
-            image.src = 'data:image/svg+xml;base64,' + window.btoa(source);
-            var link = document.createElement('a');
-            link.href = image.src;
-            link.download = ref + '_barcode.svg';
-            link.click();
-        };
-    }
-    function cerrarModalCodigoBarras() {
-        document.getElementById('modalCodigoBarras').classList.add('hidden');
-        document.getElementById('modalBackground').classList.add('hidden');
-        document.getElementById('barcode').innerHTML = '';
-    }
-    function abrirModalImagenesProducto(idProducto) {
-        document.getElementById('modalImagenesProducto').classList.remove('hidden');
-        document.getElementById('modalBackgroundImagenesProducto').classList.remove('hidden');
-        document.getElementById('listaImagenesProducto').innerHTML = '<p class="text-gray-500">Cargando imágenes...</p>';
-        document.getElementById('formNuevaImagenProducto').classList.add('hidden');
-        document.getElementById('btnMostrarFormImagen').classList.add('hidden');
-        fetch('views/productos/obtener_imagenes_producto.php?id_producto=' + idProducto)
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('listaImagenesProducto').innerHTML = html;
-                document.getElementById('idProductoImagenForm').value = idProducto;
-                if (html.includes('No hay imágenes para este producto')) {
-                    document.getElementById('formNuevaImagenProducto').classList.remove('hidden');
-                    document.getElementById('btnMostrarFormImagen').classList.add('hidden');
-                } else {
-                    document.getElementById('formNuevaImagenProducto').classList.add('hidden');
-                    document.getElementById('btnMostrarFormImagen').classList.remove('hidden');
-                }
-            })
-            .catch(() => {
-                document.getElementById('listaImagenesProducto').innerHTML = '<p class="text-red-500">Error al cargar las imágenes.</p>';
-                document.getElementById('formNuevaImagenProducto').classList.add('hidden');
-                document.getElementById('btnMostrarFormImagen').classList.add('hidden');
-            });
-    }
-    function cerrarModalImagenesProducto() {
-        document.getElementById('modalImagenesProducto').classList.add('hidden');
-        document.getElementById('modalBackgroundImagenesProducto').classList.add('hidden');
-    }
-    </script>
-    
+    <script src="assets/js/producto.js"></script>
+    <script src="assets/js/modal_confirmar.js"></script>
     <?php include 'views/productos/modals/modal_imagenes_producto.php'; ?>
     <?php include 'views/productos/modals/modal_editar_producto.php'; ?>
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.btn-editar-producto').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                const id = this.getAttribute('data-id');
-                fetch('views/productos/obtener_producto.php?id_producto=' + id)
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById('editar_id_producto').value = data.id_producto;
-                        document.getElementById('editar_ref_producto').value = data.ref_producto;
-                        document.getElementById('editar_nombre_producto').value = data.nombre_producto;
-                        document.getElementById('editar_descripcion_producto').value = data.descripcion_producto;
-                        document.getElementById('editar_talla_producto').value = data.talla_producto;
-                        cargarSubcategoriasEditar(data.id_subcategoria);
-                        abrirModalEditarProducto();
-                    });
-            });
-        });
-    });
-    function abrirModalEditarProducto() {
-        document.getElementById('modalEditarProducto').classList.remove('hidden');
-        document.getElementById('bg-editarProducto').classList.remove('hidden');
-    }
-    function cerrarModalEditarProducto() {
-        document.getElementById('modalEditarProducto').classList.add('hidden');
-        document.getElementById('bg-editarProducto').classList.add('hidden');
-    }
-    </script>
+    <?php include 'includes/modal_confirmar.php'; ?>
     <?php include_once './includes/footer.php'; ?>
 </body>
-</html> 
+
+</html>

@@ -12,8 +12,8 @@ $nombre = trim($_POST['nombre_producto'] ?? '');
 $descripcion = trim($_POST['descripcion_producto'] ?? '');
 $id_subcategoria = $_POST['id_subcategoria'] ?? '';
 $talla = trim($_POST['talla_producto'] ?? '');
+$estado = true;
 
-// Verificar unicidad de la referencia
 $result = pg_query_params($conn, "SELECT 1 FROM producto WHERE ref_producto = $1", array($ref));
 if (pg_num_rows($result) > 0) {
     $ref = generarReferenciaUnicaBD($conn);
@@ -32,7 +32,7 @@ if (!empty($errores)) {
 }
 
 $sql = insertProductQuery();
-$params = array($ref, $nombre, $descripcion, $id_subcategoria, $talla);
+$params = array($ref, $nombre, $descripcion, $id_subcategoria, $talla, $estado);
 $result = pg_query_params($conn, $sql, $params);
 manejarResultadoConsulta($result, $conn, '../../producto.php?success=2', '../../producto.php?error=1');
 ?> 

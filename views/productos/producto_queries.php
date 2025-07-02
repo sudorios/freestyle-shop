@@ -12,7 +12,7 @@ function getProductByIdQuery()
 
 function insertProductQuery()
 {
-    return "INSERT INTO producto (ref_producto, nombre_producto, descripcion_producto, id_subcategoria, talla_producto) VALUES ($1, $2, $3, $4, $5)";
+    return "INSERT INTO producto (ref_producto, nombre_producto, descripcion_producto, id_subcategoria, talla_producto, estado) VALUES ($1, $2, $3, $4, $5, $6)";
 }
 
 function updateProductQuery()
@@ -22,5 +22,15 @@ function updateProductQuery()
 
 function deleteProductQuery()
 {
-    return "DELETE FROM producto WHERE id_producto = $1";
-} 
+    return "UPDATE producto SET estado = false WHERE id_producto = $1";
+}
+
+function getProductByRefQuery()
+{
+    return "SELECT * FROM producto WHERE ref_producto = $1";
+}
+
+function updateProductByRefQuery()
+{
+    return "UPDATE producto SET nombre_producto = $1, descripcion_producto = $2, id_subcategoria = $3, talla_producto = $4, actualizado_en = CURRENT_TIMESTAMP WHERE ref_producto = $5";
+}
