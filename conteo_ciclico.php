@@ -64,10 +64,10 @@ $nombre_usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : '';
                 <div class="flex justify-between items-center mb-4">
                     <h4 class="text-xl font-semibold">Historial de Conteos Cíclicos</h4>
                     <div class="flex gap-2 items-center">
-                        <input type="text" id="buscadorConteo" placeholder="Buscar Conteo..." class="border rounded px-2 py-1">
                         <button id="btnNuevoConteo" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition">+ Nuevo Conteo</button>
                         <form method="get" action="views/conteos_ciclicos/exportar_excel.php" style="display:inline;">
-                            <input type="hidden" name="id_producto" value="<?php echo htmlspecialchars($id_producto); ?>">
+                                       <input type="text" id="buscadorConteo" placeholder="Buscar Conteo..." class="border rounded px-2 py-1">
+             <input type="hidden" name="id_producto" value="<?php echo htmlspecialchars($id_producto); ?>">
                             <input type="hidden" name="id_sucursal" value="<?php echo htmlspecialchars($id_sucursal); ?>">
                             <input type="hidden" name="fecha_desde" value="<?php echo isset($_GET['fecha_desde']) ? htmlspecialchars($_GET['fecha_desde']) : ''; ?>">
                             <input type="hidden" name="fecha_hasta" value="<?php echo isset($_GET['fecha_hasta']) ? htmlspecialchars($_GET['fecha_hasta']) : ''; ?>">
@@ -113,6 +113,7 @@ $nombre_usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : '';
                             <option value="">Todos</option>
                             <option value="Pendiente" <?php if(isset($_GET['estado']) && $_GET['estado']=='Pendiente') echo 'selected'; ?>>Pendiente</option>
                             <option value="Completado" <?php if(isset($_GET['estado']) && $_GET['estado']=='Completado') echo 'selected'; ?>>Completado</option>
+                            <option value="Cancelado" <?php if(isset($_GET['estado']) && $_GET['estado']=='Cancelado') echo 'selected'; ?>>Cancelado</option>
                         </select>
                     </label>
                 </div>
