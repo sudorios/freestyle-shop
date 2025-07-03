@@ -2,7 +2,7 @@
 
 function getAllCategoriasQuery()
 {
-    return "SELECT * FROM categoria WHERE estado_categoria = true ORDER BY id_categoria ASC";
+    return "SELECT * FROM categoria WHERE estado_categoria = true ORDER BY id_categoria DESC";
 }
 
 function getCategoriaByIdQuery()

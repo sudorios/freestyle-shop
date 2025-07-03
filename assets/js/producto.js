@@ -1,4 +1,5 @@
-
+const filasPorPagina = 10;
+let paginaActual = 1;   
 
 function generarReferenciaAleatoria() {
   return Math.floor(10000000 + Math.random() * 90000000).toString();
@@ -122,12 +123,17 @@ function cerrarModalImagenesProducto() {
     .classList.add("hidden");
 }
 
-
-
-
+function initTablaProducto() {
+  document.getElementById('buscadorProducto').addEventListener('input', function() {
+    paginaActual = 1;
+    mostrarPaginaTabla('tbody', 'buscadorProducto', filasPorPagina, paginaActual, 'paginacionProducto');
+  });
+  mostrarPaginaTabla('tbody', 'buscadorProducto', filasPorPagina, paginaActual, 'paginacionProducto');
+}
 
 document.addEventListener("DOMContentLoaded", function () {
   initEditarProducto();
+  initTablaProducto();
   const catAgregar = document.getElementById('id_categoria');
   if (catAgregar) {
     catAgregar.addEventListener('change', function() {

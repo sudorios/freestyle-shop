@@ -28,7 +28,7 @@ if (!$result) {
 
 <body id="main-content" class="ml-72 mt-20">
     <?php include_once './includes/header.php'; ?>
-    <main >
+    <main>
         <div class="container mx-auto px-4 mt-6">
             <?php if (isset($_GET['success']) || isset($_GET['error'])): ?>
                 <meta http-equiv="refresh" content="3;url=categoria.php">
@@ -76,8 +76,7 @@ if (!$result) {
                         type="text"
                         id="buscadorCategoria"
                         placeholder="Buscar categoría..."
-                        class="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
-                    >
+                        class="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200">
                     <a href="#" onclick="abrirModalAgregarCategoria()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
                         Agregar Categoría
                     </a>
@@ -88,9 +87,8 @@ if (!$result) {
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" id="thOrdenarId">
-                                ID
-                                <span id="iconoOrdenId" class="inline-block ml-1 align-middle">↑↓</span>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" onclick="ordenarPorColumna('tbody', 0, 'iconoOrdenId', 'buscadorCategoria', 10, 'paginacionCategoria')">
+                                ID <span id="iconoOrdenId" data-asc="true">↑</span>
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
@@ -128,8 +126,10 @@ if (!$result) {
     <?php include_once './views/categorias/modals/modal_editar_categoria.php'; ?>
     <?php include_once './views/categorias/modals/modal_agregar_categoria.php'; ?>
     <?php include './includes/modal_confirmar.php'; ?>
-    <?php include './includes/footer.php'; ?> 
+    <?php include './includes/footer.php'; ?>
     <script src="assets/js/categorias.js"></script>
     <script src="assets/js/modal_confirmar.js"></script>
+    <script src="assets/js/tabla_utils.js"></script>
 </body>
-</html> 
+
+</html>

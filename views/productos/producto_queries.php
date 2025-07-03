@@ -2,7 +2,7 @@
 
 function getAllProductsQuery()
 {
-    return "SELECT p.*, s.nombre_subcategoria FROM producto p LEFT JOIN subcategoria s ON p.id_subcategoria = s.id_subcategoria ORDER BY p.id_producto ASC";
+    return "SELECT p.*, s.nombre_subcategoria FROM producto p LEFT JOIN subcategoria s ON p.id_subcategoria = s.id_subcategoria WHERE p.estado = true ORDER BY p.id_producto DESC";
 }
 
 function getProductByIdQuery()
@@ -33,4 +33,9 @@ function getProductByRefQuery()
 function updateProductByRefQuery()
 {
     return "UPDATE producto SET nombre_producto = $1, descripcion_producto = $2, id_subcategoria = $3, talla_producto = $4, actualizado_en = CURRENT_TIMESTAMP WHERE ref_producto = $5";
+}
+
+function getAllSubcategoriasQuery()
+{
+    return "SELECT id_subcategoria, nombre_subcategoria FROM subcategoria WHERE estado = true ORDER BY nombre_subcategoria ASC";
 }

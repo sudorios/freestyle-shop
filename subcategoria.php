@@ -57,8 +57,8 @@ if (!$result) {
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th id="thOrdenarIdSub" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none">
-                                ID <span id="iconoOrdenIdSub">↑</span>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" onclick="ordenarPorColumna('tbody', 0, 'iconoOrdenSub', 'buscadorSubcategoria', 10, 'paginacionSubcategoria')">
+                                ID <span id="iconoOrdenSub" data-asc="true">↑</span>
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
@@ -100,6 +100,7 @@ if (!$result) {
     <?php include 'includes/modal_confirmar.php'; ?>
     <script src="assets/js/modal_confirmar.js"></script>
     <script src="assets/js/subcategorias.js"></script>
+    <script src="assets/js/tabla_utils.js"></script>
 </body>
 
 </html>
