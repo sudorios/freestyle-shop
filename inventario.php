@@ -56,8 +56,10 @@ if (!$result) {
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sucursal</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio Costo</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio Venta</th>
+
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Actualización</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -66,8 +68,16 @@ if (!$result) {
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_producto']); ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_sucursal']); ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo $row['cantidad']; ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo number_format($row['precio_costo'], 2); ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo number_format($row['precio_venta'], 2); ?></td>
+                            
+                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo isset($row['fecha_actualizacion']) ? date('d/m/Y H:i', strtotime($row['fecha_actualizacion'])) : '-'; ?></td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <?php echo ($row['estado'] === true || $row['estado'] === 't' || $row['estado'] === 1 || $row['estado'] === '1') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'; ?>">
+                                            <?php echo ($row['estado'] === true || $row['estado'] === 't' || $row['estado'] === 1 || $row['estado'] === '1') ? 'Activo' : 'Inactivo'; ?>
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <a href="conteo_ciclico.php?id_producto=<?php echo $row['id_producto']; ?>&id_sucursal=<?php echo $row['id_sucursal']; ?>" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Conteo Cíclico</a>
+                                    </td>
                                 </tr>
                             <?php } ?>
                         </tbody>

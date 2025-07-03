@@ -53,6 +53,7 @@ if (!$result) {
                     <span class="block sm:inline">Ocurrió un error. Código: <?php echo htmlspecialchars($_GET['error']); ?></span>
                 </div>
             <?php endif; ?>
+            <hr class="my-4 border-t-2 border-gray-200 rounded-full opacity-80">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Listado de Productos</h3>
                 <div class="flex gap-2 items-center">
@@ -62,6 +63,7 @@ if (!$result) {
                     </a>
                 </div>
             </div>
+            <hr class="my-4 border-t-2 border-gray-200 rounded-full opacity-80">
             <div class="bg-white shadow-md rounded-lg overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
