@@ -1,5 +1,6 @@
 {
     "require": {
-        "cloudinary/cloudinary_php": "*"
+        "cloudinary/cloudinary_php": "*",
+        "dompdf/dompdf": "*"
     }
 }
