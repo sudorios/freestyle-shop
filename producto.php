@@ -3,6 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 include_once './conexion/cone.php';
+include_once './views/productos/producto_queries.php';
 
 if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
     header('Location: login.php');
@@ -15,7 +16,7 @@ if (!$conn) {
 
 if (isset($_GET['listar']) && $_GET['listar'] == 1) {
     header('Content-Type: application/json');
-    $sql = "SELECT id_subcategoria, nombre_subcategoria FROM subcategoria ORDER BY nombre_subcategoria ASC where estado = true";
+    $sql = getAllSubcategoriasQuery();
     $result = pg_query($conn, $sql);
     $subcategorias = [];
     while ($row = pg_fetch_assoc($result)) {
@@ -25,12 +26,7 @@ if (isset($_GET['listar']) && $_GET['listar'] == 1) {
     exit;
 }
 
-$sql = "SELECT p.*, s.nombre_subcategoria 
-        FROM producto p 
-        LEFT JOIN subcategoria s ON p.id_subcategoria = s.id_subcategoria 
-        WHERE p.estado = true 
-        ORDER BY p.id_producto ASC";
-
+$sql = getAllProductsQuery();
 $result = pg_query($conn, $sql);
 
 if (!$result) {
@@ -71,8 +67,8 @@ if (!$result) {
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th id="thOrdenar" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer">
-                                    ID <span id="iconoOrden">↑</span>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" id="thOdernar" onclick="ordenarPorColumna('tbody', 0, 'iconoOrden', 'buscadorProducto', 10, 'paginacionProducto')">
+                                    ID <span id="iconoOrden" data-asc="true">↑</span>
                                 </th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Referencia</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
@@ -114,6 +110,7 @@ if (!$result) {
                     </table>
                 </div>
             </div>
+            <div id="paginacionProducto" class="flex justify-center mt-4"></div>
         </div>
     </main>
     <?php include 'views/productos/modals/modal_agregar_producto.php'; ?>
@@ -126,9 +123,11 @@ if (!$result) {
             <button id="descargarBarcode" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Imprimir</button>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <script src="assets/js/producto.js"></script>
     <script src="assets/js/modal_confirmar.js"></script>
+    <script src="assets/js/tabla_utils.js"></script>
     <?php include 'views/productos/modals/modal_imagenes_producto.php'; ?>
     <?php include 'views/productos/modals/modal_editar_producto.php'; ?>
     <?php include 'includes/modal_confirmar.php'; ?>

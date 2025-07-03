@@ -1,6 +1,5 @@
 const filasPorPagina = 10;
-let paginaActual = 1;
-let ordenAscendente = true;
+let paginaActual = 1;   
 
 function generarReferenciaAleatoria() {
   return Math.floor(10000000 + Math.random() * 90000000).toString();
@@ -124,28 +123,17 @@ function cerrarModalImagenesProducto() {
     .classList.add("hidden");
 }
 
-
-function initOrdenarProducto() {
-    document.getElementById('thOrdenar').addEventListener('click', function() {
-        const tbody = document.querySelector('tbody');
-        const filas = Array.from(tbody.querySelectorAll('tr'));
-        filas.sort((a, b) => {
-            const idA = parseInt(a.children[0].textContent.trim());
-            const idB = parseInt(b.children[0].textContent.trim());
-            return ordenAscendente ? idA - idB : idB - idA;
-        });
-        filas.forEach(tr => tbody.appendChild(tr));
-        ordenAscendente = !ordenAscendente;
-        document.getElementById('iconoOrden').textContent = ordenAscendente ? '↑' : '↓';
-        paginaActualSub = 1;
-        mostrarPaginaSubcategoria(paginaActualSub);
-    });
+function initTablaProducto() {
+  document.getElementById('buscadorProducto').addEventListener('input', function() {
+    paginaActual = 1;
+    mostrarPaginaTabla('tbody', 'buscadorProducto', filasPorPagina, paginaActual, 'paginacionProducto');
+  });
+  mostrarPaginaTabla('tbody', 'buscadorProducto', filasPorPagina, paginaActual, 'paginacionProducto');
 }
-
 
 document.addEventListener("DOMContentLoaded", function () {
   initEditarProducto();
-  initOrdenarProducto();
+  initTablaProducto();
   const catAgregar = document.getElementById('id_categoria');
   if (catAgregar) {
     catAgregar.addEventListener('change', function() {
