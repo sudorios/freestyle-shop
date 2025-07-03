@@ -31,5 +31,21 @@ if (!empty($errores)) {
 $sql = insertConteoCiclicoQuery();
 $params = array($id_producto, $id_sucursal, $cantidad_real, $cantidad_sistema, $diferencia, $fecha_conteo, $usuario_id, $comentarios, $estado_conteo);
 $result = pg_query_params($conn, $sql, $params);
+
+$estado_inventario = 'CUADRA';
+if ($diferencia > 0) {
+    $estado_inventario = 'SOBRA';
+} elseif ($diferencia < 0) {
+    $estado_inventario = 'FALTA';
+}
+$sql_update_inv = updateEstadoInventarioQuery();
+$resultado_update = pg_query_params($conn, $sql_update_inv, array($estado_inventario, $id_producto, $id_sucursal));
+if (!$resultado_update) {
+    error_log('Error al actualizar estado inventario: ' . pg_last_error($conn));
+} else {
+    $filas_afectadas = pg_affected_rows($resultado_update);
+    error_log('UPDATE inventario_sucursal OK: estado=' . $estado_inventario . ', producto=' . $id_producto . ', sucursal=' . $id_sucursal . ', filas afectadas=' . $filas_afectadas);
+}
+
 manejarResultadoConsulta($result, $conn, '../../conteo_ciclico.php?id_producto=' . $id_producto . '&id_sucursal=' . $id_sucursal . '&success=2', '../../conteo_ciclico.php?id_producto=' . $id_producto . '&id_sucursal=' . $id_sucursal . '&error=1');
 ?> 

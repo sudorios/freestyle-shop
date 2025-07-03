@@ -58,6 +58,29 @@ $params = [
 ];
 $result = pg_query_params($conn, $sql, $params);
 
+$sql_ultimo = getUltimoConteoCiclicoByProductoSucursalQuery();
+$res_ultimo = pg_query_params($conn, $sql_ultimo, [$id_producto, $id_sucursal]);
+if ($res_ultimo && pg_num_rows($res_ultimo) > 0) {
+    $row_ultimo = pg_fetch_assoc($res_ultimo);
+    $fecha_ultimo = $row_ultimo['fecha_conteo'];
+    if ($fecha_ultimo == $fecha_conteo && strtolower($estado_conteo) == 'completado') {
+        $estado_inventario = 'CUADRA';
+        if ($diferencia > 0) {
+            $estado_inventario = 'SOBRA';
+        } elseif ($diferencia < 0) {
+            $estado_inventario = 'FALTA';
+        }
+        $sql_update_inv = updateEstadoInventarioQuery();
+        $resultado_update = pg_query_params($conn, $sql_update_inv, array($estado_inventario, $id_producto, $id_sucursal));
+        if (!$resultado_update) {
+            error_log('Error al actualizar estado inventario (edición): ' . pg_last_error($conn));
+        } else {
+            $filas_afectadas = pg_affected_rows($resultado_update);
+            error_log('UPDATE inventario_sucursal OK (edición): estado=' . $estado_inventario . ', producto=' . $id_producto . ', sucursal=' . $id_sucursal . ', filas afectadas=' . $filas_afectadas);
+        }
+    }
+}
+
 manejarResultadoConsulta(
     $result,
     $conn,

@@ -64,4 +64,12 @@ function getConteosCiclicosFiltradosQuery($conDesde, $conHasta, $usuario, $estad
     }
     $sql .= " ORDER BY c.fecha_conteo DESC, c.id_conteo DESC";
     return $sql;
+}
+
+function updateEstadoInventarioQuery() {
+    return "UPDATE inventario_sucursal SET estado = $1 WHERE id_producto = $2 AND id_sucursal = $3";
+}
+
+function getUltimoConteoCiclicoByProductoSucursalQuery() {
+    return "SELECT id_conteo, fecha_conteo FROM conteos_ciclicos WHERE producto_id = $1 AND sucursal_id = $2 ORDER BY fecha_conteo DESC, id_conteo DESC LIMIT 1";
 } 
