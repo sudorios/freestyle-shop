@@ -77,9 +77,9 @@ if (!$result) {
                         <tbody class="bg-white divide-y divide-gray-200">
                             <?php while ($row = pg_fetch_assoc($result)) { ?>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_producto']); ?></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_producto'] . ($row['talla_producto'] ? '(' . $row['talla_producto'] . ')' : '')); ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_sucursal']); ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo $row['cantidad']; ?></td>
+                                    <td class="px-6 py-4 whitespace-nowrap <?php echo ($row['cantidad'] < 10) ? 'bg-red-100 text-red-800 font-semibold' : ''; ?>"><?php echo $row['cantidad']; ?></td>
                             
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo isset($row['fecha_actualizacion']) ? date('d/m/Y H:i', strtotime($row['fecha_actualizacion'])) : '-'; ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -107,7 +107,9 @@ if (!$result) {
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <a href="conteo_ciclico.php?id_producto=<?php echo $row['id_producto']; ?>&id_sucursal=<?php echo $row['id_sucursal']; ?>" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Conteo Cíclico</a>
+                                        <a href="conteo_ciclico.php?id_producto=<?php echo $row['id_producto']; ?>&id_sucursal=<?php echo $row['id_sucursal']; ?>" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded" title="Conteo Cíclico">
+                                            <i class="fas fa-clipboard-check"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             <?php } ?>

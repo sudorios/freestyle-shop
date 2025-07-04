@@ -47,32 +47,28 @@ if (!$result) {
     exit();
 }
 
-$sql_check_origen = "SELECT cantidad, precio_costo FROM inventario_sucursal WHERE id_producto = $1 AND id_sucursal = $2";
+$sql_check_origen = "SELECT cantidad FROM inventario_sucursal WHERE id_producto = $1 AND id_sucursal = $2";
 $res_check_origen = pg_query_params($conn, $sql_check_origen, array($producto, $origen));
-$precio_costo_origen = 0;
 if ($row = pg_fetch_assoc($res_check_origen)) {
     $nueva_cantidad = $row['cantidad'] - $cantidad;
-    $precio_costo_origen = $row['precio_costo'];
-    $sql_update_origen = "UPDATE inventario_sucursal SET cantidad = $1 WHERE id_producto = $2 AND id_sucursal = $3";
+    $sql_update_origen = "UPDATE inventario_sucursal SET cantidad = $1, fecha_actualizacion = CURRENT_TIMESTAMP WHERE id_producto = $2 AND id_sucursal = $3";
     pg_query_params($conn, $sql_update_origen, array($nueva_cantidad, $producto, $origen));
 }
 
-$sql_check_destino = "SELECT cantidad, precio_costo FROM inventario_sucursal WHERE id_producto = $1 AND id_sucursal = $2";
+$sql_check_destino = "SELECT cantidad FROM inventario_sucursal WHERE id_producto = $1 AND id_sucursal = $2";
 $res_check_destino = pg_query_params($conn, $sql_check_destino, array($producto, $destino));
-$precio_costo_destino = $precio_costo_origen; // Por defecto, mismo costo
 if ($row = pg_fetch_assoc($res_check_destino)) {
     $nueva_cantidad = $row['cantidad'] + $cantidad;
-    $precio_costo_destino = $row['precio_costo'];
-    $sql_update_destino = "UPDATE inventario_sucursal SET cantidad = $1 WHERE id_producto = $2 AND id_sucursal = $3";
+    $sql_update_destino = "UPDATE inventario_sucursal SET cantidad = $1, fecha_actualizacion = CURRENT_TIMESTAMP WHERE id_producto = $2 AND id_sucursal = $3";
     pg_query_params($conn, $sql_update_destino, array($nueva_cantidad, $producto, $destino));
 } else {
-    $sql_insert_destino = "INSERT INTO inventario_sucursal (id_producto, id_sucursal, cantidad) VALUES ($1, $2, $3)";
+    $sql_insert_destino = "INSERT INTO inventario_sucursal (id_producto, id_sucursal, cantidad, fecha_actualizacion, estado) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, 'CUADRA')";
     pg_query_params($conn, $sql_insert_destino, array($producto, $destino, $cantidad));
 }
 
 global $sql_insertar_kardex;
-$params_kardex_salida = array($producto, $cantidad, 'SALIDA', $precio_costo_origen, $fecha, $id_usuario);
-$params_kardex_ingreso = array($producto, $cantidad, 'INGRESO', $precio_costo_destino, $fecha, $id_usuario);
+$params_kardex_salida = array($producto, $cantidad, 'SALIDA', 0, $fecha, $id_usuario);
+$params_kardex_ingreso = array($producto, $cantidad, 'INGRESO', 0, $fecha, $id_usuario);
 pg_query_params($conn, $sql_insertar_kardex, $params_kardex_salida);
 pg_query_params($conn, $sql_insertar_kardex, $params_kardex_ingreso);
 

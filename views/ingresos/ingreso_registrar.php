@@ -49,7 +49,7 @@ $params = array(
     $id_sucursal
 );
 
-$sql_insertar_ingreso = "INSERT INTO ingreso (ref, id_producto, precio_costo, precio_costo_igv, precio_venta, utilidad_esperada, utilidad_neta, cantidad, fecha_ingreso, id_usuario, id_sucursal) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)";
+$sql_insertar_ingreso = getInsertarIngresoQuery();
 
 $result = pg_query_params($conn, $sql_insertar_ingreso, $params);
 
@@ -59,21 +59,40 @@ if (!$result) {
     exit();
 }
 
-// Actualizar o insertar en inventario
 $sql_check_inventario = "SELECT cantidad FROM inventario_sucursal WHERE id_producto = $1 AND id_sucursal = $2";
 $res_check = pg_query_params($conn, $sql_check_inventario, array($id_producto, $id_sucursal));
-if ($row = pg_fetch_assoc($res_check)) {
-    // Ya existe, actualizar cantidad
-    $nueva_cantidad = $row['cantidad'] + $cantidad;
-    $sql_update_inventario = "UPDATE inventario_sucursal SET cantidad = $1, precio_costo = $2, precio_venta = $3 WHERE id_producto = $4 AND id_sucursal = $5";
-    pg_query_params($conn, $sql_update_inventario, array($nueva_cantidad, $precio_costo, $precio_venta, $id_producto, $id_sucursal));
-} else {
-    // No existe, insertar nuevo registro
-    $sql_insert_inventario = "INSERT INTO inventario_sucursal (id_producto, id_sucursal, cantidad, precio_costo, precio_venta) VALUES ($1, $2, $3, $4, $5)";
-    pg_query_params($conn, $sql_insert_inventario, array($id_producto, $id_sucursal, $cantidad, $precio_costo, $precio_venta));
+
+if (!$res_check) {
+    error_log('Error al verificar inventario: ' . pg_last_error($conn));
+    header('Location: ../../ingreso.php?error=1&msg=' . urlencode('Error al verificar inventario: ' . pg_last_error($conn)));
+    exit();
 }
 
-// Si el ingreso se insertó correctamente, registrar en kardex
+if ($row = pg_fetch_assoc($res_check)) {
+    $nueva_cantidad = $row['cantidad'] + $cantidad;
+    $sql_update_inventario = "UPDATE inventario_sucursal SET cantidad = $1, fecha_actualizacion = CURRENT_TIMESTAMP WHERE id_producto = $2 AND id_sucursal = $3";
+    $result_update = pg_query_params($conn, $sql_update_inventario, array($nueva_cantidad, $id_producto, $id_sucursal));
+    
+    if (!$result_update) {
+        error_log('Error al actualizar inventario: ' . pg_last_error($conn));
+        header('Location: ../../ingreso.php?error=1&msg=' . urlencode('Error al actualizar inventario: ' . pg_last_error($conn)));
+        exit();
+    } else {
+        error_log('Inventario actualizado: producto=' . $id_producto . ', sucursal=' . $id_sucursal . ', cantidad=' . $nueva_cantidad);
+    }
+} else {
+    $sql_insert_inventario = "INSERT INTO inventario_sucursal (id_producto, id_sucursal, cantidad, fecha_actualizacion, estado) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, 'CUADRA')";
+    $result_insert = pg_query_params($conn, $sql_insert_inventario, array($id_producto, $id_sucursal, $cantidad));
+    
+    if (!$result_insert) {
+        error_log('Error al insertar inventario: ' . pg_last_error($conn));
+        header('Location: ../../ingreso.php?error=1&msg=' . urlencode('Error al insertar inventario: ' . pg_last_error($conn)));
+        exit();
+    } else {
+        error_log('Inventario insertado: producto=' . $id_producto . ', sucursal=' . $id_sucursal . ', cantidad=' . $cantidad);
+    }
+}
+
 $precio_costo_unidad = $cantidad > 0 ? $precio_costo / $cantidad : 0;
 
 $params_kardex = array(
@@ -88,7 +107,6 @@ $params_kardex = array(
 $result_kardex = pg_query_params($conn, $sql_insertar_kardex, $params_kardex);
 
 if (!$result_kardex) {
-    // Si falla el kardex, no es crítico, solo log del error
     error_log("Error al registrar en kardex: " . pg_last_error($conn));
 }
 

@@ -32,10 +32,13 @@
                             <option value="">Seleccione...</option>
                             <?php
                             include_once '../../../conexion/cone.php';
-                            $sql_prod = "SELECT id_producto, nombre_producto FROM producto WHERE estado = true ORDER BY nombre_producto ASC";
+                            $sql_prod = "SELECT id_producto, nombre_producto, talla_producto FROM producto WHERE estado = true ORDER BY nombre_producto ASC";
                             $res_prod = pg_query($conn, $sql_prod);
                             while ($prod = pg_fetch_assoc($res_prod)) {
-                                echo '<option value="' . $prod['id_producto'] . '">' . htmlspecialchars($prod['nombre_producto']) . '</option>';
+                                $nombre = htmlspecialchars($prod['nombre_producto']);
+                                $talla = htmlspecialchars($prod['talla_producto']);
+                                $texto = $nombre . ($talla ? ' - Talla: ' . $talla : '');
+                                echo '<option value="' . $prod['id_producto'] . '">' . $texto . '</option>';
                             }
                             ?>
                         </select>
@@ -45,34 +48,6 @@
                         <input type="number" step="0.01" id="precio_costo" name="precio_costo" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" required>
                     </div>
                     <div class="mb-4">
-                        <label for="precio_costo_unidad" class="block text-sm font-medium text-gray-700">Precio Costo (por unidad)</label>
-                        <input type="number" step="0.01" id="precio_costo_unidad" name="precio_costo_unidad" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" readonly>
-                    </div>
-                    <div class="mb-4">
-                        <label for="precio_costo_con_igv" class="block text-sm font-medium text-gray-700">Precio Costo c/IGV (por unidad)</label>
-                        <input type="number" step="0.01" id="precio_costo_con_igv" name="precio_costo_con_igv" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" required readonly>
-                    </div>
-                    <div class="mb-4">
-                        <label for="precio_venta" class="block text-sm font-medium text-gray-700">Precio Venta (por unidad)</label>
-                        <input type="number" step="0.01" id="precio_venta" name="precio_venta" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" required readonly>
-                    </div>
-                    <div class="mb-4">
-                        <label for="utilidad_esperada_unidad" class="block text-sm font-medium text-gray-700">Utilidad Esperada (por unidad)</label>
-                        <input type="number" step="0.01" id="utilidad_esperada_unidad" name="utilidad_esperada_unidad" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" readonly>
-                    </div>
-                    <div class="mb-4">
-                        <label for="utilidad_esperada_total" class="block text-sm font-medium text-gray-700">Utilidad Esperada (total)</label>
-                        <input type="number" step="0.01" id="utilidad_esperada_total" name="utilidad_esperada_total" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" readonly>
-                    </div>
-                    <div class="mb-4">
-                        <label for="utilidad_neta_unidad" class="block text-sm font-medium text-gray-700">Utilidad Neta (por unidad)</label>
-                        <input type="number" step="0.01" id="utilidad_neta_unidad" name="utilidad_neta_unidad" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" readonly>
-                    </div>
-                    <div class="mb-4">
-                        <label for="utilidad_neta_total" class="block text-sm font-medium text-gray-700">Utilidad Neta (total)</label>
-                        <input type="number" step="0.01" id="utilidad_neta_total" name="utilidad_neta_total" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" readonly>
-                    </div>
-                    <div class="mb-4">
                         <label for="cantidad" class="block text-sm font-medium text-gray-700">Cantidad de unidades</label>
                         <input type="number" id="cantidad" name="cantidad" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" value="1" min="1" required>
                     </div>
@@ -80,8 +55,16 @@
                         <label for="fecha_ingreso" class="block text-sm font-medium text-gray-700">Fecha de Ingreso</label>
                         <input type="date" id="fecha_ingreso" name="fecha_ingreso" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" required>
                     </div>
+                    <!-- Campos automáticos ocultos -->
+                    <input type="hidden" id="precio_costo_unidad" name="precio_costo_unidad">
+                    <input type="hidden" id="precio_costo_con_igv" name="precio_costo_con_igv">
+                    <input type="hidden" id="precio_venta" name="precio_venta">
+                    <input type="hidden" id="utilidad_esperada_unidad" name="utilidad_esperada_unidad">
+                    <input type="hidden" id="utilidad_esperada_total" name="utilidad_esperada_total">
+                    <input type="hidden" id="utilidad_neta_unidad" name="utilidad_neta_unidad">
+                    <input type="hidden" id="utilidad_neta_total" name="utilidad_neta_total">
+                    <input type="hidden" id="precio_costo_igv_paquete" name="precio_costo_igv_paquete">
                 </div>
-                <input type="hidden" id="precio_costo_igv_paquete" name="precio_costo_igv_paquete">
                 <div class="flex justify-end mt-6">
                     <button type="button" onclick="cerrarModalAgregarIngreso()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded mr-2">Cancelar</button>
                     <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">Guardar</button>
