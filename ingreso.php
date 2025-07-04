@@ -13,7 +13,7 @@ if (!$conn) {
     die('Error de conexión: ' . pg_last_error($conn));
 }
 
-$sql = "SELECT i.*, p.nombre_producto, s.nombre_sucursal, u.nombre_usuario AS usuario
+$sql = "SELECT i.*, p.nombre_producto, p.talla_producto, s.nombre_sucursal, u.nombre_usuario AS usuario
         FROM ingreso i
         JOIN producto p ON i.id_producto = p.id_producto
         LEFT JOIN sucursal s ON i.id_sucursal = s.id_sucursal
@@ -54,34 +54,42 @@ if (!$result) {
             </div>
             <div class="bg-white shadow-md rounded-lg overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200 text-xs" style="font-size: 0.85rem;">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Referencia</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sucursal</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Costo Total (c/IGV)</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio Venta Unidad</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilidad Esperada</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilidad Neta</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Ingreso</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             <?php while ($row = pg_fetch_assoc($result)) { ?>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['ref']); ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_producto']); ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_sucursal'] ?? 'Sin sucursal'); ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo number_format($row['precio_costo_igv'], 2); ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo number_format($row['precio_venta'], 2); ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo number_format($row['utilidad_esperada'], 2); ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo number_format($row['utilidad_neta'], 2); ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo $row['cantidad']; ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo $row['fecha_ingreso']; ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['usuario']); ?></td>
+                                    <td class="px-3 py-2 whitespace-nowrap"><?php echo htmlspecialchars($row['ref']); ?></td>
+                                    <td class="px-3 py-2 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_producto'] . ($row['talla_producto'] ? '(' . $row['talla_producto'] . ')' : '')); ?></td>
+                                    <td class="px-3 py-2 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_sucursal'] ?? 'Sin sucursal'); ?></td>
+                                    <td class="px-3 py-2 whitespace-nowrap"><?php echo $row['cantidad']; ?></td>
+                                    <td class="px-3 py-2 whitespace-nowrap"><?php echo $row['fecha_ingreso']; ?></td>
+                                    <td class="px-3 py-2 whitespace-nowrap"><?php echo htmlspecialchars($row['usuario']); ?></td>
+                                    <td class="px-3 py-2 whitespace-nowrap">
+                                        <button onclick="mostrarCostos(<?php echo htmlspecialchars(json_encode([
+                                            'precio_costo_igv' => $row['precio_costo_igv'],
+                                            'precio_venta' => $row['precio_venta'],
+                                            'utilidad_esperada' => $row['utilidad_esperada'],
+                                            'utilidad_neta' => $row['utilidad_neta'],
+                                            'ref' => $row['ref'],
+                                            'nombre_producto' => $row['nombre_producto'] . ($row['talla_producto'] ? '(' . $row['talla_producto'] . ')' : ''),
+                                            'nombre_sucursal' => $row['nombre_sucursal'] ?? 'Sin sucursal',
+                                            'cantidad' => $row['cantidad'],
+                                            'usuario' => $row['usuario'],
+                                        ])); ?>)" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded text-xs flex items-center gap-1">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
                                 </tr>
                             <?php } ?>
                         </tbody>
@@ -91,6 +99,7 @@ if (!$result) {
         </div>
     </main>
     <?php include 'views/ingresos/modals/modal_agregar_ingreso.php'; ?>
+    <?php include 'views/ingresos/modals/modal_costos_ingreso.php'; ?>
     <div id="modalBackground" class="fixed inset-0 bg-black opacity-75 hidden z-20"></div>
     <script>
     function abrirModalAgregarIngreso() {
@@ -100,6 +109,23 @@ if (!$result) {
     function cerrarModalAgregarIngreso() {
         document.getElementById('modal_agregar_ingreso').classList.add('hidden');
         document.getElementById('modalBackground').classList.add('hidden');
+    }
+    function mostrarCostos(data) {
+        document.getElementById('costos_ref').textContent = data.ref;
+        document.getElementById('costos_producto').textContent = data.nombre_producto;
+        document.getElementById('costos_sucursal').textContent = data.nombre_sucursal;
+        document.getElementById('costos_cantidad').textContent = data.cantidad;
+        document.getElementById('costos_usuario').textContent = data.usuario;
+        document.getElementById('costos_precio_costo_igv').textContent = Number(data.precio_costo_igv).toFixed(2);
+        document.getElementById('costos_precio_venta').textContent = Number(data.precio_venta).toFixed(2);
+        document.getElementById('costos_utilidad_esperada').textContent = Number(data.utilidad_esperada).toFixed(2);
+        document.getElementById('costos_utilidad_neta').textContent = Number(data.utilidad_neta).toFixed(2);
+        document.getElementById('modal_costos_ingreso').classList.remove('hidden');
+        document.getElementById('modalBackgroundCostos').classList.remove('hidden');
+    }
+    function cerrarModalCostos() {
+        document.getElementById('modal_costos_ingreso').classList.add('hidden');
+        document.getElementById('modalBackgroundCostos').classList.add('hidden');
     }
     </script>
     <?php include_once './includes/footer.php'; ?>

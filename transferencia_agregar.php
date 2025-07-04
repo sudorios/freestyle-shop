@@ -197,7 +197,7 @@ if (isset($_GET['ajax_stock']) && $_GET['ajax_stock'] == '1' && isset($_GET['pro
                             <select id="producto" name="producto" class="w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 px-3 py-2 bg-gray-50" required>
                                 <option value="">Seleccione un producto...</option>
                                 <?php
-                                $sql_prod = "SELECT id_producto, nombre_producto FROM producto WHERE estado = true ORDER BY nombre_producto ASC";
+                                $sql_prod = "SELECT id_producto, nombre_producto, talla_producto FROM producto WHERE estado = true ORDER BY nombre_producto ASC";
                                 $res_prod = pg_query($conn, $sql_prod);
                                 $num_prod = pg_num_rows($res_prod);
                                 if ($num_prod == 0) {
@@ -205,7 +205,10 @@ if (isset($_GET['ajax_stock']) && $_GET['ajax_stock'] == '1' && isset($_GET['pro
                                 }
                                 while ($prod = pg_fetch_assoc($res_prod)) {
                                     $selected = (isset($_POST['producto']) && $_POST['producto'] == $prod['id_producto']) ? 'selected' : '';
-                                    echo '<option value="' . $prod['id_producto'] . '" ' . $selected . '>' . htmlspecialchars($prod['nombre_producto']) . '</option>';
+                                    $nombre = htmlspecialchars($prod['nombre_producto']);
+                                    $talla = htmlspecialchars($prod['talla_producto']);
+                                    $texto = $nombre . ($talla ? '(' . $talla . ')' : '');
+                                    echo '<option value="' . $prod['id_producto'] . '" ' . $selected . '>' . $texto . '</option>';
                                 }
                                 ?>
                             </select>
