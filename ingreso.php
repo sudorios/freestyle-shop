@@ -107,8 +107,8 @@ if (!$result) {
                                     <td class="px-3 py-2 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_sucursal'] ?? 'Sin sucursal'); ?></td>
                                     <td class="px-3 py-2 whitespace-nowrap"><?php echo $row['fecha_ingreso']; ?></td>
                                     <td class="px-3 py-2 whitespace-nowrap"><?php echo htmlspecialchars($row['usuario']); ?></td>
-                                    <td class="px-3 py-2 whitespace-nowrap">
-                                        <button onclick="mostrarCostos(<?php echo htmlspecialchars(json_encode([
+                                    <td class="px-3 py-2 whitespace-nowrap flex gap-1">
+                                        <button onclick='mostrarCostos(<?php echo htmlspecialchars(json_encode([
                                                                             'precio_costo_igv' => $row['precio_costo_igv'],
                                                                             'precio_venta' => $row['precio_venta'],
                                                                             'utilidad_esperada' => $row['utilidad_esperada'],
@@ -118,8 +118,20 @@ if (!$result) {
                                                                             'nombre_sucursal' => $row['nombre_sucursal'] ?? 'Sin sucursal',
                                                                             'cantidad' => $row['cantidad'],
                                                                             'usuario' => $row['usuario'],
-                                                                        ])); ?>)" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded text-xs flex items-center gap-1">
+                                                                        ])); ?>)' class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded text-xs flex items-center gap-1">
                                             <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button onclick='abrirModalEditarIngresoDesdeTabla(<?php echo htmlspecialchars(json_encode([
+                                            'id' => $row['id'],
+                                            'ref' => $row['ref'],
+                                            'nombre_producto' => $row['nombre_producto'] . ($row['talla_producto'] ? '(' . $row['talla_producto'] . ')' : ''),
+                                            'nombre_sucursal' => $row['nombre_sucursal'] ?? 'Sin sucursal',
+                                            'fecha_ingreso' => $row['fecha_ingreso'],
+                                            'cantidad' => $row['cantidad'],
+                                            'precio_costo_igv' => $row['precio_costo_igv'],
+                                            'precio_venta' => $row['precio_venta'],
+                                        ])); ?>)' class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-xs flex items-center gap-1">
+                                            <i class="fas fa-edit"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -133,37 +145,8 @@ if (!$result) {
     </main>
     <?php include 'views/ingresos/modals/modal_agregar_ingreso.php'; ?>
     <?php include 'views/ingresos/modals/modal_costos_ingreso.php'; ?>
+    <?php include 'views/ingresos/modals/modal_editar_ingreso.php'; ?>
     <div id="modalBackground" class="fixed inset-0 bg-black opacity-75 hidden z-20"></div>
-    <script>
-        function abrirModalAgregarIngreso() {
-            document.getElementById('modal_agregar_ingreso').classList.remove('hidden');
-            document.getElementById('modalBackground').classList.remove('hidden');
-        }
-
-        function cerrarModalAgregarIngreso() {
-            document.getElementById('modal_agregar_ingreso').classList.add('hidden');
-            document.getElementById('modalBackground').classList.add('hidden');
-        }
-
-        function mostrarCostos(data) {
-            document.getElementById('costos_ref').textContent = data.ref;
-            document.getElementById('costos_producto').textContent = data.nombre_producto;
-            document.getElementById('costos_sucursal').textContent = data.nombre_sucursal;
-            document.getElementById('costos_cantidad').textContent = data.cantidad;
-            document.getElementById('costos_usuario').textContent = data.usuario;
-            document.getElementById('costos_precio_costo_igv').textContent = Number(data.precio_costo_igv).toFixed(2);
-            document.getElementById('costos_precio_venta').textContent = Number(data.precio_venta).toFixed(2);
-            document.getElementById('costos_utilidad_esperada').textContent = Number(data.utilidad_esperada).toFixed(2);
-            document.getElementById('costos_utilidad_neta').textContent = Number(data.utilidad_neta).toFixed(2);
-            document.getElementById('modal_costos_ingreso').classList.remove('hidden');
-            document.getElementById('modalBackgroundCostos').classList.remove('hidden');
-        }
-
-        function cerrarModalCostos() {
-            document.getElementById('modal_costos_ingreso').classList.add('hidden');
-            document.getElementById('modalBackgroundCostos').classList.add('hidden');
-        }
-    </script>
     <script src="assets/js/ingreso.js"></script>
     <script src="assets/js/tabla_utils.js"></script>
     <?php include_once './includes/footer.php'; ?>
