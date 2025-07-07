@@ -14,6 +14,10 @@ function insertProductQuery()
 {
     return "INSERT INTO producto (ref_producto, nombre_producto, descripcion_producto, id_subcategoria, talla_producto, estado) VALUES ($1, $2, $3, $4, $5, $6)";
 }
+function insertImageProductQuery()
+{
+    return "INSERT INTO imagenes_producto (producto_id, url_imagen, creado_en, actualizado_en, vista_producto) VALUES ($1, $2, NOW(), NOW(), $3)";
+}
 
 function updateProductQuery()
 {
