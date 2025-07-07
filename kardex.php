@@ -58,6 +58,7 @@ if (!$result) {
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Movimiento de Productos</h3>
                 <div class="flex gap-2 items-center">
+                    <input type="text" id="buscadorKardex" placeholder="Buscar Movimiento..." class="border rounded px-2 py-1">
                     <form method="get" action="views/kardex/exportar_csv.php" style="display:inline;">
                         <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow transition ml-2" title="Exportar a CSV">
                             <i class="fas fa-file-csv"></i>
@@ -95,7 +96,9 @@ if (!$result) {
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo Movimiento</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Movimiento</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" id="thOdernar" onclick="ordenarPorColumna('tbody', 0, 'iconoOrden', 'buscadorProducto', 10, 'paginacionProducto')">
+                                    Fecha Movimiento <span id="iconoOrden" data-asc="true">↑</span>
+                                </th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
                             </tr>
                         </thead>

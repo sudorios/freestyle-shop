@@ -52,9 +52,16 @@ if (!$result) {
             <?php endif; ?>
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Transferencias entre Sucursales</h3>
-                <a href="transferencia_agregar.php" onclick="abrirModalAgregarTransferencia()" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">
-                    Nueva Transferencia
-                </a>
+                <div class="flex gap-2 items-center">
+                    <input
+                        type="text"
+                        id="buscadorTransferencia"
+                        placeholder="Buscar categoría..."
+                        class="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200">
+                    <a href="transferencia_agregar.php" onclick="abrirModalAgregarTransferencia()" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">
+                        Nueva Transferencia
+                    </a>
+                </div>
             </div>
             <div class="bg-white shadow-md rounded-lg overflow-hidden">
                 <div class="overflow-x-auto">
@@ -94,18 +101,23 @@ if (!$result) {
                     </table>
                 </div>
             </div>
+            <div id="paginacionTransferencia" class="flex justify-center mt-4"></div>
         </div>
     </main>
     <script>
-    function abrirModalAgregarTransferencia() {
-        document.getElementById('modal_agregar_transferencia').classList.remove('hidden');
-        document.getElementById('modalBackground').classList.remove('hidden');
-    }
-    function cerrarModalAgregarTransferencia() {
-        document.getElementById('modal_agregar_transferencia').classList.add('hidden');
-        document.getElementById('modalBackground').classList.add('hidden');
-    }
+        function abrirModalAgregarTransferencia() {
+            document.getElementById('modal_agregar_transferencia').classList.remove('hidden');
+            document.getElementById('modalBackground').classList.remove('hidden');
+        }
+
+        function cerrarModalAgregarTransferencia() {
+            document.getElementById('modal_agregar_transferencia').classList.add('hidden');
+            document.getElementById('modalBackground').classList.add('hidden');
+        }
     </script>
+    <script src="assets/js/transferencia.js"></script>
+    <script src="assets/js/tabla_utils.js"></script>
     <?php include_once './includes/footer.php'; ?>
 </body>
-</html> 
+
+</html>
