@@ -24,4 +24,8 @@ function getEliminarIngresoQuery() {
     return "DELETE FROM ingreso WHERE id_ingreso = $1";
 }
 
+function updateIngresos() {
+    return "UPDATE ingreso SET fecha_ingreso = $1, cantidad = $2, precio_costo_igv = $3, precio_venta = $4 WHERE id = $5";
+}
+
 ?> 
