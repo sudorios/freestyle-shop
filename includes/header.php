@@ -48,6 +48,7 @@ if (session_status() === PHP_SESSION_NONE) {
             <li><a href="producto.php" class="flex items-center text-gray-300 hover:text-blue-400 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i class="fas fa-box-open w-4 h-4 mr-2"></i>Producto</a></li>
             <li><a href="categoria.php" class="flex items-center text-gray-300 hover:text-blue-400 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i class="fas fa-tags w-4 h-4 mr-2"></i>Categoría</a></li>
             <li><a href="subcategoria.php" class="flex items-center text-gray-300 hover:text-blue-400 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i class="fas fa-plus w-4 h-4 mr-2"></i>Subcategoría</a></li>
+            <li><a href="catalogo_producto.php" class="flex items-center text-gray-300 hover:text-blue-400 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i class="fas fa-plus w-4 h-4 mr-2"></i>Catalogo</a></li>
         </ul>
         <div class="flex items-center cursor-pointer group collapsible-toggle mt-4">
             <i class="fas fa-store text-white w-5 h-5 mr-2"></i>
