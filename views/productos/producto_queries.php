@@ -43,3 +43,28 @@ function getAllSubcategoriasQuery()
 {
     return "SELECT id_subcategoria, nombre_subcategoria FROM subcategoria WHERE estado = true ORDER BY nombre_subcategoria ASC";
 }
+
+function getVistaClienteProductosQuery()
+{
+    return "SELECT * FROM catalogo_productos
+    ORDER BY id ASC";
+}
+
+function insertCatalogoProductoQuery()
+{
+    return "INSERT INTO catalogo_productos (
+        producto_id, 
+        sucursal_id, 
+        ingreso_id, 
+        imagen_id, 
+        estado, 
+        estado_oferta, 
+        limite_oferta, 
+        oferta
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)";
+}
+
+function checkCatalogoProductoExistsQuery()
+{
+    return "SELECT 1 FROM catalogo_productos WHERE producto_id = $1 AND sucursal_id = $2";
+}
