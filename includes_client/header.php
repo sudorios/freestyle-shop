@@ -24,7 +24,7 @@
       <a href="#accesorios" class="hover:text-pink-400 text-white border-b-2 border-transparent hover:border-pink-600 transition">Accesorios</a>
     </nav>
     <div class="flex items-center space-x-5">
-      <a href="#carrito" class="relative group">
+      <a href="carrito.php" class="relative group">
         <i class="fas fa-shopping-cart w-7 h-7 text-white group-hover:text-pink-400 transition text-2xl"></i>
         <span class="absolute -top-2 -right-2 bg-pink-600 text-xs rounded-full px-1.5 py-0.5 font-bold border-2 border-black">0</span>
       </a>
@@ -70,4 +70,16 @@
       });
     }
   });
+
+function actualizarContadorCarrito() {
+    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    let total = carrito.reduce((sum, item) => sum + (parseInt(item.cantidad) || 0), 0);
+    const badge = document.querySelector('.fa-shopping-cart').parentElement.querySelector('span');
+    if (badge) {
+        badge.textContent = total;
+        badge.style.display = total > 0 ? 'inline-block' : 'none';
+    }
+}
+actualizarContadorCarrito();
+window.addEventListener('storage', actualizarContadorCarrito);
 </script>

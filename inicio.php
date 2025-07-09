@@ -51,7 +51,7 @@ $result_ofertas = pg_query($conn, $sql_ofertas);
                                     <span class="text-2xl text-yellow-400 font-bold">S/ <?php echo number_format($oferta['precio_con_descuento'], 2); ?></span>
                                     <span class="text-xs text-green-400 font-semibold">-<?php echo htmlspecialchars($oferta['oferta']); ?>%</span>
                                 </div>
-                                <a href="#" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2 rounded mb-2 text-center transition shadow-md" style="min-width: 140px; max-width: 200px;">Ver producto</a>
+                                <a href="ver_producto.php?id=<?php echo $oferta['id']; ?>" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2 rounded mb-2 text-center transition shadow-md" style="min-width: 140px; max-width: 200px;">Ver producto</a>
                                 <div class="text-xs text-gray-200">Válido hasta: <?php echo date('d/m/Y', strtotime($oferta['limite_oferta'])); ?></div>
                             </div>
                         </div>
