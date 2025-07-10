@@ -60,17 +60,23 @@ function renderCarrito() {
                 <div class="flex justify-between mb-2 text-gray-500 text-sm"><span>Descuento</span><span>- S/ ${Number(data.totalDescuento).toFixed(2)}</span></div>
                 <div class="flex justify-between mt-4 text-xl font-bold"><span>Total</span><span>S/ ${(data.total >= 99 ? Number(data.total) : Number(data.total) + 15).toFixed(2)}</span></div>
                 <div class="text-xs text-gray-400 mb-4">(IGV incluido)</div>
-                <div class="mb-4">
-                    <input type="text" placeholder="Código promocional" class="w-full border rounded px-3 py-2 mb-2" />
-                    <button class="underline text-sm font-semibold">Usa un código promocional</button>
-                </div>
-                <button class="w-full bg-black hover:bg-gray-900 text-white font-bold py-3 rounded text-lg flex items-center justify-center gap-2 mb-4">IR A PAGAR <span class="ml-2">→</span></button>
+                <button id="btn-ir-a-pagar" type="button" class="w-full bg-black hover:bg-gray-900 text-white font-bold py-3 rounded text-lg flex items-center justify-center gap-2 mb-4 cursor-pointer">IR A PAGAR <span class="ml-2">→</span></button>
                 <div class="flex gap-2 mt-2">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa" class="h-6" />
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Mastercard-logo.png" alt="Mastercard" class="h-6" />
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo_%282018%29.svg" alt="Amex" class="h-6" />
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa" class="h-6" />                
                 </div>
             `;
+            const btnIrAPagar = document.getElementById('btn-ir-a-pagar');
+            if (btnIrAPagar) {
+                btnIrAPagar.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const ids = (data.items || []).map(item => item.id).join(',');
+                    if (ids.length === 0) {
+                        alert('No hay productos en el carrito.');
+                        return;
+                    }
+                    window.location.href = 'checkout.php?items=' + encodeURIComponent(ids);
+                });
+            }
             asignarEventosCarrito();
             if (typeof actualizarContadorCarritoAjax === 'function') actualizarContadorCarritoAjax();
         });

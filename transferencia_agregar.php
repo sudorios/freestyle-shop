@@ -13,7 +13,6 @@ if (!$conn) {
     die('Error de conexión: ' . pg_last_error($conn));
 }
 
-// Obtener sucursales activas
 $sql_suc = "SELECT id_sucursal, nombre_sucursal, tipo_sucursal FROM sucursal WHERE estado_sucursal = true ORDER BY nombre_sucursal ASC";
 $res_suc = pg_query($conn, $sql_suc);
 $sucursales = [];
@@ -21,7 +20,6 @@ while ($row = pg_fetch_assoc($res_suc)) {
     $sucursales[] = $row;
 }
 
-// Endpoint AJAX para stock dinámico
 if (isset($_GET['ajax_stock']) && $_GET['ajax_stock'] == '1' && isset($_GET['producto']) && isset($_GET['sucursal'])) {
     $id_producto = pg_escape_string($conn, $_GET['producto']);
     $id_sucursal = pg_escape_string($conn, $_GET['sucursal']);
@@ -61,25 +59,20 @@ if (isset($_GET['ajax_stock']) && $_GET['ajax_stock'] == '1' && isset($_GET['pro
             }
             ?>
             <div class="flex items-center justify-center mb-10">
-                <!-- Paso 1: Origen -->
                 <div class="flex flex-col items-center">
                     <div class="rounded-full p-4 shadow-lg <?php echo $paso1 ? 'bg-purple-500 text-white' : 'bg-gray-300 text-gray-500'; ?>">
                         <i class="fas fa-warehouse fa-2x"></i>
                     </div>
                     <span class="mt-2 text-sm font-semibold <?php echo $paso1 ? 'text-purple-700' : 'text-gray-500'; ?>">Origen</span>
                 </div>
-                <!-- Línea -->
                 <div class="flex-1 h-1 mx-2 <?php echo $paso2 ? 'bg-purple-400' : 'bg-gray-300'; ?>"></div>
-                <!-- Paso 2: Destino -->
                 <div class="flex flex-col items-center">
                     <div class="rounded-full p-4 shadow-lg <?php echo $paso2 ? 'bg-purple-500 text-white' : 'bg-gray-300 text-gray-500'; ?>">
                         <i class="fas fa-store fa-2x"></i>
                     </div>
                     <span class="mt-2 text-sm font-semibold <?php echo $paso2 ? 'text-purple-700' : 'text-gray-500'; ?>">Destino</span>
                 </div>
-                <!-- Línea -->
                 <div class="flex-1 h-1 mx-2 <?php echo $paso3 ? 'bg-purple-400' : 'bg-gray-300'; ?>"></div>
-                <!-- Paso 3: Detalles -->
                 <div class="flex flex-col items-center">
                     <div class="rounded-full p-4 shadow-lg <?php echo $paso3 ? 'bg-purple-500 text-white' : 'bg-gray-300 text-gray-500'; ?>">
                         <i class="fas fa-truck fa-2x"></i>
@@ -88,11 +81,9 @@ if (isset($_GET['ajax_stock']) && $_GET['ajax_stock'] == '1' && isset($_GET['pro
                 </div>
             </div>
 
-            <!-- Formulario de catálogo SOLO si falta origen o destino -->
             <?php if (!isset($_GET['origen']) || $_GET['origen'] === '' || !isset($_GET['destino']) || $_GET['destino'] === ''): ?>
                 <div class="bg-white shadow-lg rounded-lg p-6">
                     <div class="flex flex-col items-start mb-8">
-                        <!-- Paso Origen: Selección y confirmación -->
                         <?php if(!isset($_GET['origen']) || $_GET['origen'] === ''): ?>
                             <form method="GET" action="transferencia_agregar.php">
                                 <span class="text-gray-700 font-medium mb-2 block">Selecciona la sucursal origen</span>
@@ -124,7 +115,6 @@ if (isset($_GET['ajax_stock']) && $_GET['ajax_stock'] == '1' && isset($_GET['pro
                                     }
                                 });
                             });
-                            // Estado inicial: si hay uno seleccionado por el navegador
                             radiosOrigen.forEach(radio => {
                                 if (radio.checked) {
                                     radio.parentElement.querySelector('div').classList.add('border-purple-500', 'bg-purple-50', 'shadow-lg');
@@ -134,7 +124,6 @@ if (isset($_GET['ajax_stock']) && $_GET['ajax_stock'] == '1' && isset($_GET['pro
                             </script>
                         <?php endif; ?>
 
-                        <!-- Paso Destino: Selección y confirmación -->
                         <?php if(isset($_GET['origen']) && $_GET['origen'] !== '' && (!isset($_GET['destino']) || $_GET['destino'] === '')): ?>
                             <form method="GET" action="transferencia_agregar.php">
                                 <input type="hidden" name="origen" value="<?php echo htmlspecialchars($_GET['origen']); ?>">
@@ -158,7 +147,6 @@ if (isset($_GET['ajax_stock']) && $_GET['ajax_stock'] == '1' && isset($_GET['pro
                                 </div>
                             </form>
                             <script>
-                            // Resaltar card seleccionada en destino
                             const radiosDestino = document.querySelectorAll('input[name="destino"]');
                             const btnSiguienteDestino = document.getElementById('btn-siguiente-destino');
                             radiosDestino.forEach(radio => {
@@ -214,22 +202,18 @@ if (isset($_GET['ajax_stock']) && $_GET['ajax_stock'] == '1' && isset($_GET['pro
                             </select>
                             <div id="stock-info" class="mt-2 text-sm text-gray-600"></div>
                         </div>
-                        <!-- Cantidad -->
                         <div class="mb-4">
                             <label for="cantidad" class="block text-gray-700 font-medium mb-1">Cantidad</label>
                             <input type="number" id="cantidad" name="cantidad" min="1" class="w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 px-3 py-2 bg-gray-50" required>
                         </div>
-                        <!-- Fecha -->
                         <div class="mb-6">
                             <label for="fecha" class="block text-gray-700 font-medium mb-1">Fecha</label>
                             <input type="date" id="fecha" name="fecha" class="w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 px-3 py-2 bg-gray-50" required value="<?php echo date('Y-m-d'); ?>">
                         </div>
-                        <!-- Botón Registrar Transferencia dentro del form POST -->
                         <div class="flex justify-end mt-8 gap-2">
                             <button type="submit" class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">Registrar Transferencia</button>
                         </div>
                     </form>
-                    <!-- Botón Atrás fuera del form POST, pero alineado -->
                     <div class="flex justify-end mt-2 gap-2">
                         <form method="GET" action="transferencia_agregar.php" class="m-0">
                             <input type="hidden" name="origen" value="<?php echo htmlspecialchars($_GET['origen']); ?>">
@@ -242,7 +226,6 @@ if (isset($_GET['ajax_stock']) && $_GET['ajax_stock'] == '1' && isset($_GET['pro
     </main>
     <?php include_once './includes/footer.php'; ?>
     <script>
-    // Mostrar stock dinámicamente al cambiar producto
     const selectProd = document.getElementById('producto');
     const stockInfo = document.getElementById('stock-info');
     const idSucursalOrigen = '<?php echo isset($_GET['origen']) ? htmlspecialchars($_GET['origen']) : ''; ?>';

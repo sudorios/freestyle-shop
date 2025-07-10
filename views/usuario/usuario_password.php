@@ -25,4 +25,14 @@ $sql = updateUsuarioPassword();
 
 $params = array($password_hash, $id_usuario);
 $result = pg_query_params($conn, $sql, $params);
-manejarResultadoConsulta($result, $conn, '../../usuario.php?success=2', '../../usuario.php?error=1');
+
+$referer = $_POST['referer'] ?? '';
+if (strpos($referer, 'cliente.php') !== false) {
+    $success_url = '../../cliente.php?success=3';
+    $error_url = '../../cliente.php?error=5';
+} else {
+    $success_url = '../../usuario.php?success=3';
+    $error_url = '../../usuario.php?error=5';
+}
+
+manejarResultadoConsulta($result, $conn, $success_url, $error_url);
