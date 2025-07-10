@@ -82,9 +82,8 @@ if ($carrito_id) {
   </div>
 </header>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
-<script src="assets/js/carrito_utils.js"></script>
+<script src="assets/js/carrito.js"></script>
 <script>
-  // Menú móvil toggle
   document.addEventListener('DOMContentLoaded', function() {
     const btn = document.getElementById('menu-movil-btn');
     const menu = document.getElementById('menu-movil');

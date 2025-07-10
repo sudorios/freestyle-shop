@@ -146,7 +146,6 @@ if ($res_tallas) {
         </div>
     </main>
     <?php include_once './includes/footer.php'; ?>
-    <script src="assets/js/carrito_utils.js"></script>
     <script>
         const catalogoId = <?php echo (int) $producto['id']; ?>;
         let stockDisponible = 0;
@@ -221,7 +220,7 @@ if ($res_tallas) {
                 return;
             }
             const cantidad = parseInt(document.getElementById('cantidad').value) || 1;
-            fetch('agregar_al_carrito.php', {
+            fetch('views/carrito/carrito_registrar.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: `catalogo_id=${encodeURIComponent(catalogoId)}&talla=${encodeURIComponent(tallaSeleccionada)}&cantidad=${encodeURIComponent(cantidad)}`
