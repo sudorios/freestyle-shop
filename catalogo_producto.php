@@ -117,10 +117,8 @@ if (!$result) {
         </div>
     </main>
     
-    <!-- Modal Agregar al Catálogo -->
     <?php include_once './views/productos/modals/modal_agregar_catalogo.php'; ?>
     
-    <!-- Modal para mostrar imagen grande -->
     <div id="modalImagen" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 hidden">
         <div class="relative bg-white rounded-lg shadow-lg p-4 max-w-2xl w-full flex flex-col items-center">
             <button onclick="cerrarModalImagen()" class="absolute top-2 right-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-full w-8 h-8 flex items-center justify-center">&times;</button>
@@ -139,12 +137,10 @@ if (!$result) {
             document.getElementById('modalAgregarCatalogo').classList.add('hidden');
         }
 
-        // Cerrar modal al hacer clic en el fondo
         document.getElementById('modalBackgroundAgregarCatalogo').addEventListener('click', function() {
             cerrarModalAgregarCatalogo();
         });
 
-        // Validación del formulario
         document.getElementById('formAgregarCatalogo').addEventListener('submit', function(e) {
             const estadoOferta = document.getElementById('estado_oferta').value;
             const limiteOferta = document.getElementById('limite_oferta').value;
@@ -169,7 +165,6 @@ if (!$result) {
             }
         });
 
-        // Mostrar/ocultar campos de oferta según el estado
         document.getElementById('estado_oferta').addEventListener('change', function() {
             const limiteOfertaDiv = document.getElementById('limite_oferta').parentElement;
             const ofertaDiv = document.getElementById('oferta').parentElement;
@@ -195,14 +190,12 @@ if (!$result) {
             document.getElementById('modalImagen').classList.add('hidden');
             document.getElementById('imagenModalGrande').src = '';
         }
-        // Cerrar modal al hacer clic fuera de la imagen
         const modalImagen = document.getElementById('modalImagen');
         modalImagen.addEventListener('click', function(e) {
             if (e.target === modalImagen) {
                 cerrarModalImagen();
             }
         });
-        // Cerrar modal con Escape
         window.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 cerrarModalImagen();
