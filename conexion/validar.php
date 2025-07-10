@@ -18,21 +18,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['id'] = $row['id_usuario'];
                 $_SESSION['rol'] = $row['rol_usuario'];
                 
-                // --- MIGRACIÓN DE CARRITO DE SESIÓN A USUARIO ---
                 $usuario_id = $row['id_usuario'];
                 $session_id = session_id();
-                // Buscar carrito de sesión
                 $sql = "SELECT id FROM carrito WHERE session_id = $1";
                 $result_carrito_sesion = pg_query_params($conn, $sql, array($session_id));
                 $row_sesion = pg_fetch_assoc($result_carrito_sesion);
-                // Buscar carrito de usuario
                 $sql = "SELECT id FROM carrito WHERE usuario_id = $1";
                 $result_carrito_usuario = pg_query_params($conn, $sql, array($usuario_id));
                 $row_usuario = pg_fetch_assoc($result_carrito_usuario);
                 if ($row_sesion && $row_usuario) {
                     $carrito_sesion_id = $row_sesion['id'];
                     $carrito_usuario_id = $row_usuario['id'];
-                    // Fusionar items
                     $sql = "SELECT producto_id, talla, cantidad, precio_unitario FROM carrito_items WHERE carrito_id = $1 AND estado = 'activo'";
                     $result_items = pg_query_params($conn, $sql, array($carrito_sesion_id));
                     while ($item = pg_fetch_assoc($result_items)) {
@@ -49,7 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             pg_query_params($conn, $sql_insert, array($carrito_usuario_id, $item['producto_id'], $item['talla'], $item['cantidad'], $item['precio_unitario']));
                         }
                     }
-                    // Eliminar carrito de sesión
                     $sql = "DELETE FROM carrito WHERE id = $1";
                     pg_query_params($conn, $sql, array($carrito_sesion_id));
                 } elseif ($row_sesion && !$row_usuario) {
@@ -57,9 +52,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $sql = "UPDATE carrito SET usuario_id = $1, session_id = NULL WHERE id = $2";
                     pg_query_params($conn, $sql, array($usuario_id, $carrito_sesion_id));
                 }
-                // --- FIN MIGRACIÓN CARRITO ---
                 
-                header('Location: ../index.php');
+                if ($_SESSION['rol'] === 'cliente') {
+                    header('Location: ../index.php');
+                } else {
+                    header('Location: ../dashboard.php');
+                }
                 exit();
             } else {
                 header("Location: ../login.php?error=1");

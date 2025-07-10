@@ -35,7 +35,6 @@ LEFT JOIN
 WHERE
     cp.sucursal_id = 7
     AND (cp.estado = true OR cp.estado = 't')
-    AND (cp.estado_oferta = true OR cp.estado_oferta = 't')
     AND cp.id = $1
 ORDER BY 
     cp.id ASC
@@ -91,13 +90,18 @@ if ($res_tallas) {
                 <?php } ?>
             </div>
             <div class="mb-4 flex items-end gap-3">
-                <span class="text-lg text-gray-400 line-through">S/
-                    <?php echo number_format($producto['precio_venta'], 2); ?></span>
-                <span class="text-2xl font-extrabold text-yellow-400">S/
-                    <?php echo number_format($producto['precio_con_descuento'], 2); ?></span>
-                <span
-                    class="text-green-500 font-semibold text-base">-<?php echo htmlspecialchars($producto['oferta']); ?>%
-                    OFF</span>
+                <?php if (!empty($producto['oferta']) && $producto['oferta'] > 0): ?>
+                    <span class="text-lg text-gray-400 line-through">S/
+                        <?= number_format($producto['precio_venta'], 2); ?></span>
+                    <span class="text-2xl font-extrabold text-yellow-400">S/
+                        <?= number_format($producto['precio_con_descuento'], 2); ?></span>
+                    <span class="text-green-500 font-semibold text-base">
+                        -<?= htmlspecialchars($producto['oferta']); ?>% OFF
+                    </span>
+                <?php else: ?>
+                    <span class="text-2xl font-extrabold text-gray-900">S/
+                        <?= number_format($producto['precio_venta'], 2); ?></span>
+                <?php endif; ?>
             </div>
             <div class="mb-6">
                 <h2 class="text-lg font-bold text-gray-800 mb-1">Descripción</h2>
