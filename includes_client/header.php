@@ -22,6 +22,26 @@ if ($carrito_id) {
     $row = pg_fetch_assoc($res);
     $total_items = $row && $row['total'] ? (int)$row['total'] : 0;
 }
+// Consulta de categorías activas
+$sql = "SELECT id_categoria, nombre_categoria
+FROM categoria c
+WHERE estado_categoria = true
+  AND id_categoria > 0
+  AND EXISTS (
+    SELECT 1
+    FROM producto p
+    JOIN catalogo_productos cp ON cp.producto_id = p.id_producto
+    JOIN subcategoria s ON p.id_subcategoria = s.id_subcategoria
+    WHERE s.id_categoria = c.id_categoria
+      AND cp.sucursal_id = 7
+      AND (cp.estado = true OR cp.estado = 't')
+  )
+ORDER BY nombre_categoria ASC";
+$res = pg_query($conn, $sql);
+$categorias = [];
+while ($row = pg_fetch_assoc($res)) {
+    $categorias[] = $row;
+}
 ?>
 <header class="bg-black border-b-2 border-pink-600 shadow-lg sticky top-0 z-50">
   <div class="container mx-auto px-4 py-3 flex items-center justify-between">
@@ -33,19 +53,18 @@ if ($carrito_id) {
       <a href="inicio.php" class="hover:text-pink-400 text-white border-b-2 border-transparent hover:border-pink-600 transition">Inicio</a>
       <a href="#novedades" class="hover:text-pink-400 text-white border-b-2 border-transparent hover:border-pink-600 transition">Nosotros</a>
       <div class="relative group">
-        <button class="uppercase hover:text-pink-400 text-white border-b-2 border-transparent hover:border-pink-600 transition flex items-center gap-1">Categoría
+        <button class="uppercase hover:text-pink-400 text-white border-b-2 border-transparent hover:border-pink-600 transition flex items-center gap-1">
+          Categorías
           <i class="fas fa-chevron-down ml-1"></i>
         </button>
         <div class="absolute left-0 mt-2 w-52 bg-gray-900 border-2 border-pink-600 rounded shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity z-50">
-          <a href="#camisetas" class="block px-4 py-2 text-white hover:bg-pink-600 hover:text-black transition">Camisetas</a>
-          <a href="#hoodies" class="block px-4 py-2 text-white hover:bg-pink-600 hover:text-black transition">Hoodies</a>
-          <a href="#pantalones" class="block px-4 py-2 text-white hover:bg-pink-600 hover:text-black transition">Pantalones</a>
-          <a href="#zapatillas" class="block px-4 py-2 text-white hover:bg-pink-600 hover:text-black transition">Zapatillas</a>
-          <a href="#gorras" class="block px-4 py-2 text-white hover:bg-pink-600 hover:text-black transition">Gorras</a>
-          <a href="#accesorios" class="block px-4 py-2 text-white hover:bg-pink-600 hover:text-black transition">Accesorios</a>
+          <?php foreach ($categorias as $cat): ?>
+            <a href="vista_categorias.php?id_categoria=<?php echo $cat['id_categoria']; ?>" class="block px-4 py-2 text-white hover:bg-pink-600 hover:text-black transition">
+              <?php echo htmlspecialchars($cat['nombre_categoria']); ?>
+            </a>
+          <?php endforeach; ?>
         </div>
       </div>
-      <a href="#accesorios" class="hover:text-pink-400 text-white border-b-2 border-transparent hover:border-pink-600 transition">Accesorios</a>
     </nav>
     <div class="flex items-center space-x-5">
       <a href="carrito.php" class="relative group">

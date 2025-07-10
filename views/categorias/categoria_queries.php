@@ -44,4 +44,27 @@ function updateEstadoCategoriaQuery()
 {
     return "UPDATE categoria SET estado_categoria = $1 WHERE id_categoria = $2";
 }
+
+function query_catalogo_por_categoria() {
+    return "SELECT 
+        cp.id AS id_catalogo,
+        p.nombre_producto,
+        p.descripcion_producto,
+        ip.url_imagen,
+        i.precio_venta,
+        cp.oferta,
+        c.nombre_categoria
+    FROM 
+        catalogo_productos cp
+    JOIN producto p ON cp.producto_id = p.id_producto
+    JOIN ingreso i ON cp.ingreso_id = i.id
+    LEFT JOIN imagenes_producto ip ON cp.imagen_id = ip.id
+    JOIN subcategoria s ON p.id_subcategoria = s.id_subcategoria
+    JOIN categoria c ON s.id_categoria = c.id_categoria
+    WHERE 
+        cp.sucursal_id = 7
+        AND (cp.estado = true OR cp.estado = 't')
+        AND c.id_categoria = $1
+    ORDER BY p.nombre_producto ASC";
+}
 ?> 
