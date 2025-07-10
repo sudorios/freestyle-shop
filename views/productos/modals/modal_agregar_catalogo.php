@@ -48,8 +48,7 @@
                                               data-descripcion="' . htmlspecialchars($row['descripcion_producto']) . '" 
                                               data-talla="' . htmlspecialchars($row['talla_producto']) . '">' . 
                                          htmlspecialchars($row['nombre_producto']) . ' - ' . 
-                                         htmlspecialchars($row['talla_producto']) . ' - ' . 
-                                         htmlspecialchars($row['descripcion_producto']) . '</option>';
+                                         htmlspecialchars($row['talla_producto']) . '</option>';
                                 }
                             ?>
                         </select>
@@ -68,6 +67,7 @@
                         <select id="estado_oferta" name="estado_oferta" class="block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-200 px-3 py-2 bg-gray-50" required>
                             <option value="false">Sin oferta</option>
                             <option value="true">En oferta</option>
+                            <option value="false">Sin oferta</option>
                         </select>
                     </div>
                     <div class="mb-4">
