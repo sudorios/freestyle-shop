@@ -3,33 +3,13 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 include_once './conexion/cone.php';
+require_once './views/catalogo/catalogo_queries.php';
 
 if (!$conn) {
     die('Error de conexión: ' . pg_last_error($conn));
 }
 
-$sql = "SELECT 
-    cp.id,
-    p.nombre_producto,
-    ip.url_imagen,
-    i.precio_venta,
-    cp.estado,
-    cp.estado_oferta,
-    cp.limite_oferta,
-    cp.oferta,
-    (i.precio_venta * (1 - (cp.oferta / 100))) AS precio_con_descuento
-FROM 
-    catalogo_productos cp
-JOIN 
-    producto p ON cp.producto_id = p.id_producto
-JOIN 
-    ingreso i ON cp.ingreso_id = i.id
-JOIN 
-    imagenes_producto ip ON cp.imagen_id = ip.id
-WHERE
-    cp.sucursal_id = 7
-ORDER BY 
-    cp.id ASC;";
+$sql = getCatalogoProductosListadoQuery();
 $result = pg_query($conn, $sql);
 if (!$result) {
     die('Error en la consulta: ' . pg_last_error($conn));
@@ -43,7 +23,6 @@ if (!$result) {
     <main>
         <div class="container mx-auto px-4 mt-6">
             <?php
-            // Mostrar mensajes de éxito o error
             if (isset($_GET['success'])) {
                 $msg = $_GET['msg'] ?? 'Operación exitosa';
                 echo '<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">' . htmlspecialchars($msg) . '</div>';
@@ -117,7 +96,7 @@ if (!$result) {
         </div>
     </main>
     
-    <?php include_once './views/productos/modals/modal_agregar_catalogo.php'; ?>
+    <?php include_once './views/catalogo/modals/modal_agregar_catalogo.php'; ?>
     
     <div id="modalImagen" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 hidden">
         <div class="relative bg-white rounded-lg shadow-lg p-4 max-w-2xl w-full flex flex-col items-center">

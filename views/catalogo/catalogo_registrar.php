@@ -1,9 +1,8 @@
 <?php
 session_start();
 include_once '../../conexion/cone.php';
-include_once 'producto_queries.php';
-
-
+include_once 'catalogo_queries.php';
+include_once 'catalogo_utils.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ../../catalogo_producto.php?error=1&msg=' . urlencode('Método no permitido'));
@@ -20,32 +19,17 @@ $estado_oferta = $estado_oferta ? 'true' : 'false';
 $limite_oferta = isset($_POST['limite_oferta']) && $_POST['limite_oferta'] !== '' ? $_POST['limite_oferta'] : null;
 $oferta = isset($_POST['oferta']) && $_POST['oferta'] !== '' ? $_POST['oferta'] : null;
 
-$errores = [];
-if (empty($producto_id)) {
-    $errores[] = 'El producto es requerido';
-}
-if (empty($sucursal_id)) {
-    $errores[] = 'La sucursal es requerida';
-}
-if (empty($ingreso_id)) {
-    $errores[] = 'El ingreso es requerido';
-}
-if (empty($imagen_id)) {
-    $errores[] = 'La imagen es requerida';
-}
+$data = [
+    'producto_id' => $producto_id,
+    'sucursal_id' => $sucursal_id,
+    'ingreso_id' => $ingreso_id,
+    'imagen_id' => $imagen_id,
+    'estado_oferta' => $estado_oferta,
+    'limite_oferta' => $limite_oferta,
+    'oferta' => $oferta
+];
 
-if ($estado_oferta === 'true') {
-    if (empty($limite_oferta)) {
-        $errores[] = 'La fecha límite de oferta es requerida cuando está en oferta';
-    }
-    if (empty($oferta)) {
-        $errores[] = 'El porcentaje de descuento es requerido cuando está en oferta';
-    }
-    if ($oferta < 0 || $oferta > 100) {
-        $errores[] = 'El porcentaje de descuento debe estar entre 0 y 100';
-    }
-}
-
+$errores = validarDatosCatalogo($data);
 if (!empty($errores)) {
     $msg = urlencode(implode(', ', $errores));
     header('Location: ../../catalogo_producto.php?error=2&msg=' . $msg);
@@ -61,7 +45,6 @@ if (pg_num_rows($result_check) > 0) {
 }
 
 $sql = insertCatalogoProductoQuery();
-
 $params = array(
     $producto_id,
     $sucursal_id,
@@ -83,5 +66,4 @@ if ($result) {
     $msg = urlencode('Error al agregar producto al catálogo: ' . $error_msg);
     header('Location: ../../catalogo_producto.php?error=1&msg=' . $msg);
 }
-exit();
-?> 
+exit(); 
