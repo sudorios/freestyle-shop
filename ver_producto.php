@@ -46,7 +46,6 @@ if (!$producto) {
     die('Producto no encontrado o no está en oferta.');
 }
 
-// Consulta dinámica de tallas disponibles
 $sql_tallas = "SELECT DISTINCT p.talla_producto  
 FROM catalogo_productos cp
 JOIN producto p ON cp.producto_id = p.id_producto
@@ -233,13 +232,16 @@ if ($res_tallas) {
                 .then(data => {
                     const msg = document.getElementById('msgCarrito');
                     if (data.success) {
+                        msg.textContent = '¡Producto agregado al carrito exitosamente!';
+                        msg.classList.remove('hidden', 'text-red-600');
+                        msg.classList.add('text-green-600');
                         if (typeof actualizarContadorCarritoAjax === 'function') actualizarContadorCarritoAjax();
                     } else {
                         msg.textContent = data.error || 'Error al añadir al carrito';
                         msg.classList.remove('hidden', 'text-green-600');
                         msg.classList.add('text-red-600');
                     }
-                    setTimeout(() => { msg.classList.add('hidden'); }, 2000);
+                    setTimeout(() => { msg.classList.add('hidden'); }, 3000);
                 })
                 .catch(() => {
                     const msg = document.getElementById('msgCarrito');

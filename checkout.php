@@ -4,13 +4,11 @@ require_once './conexion/cone.php';
 include_once './includes/head.php';
 include_once './includes_client/header.php';
 
-// Mostrar solo el mensaje si hay success o error
 $mostrar_formulario = true;
 if (isset($_GET['success']) || isset($_GET['error'])) {
     $mostrar_formulario = false;
 }
 
-// Obtener los IDs de los items seleccionados por GET
 $ids = isset($_GET['items']) ? explode(',', $_GET['items']) : [];
 $ids = array_filter(array_map('intval', $ids));
 
@@ -20,7 +18,6 @@ if (empty($ids) && $mostrar_formulario) {
     exit;
 }
 
-// Consulta mejorada: incluye imagen y talla
 $placeholders = implode(',', array_map(function($i) { static $c=1; return '$'.($c++); }, $ids));
 $sql = "SELECT ci.id, ci.producto_id, ci.cantidad, ci.precio_unitario, ci.talla, p.nombre_producto, ip.url_imagen
         FROM carrito_items ci
@@ -40,18 +37,13 @@ if ($res) {
 $envio = $total >= 99 ? 0 : 15;
 $total_final = $total + $envio;
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Checkout - Finalizar compra</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
+
 <body class="bg-gray-100 min-h-screen">
     <div class="max-w-xl mx-auto bg-white p-8 mt-10 rounded shadow">
         <?php
         if (isset($_GET['success'])) {
             echo '<div class="mb-4 p-3 bg-green-100 text-green-800 rounded font-semibold text-center">' . htmlspecialchars($_GET['msg'] ?? '¡Pedido registrado correctamente!') . '</div>';
+            echo '<meta http-equiv="refresh" content="3;url=index.php">';
         } elseif (isset($_GET['error'])) {
             echo '<div class="mb-4 p-3 bg-red-100 text-red-800 rounded font-semibold text-center">' . htmlspecialchars($_GET['msg'] ?? 'Ocurrió un error al registrar el pedido.') . '</div>';
         }
@@ -66,15 +58,10 @@ $total_final = $total + $envio;
             <div class="mb-4">
                 <label for="metodo_pago" class="block font-semibold mb-1">Método de pago</label>
                 <select name="metodo_pago" id="metodo_pago" class="w-full border p-2 rounded" required>
-                    <option value="">Selecciona método de pago</option>
-                    <option value="tarjeta">Tarjeta</option>
-                    <option value="efectivo">Efectivo</option>
+                    <option value="tarjeta" selected>Tarjeta</option>
                 </select>
             </div>
-            <div class="mb-4">
-                <label for="observaciones" class="block font-semibold mb-1">Observaciones</label>
-                <textarea name="observaciones" id="observaciones" class="w-full border p-2 rounded"></textarea>
-            </div>
+            <input type="hidden" name="observaciones" value="Pagado">
             <div class="mb-6">
                 <h2 class="font-bold mb-2">Resumen del carrito</h2>
                 <div class="divide-y">
@@ -94,7 +81,6 @@ $total_final = $total + $envio;
                             <div class="font-bold text-gray-900">x<?= $item['cantidad'] ?></div>
                             <div class="text-sm text-gray-700">S/ <?= number_format($item['cantidad'] * $item['precio_unitario'], 2) ?></div>
                         </div>
-                        <!-- Input oculto para enviar los datos de los productos -->
                         <input type="hidden" name="productos[]" value='<?= json_encode([
                             "id_producto" => $item["producto_id"],
                             "cantidad" => $item["cantidad"],
