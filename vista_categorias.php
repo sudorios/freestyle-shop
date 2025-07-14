@@ -110,10 +110,12 @@ while ($row = pg_fetch_assoc($res)) {
                         <div class="text-gray-700 text-sm mb-2 text-center line-clamp-3"><?php echo htmlspecialchars($producto['descripcion_producto']); ?></div>
                         <hr class="w-2/3 my-2 border-gray-200">
                         <div class="flex items-center gap-2 mb-2">
-                            <span class="text-gray-400 line-through">S/ <?php echo number_format($producto['precio_venta'], 2); ?></span>
-                            <span class="text-pink-600 font-bold">S/ <?php echo number_format($producto['precio_venta'] * (1 - ($producto['oferta'] / 100)), 2); ?></span>
                             <?php if ($producto['oferta'] > 0): ?>
+                                <span class="text-gray-400 line-through">S/ <?php echo number_format($producto['precio_venta'], 2); ?></span>
+                                <span class="text-pink-600 font-bold">S/ <?php echo number_format($producto['precio_venta'] * (1 - ($producto['oferta'] / 100)), 2); ?></span>
                                 <span class="text-green-500 font-semibold text-xs">-<?php echo number_format($producto['oferta'], 0); ?>% OFF</span>
+                            <?php else: ?>
+                                <span class="text-gray-900 font-bold text-lg">S/ <?php echo number_format($producto['precio_venta'], 2); ?></span>
                             <?php endif; ?>
                         </div>
                         <a href="ver_producto.php?id=<?php echo $producto['id_catalogo']; ?>" class="mt-auto w-full bg-black hover:bg-gray-900 text-white font-bold py-2 rounded text-center transition">Ver producto</a>

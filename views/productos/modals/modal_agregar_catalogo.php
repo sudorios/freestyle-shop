@@ -8,54 +8,16 @@
         <form id="formAgregarCatalogo" action="views/productos/catalogo_registrar.php" method="POST">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <!-- Producto -->
                     <div class="mb-4">
-                        <label for="producto_id" class="block text-sm font-medium text-gray-700 mb-1">Producto</label>
-                        <select id="producto_id" name="producto_id" class="block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-200 px-3 py-2 bg-gray-50" required>
-                            <option value="">Seleccione un producto</option>
-                            <?php
-                                global $conn;
-                                $sql = "SELECT 
-                                            p.id_producto, 
-                                            p.nombre_producto, 
-                                            p.talla_producto, 
-                                            p.descripcion_producto, 
-                                            i.precio_venta, 
-                                            i.id AS ingreso_id, 
-                                            ip.url_imagen, 
-                                            ip.id AS imagen_id, 
-                                            ip.vista_producto 
-                                        FROM 
-                                            inventario_sucursal isuc
-                                        JOIN 
-                                            producto p ON isuc.id_producto = p.id_producto
-                                        JOIN 
-                                            ingreso i ON p.id_producto = i.id_producto
-                                        JOIN 
-                                            imagenes_producto ip ON p.id_producto = ip.producto_id
-                                        WHERE 
-                                            isuc.id_sucursal = 7
-                                            AND isuc.cantidad > 0
-                                        ORDER BY 
-                                            p.nombre_producto";
-                                $result = pg_query($conn, $sql);
-                                while ($row = pg_fetch_assoc($result)) {
-                                    echo '<option value="' . htmlspecialchars($row['id_producto']) . '" 
-                                              data-precio="' . htmlspecialchars($row['precio_venta']) . '" 
-                                              data-imagen="' . htmlspecialchars($row['url_imagen']) . '" 
-                                              data-imagen_id="' . htmlspecialchars($row['imagen_id']) . '" 
-                                              data-ingreso_id="' . htmlspecialchars($row['ingreso_id']) . '" 
-                                              data-descripcion="' . htmlspecialchars($row['descripcion_producto']) . '" 
-                                              data-talla="' . htmlspecialchars($row['talla_producto']) . '">' . 
-                                         htmlspecialchars($row['nombre_producto']) . ' - ' . 
-                                         htmlspecialchars($row['talla_producto']) . '</option>';
-                                }
-                            ?>
-                        </select>
-                        <input type="show" id="ingreso_id" name="ingreso_id" value="">
-                        <input type="show" id="imagen_id" name="imagen_id" value="">
-                        <input type="show" id="estado" name="estado" value="true">
+                        <label for="buscador_producto" class="block text-sm font-medium text-gray-700 mb-1">Buscar producto</label>
+                        <input type="text" id="buscador_producto" autocomplete="off" class="block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-200 px-3 py-2 mb-2 bg-gray-50" placeholder="Buscar por nombre...">
+                        <div id="sugerencias_producto" class="absolute z-40 w-full bg-white border border-gray-300 rounded-md shadow-lg hidden"></div>
                     </div>
+                    <!-- Producto (campos ocultos) -->
+                    <input type="hidden" id="producto_id" name="producto_id" value="">
+                    <input type="hidden" id="ingreso_id" name="ingreso_id" value="">
+                    <input type="hidden" id="imagen_id" name="imagen_id" value="">
+                    <input type="hidden" id="estado" name="estado" value="true">
                     <div class="mb-4">
                         <label for="precio_venta_display" class="block text-sm font-medium text-gray-700 mb-1">Precio de Venta</label>
                         <div id="precio_venta_display" class="block w-full rounded-md border border-gray-200 px-3 py-2 bg-gray-100 text-gray-700">
@@ -67,7 +29,6 @@
                         <select id="estado_oferta" name="estado_oferta" class="block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-200 px-3 py-2 bg-gray-50" required>
                             <option value="false">Sin oferta</option>
                             <option value="true">En oferta</option>
-                            <option value="false">Sin oferta</option>
                         </select>
                     </div>
                     <div class="mb-4">
@@ -110,6 +71,51 @@
 </div>
 
 <script>
+    // Array de productos generado en PHP
+    const productos = [
+<?php
+    global $conn;
+    $sql = "SELECT 
+                p.id_producto, 
+                p.nombre_producto, 
+                p.talla_producto, 
+                p.descripcion_producto, 
+                i.precio_venta, 
+                i.id AS ingreso_id, 
+                ip.url_imagen, 
+                ip.id AS imagen_id, 
+                ip.vista_producto 
+            FROM 
+                inventario_sucursal isuc
+            JOIN 
+                producto p ON isuc.id_producto = p.id_producto
+            JOIN 
+                ingreso i ON p.id_producto = i.id_producto
+            JOIN 
+                imagenes_producto ip ON p.id_producto = ip.producto_id
+            WHERE 
+                isuc.id_sucursal = 7
+                AND isuc.cantidad > 0
+            ORDER BY 
+                p.nombre_producto";
+    $result = pg_query($conn, $sql);
+    $first = true;
+    while ($row = pg_fetch_assoc($result)) {
+        if (!$first) echo ",\n"; else $first = false;
+        echo json_encode([
+            'id_producto' => $row['id_producto'],
+            'nombre_producto' => $row['nombre_producto'],
+            'talla_producto' => $row['talla_producto'],
+            'descripcion_producto' => $row['descripcion_producto'],
+            'precio_venta' => $row['precio_venta'],
+            'ingreso_id' => $row['ingreso_id'],
+            'url_imagen' => $row['url_imagen'],
+            'imagen_id' => $row['imagen_id'],
+        ]);
+    }
+?>
+];
+
     document.getElementById('producto_id').addEventListener('change', function() {
         var selectedOption = this.options[this.selectedIndex];
         var precio = selectedOption.getAttribute('data-precio');
@@ -173,4 +179,69 @@
 
     estadoOfertaInput.addEventListener('change', actualizarOfertaSelectUI);
     actualizarOfertaSelectUI();
+
+    const buscadorProducto = document.getElementById('buscador_producto');
+    const sugerenciasDiv = document.getElementById('sugerencias_producto');
+
+    buscadorProducto.addEventListener('input', function() {
+        const filtro = this.value.toLowerCase();
+        sugerenciasDiv.innerHTML = '';
+        if (filtro.length === 0) {
+            sugerenciasDiv.classList.add('hidden');
+            return;
+        }
+        const coincidencias = productos.filter(p => p.nombre_producto.toLowerCase().includes(filtro));
+        if (coincidencias.length === 0) {
+            sugerenciasDiv.classList.add('hidden');
+            return;
+        }
+        coincidencias.forEach(p => {
+            const div = document.createElement('div');
+            div.className = 'px-3 py-2 cursor-pointer hover:bg-blue-100';
+            div.textContent = p.nombre_producto;
+            div.addEventListener('mousedown', function(e) {
+                e.preventDefault();
+                seleccionarProducto(p);
+            });
+            sugerenciasDiv.appendChild(div);
+        });
+        sugerenciasDiv.classList.remove('hidden');
+    });
+
+    buscadorProducto.addEventListener('blur', function() {
+        setTimeout(() => sugerenciasDiv.classList.add('hidden'), 100); // Permite click en sugerencia
+    });
+
+    function seleccionarProducto(producto) {
+        buscadorProducto.value = producto.nombre_producto;
+        document.getElementById('producto_id').value = producto.id_producto;
+        document.getElementById('ingreso_id').value = producto.ingreso_id;
+        document.getElementById('imagen_id').value = producto.imagen_id;
+        // Actualiza el precio de venta
+        document.getElementById('precio_venta_display').innerText = producto.precio_venta ? '$' + producto.precio_venta : 'Seleccione un producto para ver el precio';
+        // Actualiza la imagen
+        var imgElement = document.getElementById('imagen_producto');
+        var placeholder = document.getElementById('placeholder_img');
+        if (producto.url_imagen) {
+            imgElement.src = producto.url_imagen;
+            imgElement.style.display = '';
+            placeholder.style.display = 'none';
+        } else {
+            imgElement.src = '';
+            imgElement.style.display = 'none';
+            placeholder.style.display = '';
+        }
+        // Actualiza la información del producto
+        const infoProducto = document.getElementById('info_producto');
+        if (producto.descripcion_producto && producto.talla_producto) {
+            infoProducto.innerHTML = `
+                <p><strong>Descripción:</strong> ${producto.descripcion_producto}</p>
+                <p><strong>Talla:</strong> ${producto.talla_producto}</p>
+                <p><strong>Precio:</strong> $${producto.precio_venta ? producto.precio_venta : '-'}</p>
+            `;
+        } else {
+            infoProducto.innerHTML = '<p>Selecciona un producto para ver su información detallada</p>';
+        }
+        sugerenciasDiv.classList.add('hidden');
+    }
 </script>

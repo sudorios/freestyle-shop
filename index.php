@@ -42,35 +42,46 @@ $result_ofertas = pg_query($conn, $sql_ofertas);
                 <div class="swiper-pagination mt-2"></div>
             </div>
         </section>
-        <?php
-        $sql_categorias = getCategoriasQuery();
-        $res_categorias = pg_query($conn, $sql_categorias);
-        $primera = true;
-        if ($res_categorias && pg_num_rows($res_categorias) > 0) {
-            while ($cat = pg_fetch_assoc($res_categorias)) {
-                $cat_id = $cat['id_categoria'];
-                $cat_nombre = $cat['nombre_categoria'];
-                $sql_prod = getProductosPorCategoriaQuery();
-                $res_prod = pg_query_params($conn, $sql_prod, [$cat_id]);
-                if ($res_prod && pg_num_rows($res_prod) > 0) {
-                    echo '<section class="mb-12">';
-                    echo '<h2 class="text-2xl md:text-3xl font-black uppercase tracking-wider mb-0 text-black">' . htmlspecialchars($cat_nombre) . '</h2>';
-                    echo '<div class="h-1 bg-pink-600 rounded-full mt-1 mb-8 w-full"></div>';
-                    echo '<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">';
-                    while ($prod = pg_fetch_assoc($res_prod)) {
-                        echo '<div class="bg-white rounded-lg shadow p-4 flex flex-col items-center">';
-                        echo '<img src="' . htmlspecialchars($prod['url_imagen']) . '" alt="' . htmlspecialchars($prod['nombre_producto']) . '" class="w-full aspect-square object-cover mb-2 rounded">';
-                        echo '<h3 class="font-bold text-lg text-center mb-1">' . htmlspecialchars($prod['nombre_producto']) . '</h3>';
-                        echo '<div class="text-yellow-600 font-bold text-xl mb-2">S/ ' . number_format($prod['precio_venta'], 2) . '</div>';
-                        echo '<a href="ver_producto.php?id=' . $prod['id'] . '" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded transition">Ver producto</a>';
-                        echo '</div>';
-                    }
+        
+        <section class="mb-12">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl md:text-3xl font-black uppercase tracking-wider mb-2 text-black">Nuestros Productos</h2>
+                <h3 class="text-lg md:text-xl font-semibold text-gray-600">Pantalón</h3>
+                <div class="h-1 bg-black rounded-full mt-4 mx-auto w-24"></div>
+            </div>
+            <?php
+            $sql_todos_productos = "SELECT cp.id, p.nombre_producto, ip.url_imagen, i.precio_venta
+                FROM catalogo_productos cp
+                JOIN producto p ON cp.producto_id = p.id_producto
+                JOIN ingreso i ON cp.ingreso_id = i.id
+                JOIN imagenes_producto ip ON cp.imagen_id = ip.id
+                WHERE cp.sucursal_id = 7
+                  AND (cp.estado = true OR cp.estado = 't')
+                  AND (cp.estado_oferta = false OR cp.estado_oferta = 'f' OR cp.oferta IS NULL OR cp.oferta = 0)
+                ORDER BY cp.id ASC
+                LIMIT 8";
+            $res_todos = pg_query($conn, $sql_todos_productos);
+            if ($res_todos && pg_num_rows($res_todos) > 0) {
+                echo '<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">';
+                while ($prod = pg_fetch_assoc($res_todos)) {
+                    echo '<div class="bg-white rounded-lg shadow p-4 flex flex-col items-center">';
+                    echo '<img src="' . htmlspecialchars($prod['url_imagen']) . '" alt="' . htmlspecialchars($prod['nombre_producto']) . '" class="w-full aspect-square object-cover mb-2 rounded">';
+                    echo '<h3 class="font-bold text-lg text-center mb-1">' . htmlspecialchars($prod['nombre_producto']) . '</h3>';
+                    echo '<div class="text-yellow-600 font-bold text-xl mb-2">S/ ' . number_format($prod['precio_venta'], 2) . '</div>';
+                    echo '<a href="ver_producto.php?id=' . $prod['id'] . '" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded transition">Ver producto</a>';
                     echo '</div>';
-                    echo '</section>';
                 }
+                echo '</div>';
+                echo '<div class="text-center mt-8">';
+                echo '<a href="vista_categorias.php?id_categoria=2" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition shadow-lg">Ver Todos los Productos</a>';
+                echo '</div>';
+            } else {
+                echo '<div class="text-center py-8">';
+                echo '<span class="text-gray-500 text-xl">No hay productos disponibles actualmente.</span>';
+                echo '</div>';
             }
-        }
-        ?>
+            ?>
+        </section>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script type="module">
