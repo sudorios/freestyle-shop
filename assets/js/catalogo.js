@@ -1,4 +1,28 @@
 
+const filasPorPagina = 10;
+let paginaActual = 1;
+
+function initTablaCatalogo() {
+  document
+    .getElementById("buscadorCatalogo")
+    .addEventListener("input", function () {
+      paginaActual = 1;
+      mostrarPaginaTabla(
+        "tbody",
+        "buscadorCatalogo",
+        filasPorPagina,
+        paginaActual,
+        "paginacionCatalogo"
+      );
+    });
+  mostrarPaginaTabla(
+    "tbody",
+    "buscadorCatalogo",
+    filasPorPagina,
+    paginaActual,
+    "paginacionCatalogo"
+  );
+}
 
 function initCatalogoBuscador() {
     const buscadorProducto = document.getElementById('buscador_producto');
@@ -169,10 +193,51 @@ function cerrarModalImagen() {
     document.getElementById('imagenModalGrande').src = '';
 }
 
+function filtrarTablaCatalogo() {
+    const buscador = document.getElementById('buscadorCatalogo');
+    const filtroEstadoOferta = document.getElementById('filtroEstadoOferta');
+    const filtroPrecioMin = document.getElementById('filtroPrecioMin');
+    const filtroPrecioMax = document.getElementById('filtroPrecioMax');
+    const filtroLimiteOferta = document.getElementById('filtroLimiteOferta');
+    const tabla = document.querySelector('table');
+    if (!tabla) return;
+
+    const texto = buscador.value.toLowerCase();
+    const estadoOferta = filtroEstadoOferta.value;
+    const precioMin = parseFloat(filtroPrecioMin.value) || 0;
+    const precioMax = parseFloat(filtroPrecioMax.value) || Infinity;
+    const limiteOferta = filtroLimiteOferta.value;
+
+    Array.from(tabla.tBodies[0].rows).forEach(row => {
+        const nombre = row.cells[1].textContent.toLowerCase();
+        const precio = parseFloat(row.cells[2].textContent.replace(/[^\d.]/g, '')) || 0;
+        const estado = row.cells[4].textContent.includes('En Oferta') ? 'true' : (row.cells[4].textContent.includes('Sin oferta') ? 'false' : '');
+        const limite = row.cells[4].querySelector('small')?.textContent.match(/\d{2}\/\d{2}\/\d{4}/)?.[0] || '';
+
+        let visible = true;
+        if (texto && !nombre.includes(texto)) visible = false;
+        if (estadoOferta && estado !== estadoOferta) visible = false;
+        if (precio < precioMin || precio > precioMax) visible = false;
+        if (limiteOferta && limite !== '' && !fechaIgual(limite, limiteOferta)) visible = false;
+
+        row.style.display = visible ? '' : 'none';
+    });
+}
+
+function fechaIgual(fechaStr, inputDate) {
+    if (!fechaStr || !inputDate) return false;
+    const [dia, mes, anio] = fechaStr.split('/');
+    const [inputAnio, inputMes, inputDia] = inputDate.split('-');
+    return parseInt(dia, 10) === parseInt(inputDia, 10) &&
+           parseInt(mes, 10) === parseInt(inputMes, 10) &&
+           parseInt(anio, 10) === parseInt(inputAnio, 10);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     initCatalogoBuscador();
     initCatalogoModalOferta();
     initCatalogoFormValidation();
+    initTablaCatalogo();
 
     const bgAgregar = document.getElementById('modalBackgroundAgregarCatalogo');
     if (bgAgregar) {
@@ -197,4 +262,64 @@ document.addEventListener('DOMContentLoaded', function() {
         estadoOfertaInput.addEventListener('change', actualizarOfertaSelectUI);
         actualizarOfertaSelectUI();
     }
+    const btnFiltrar = document.getElementById('btnFiltrarCatalogo');
+    const buscador = document.getElementById('buscadorCatalogo');
+    const filtroEstadoOferta = document.getElementById('filtroEstadoOferta');
+    const filtroPrecioMin = document.getElementById('filtroPrecioMin');
+    const filtroPrecioMax = document.getElementById('filtroPrecioMax');
+    const filtroLimiteOferta = document.getElementById('filtroLimiteOferta');
+    if (btnFiltrar) btnFiltrar.addEventListener('click', filtrarTablaCatalogo);
+    [buscador, filtroEstadoOferta, filtroPrecioMin, filtroPrecioMax, filtroLimiteOferta].forEach(el => {
+        if (el) {
+            el.addEventListener('change', filtrarTablaCatalogo);
+            el.addEventListener('input', filtrarTablaCatalogo);
+        }
+    });
+
+    // Toggle estado catálogo
+    document.querySelectorAll('table .fa-toggle-on, table .fa-toggle-off').forEach(function(btn) {
+        btn.parentElement.addEventListener('click', function(e) {
+            e.preventDefault();
+            const row = btn.closest('tr');
+            const id = row ? row.dataset.id : null;
+            if (!id) return;
+            const estadoActual = btn.classList.contains('fa-toggle-on');
+            fetch('/freestyle-shop/views/catalogo/catalogo_desactivar.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `id=${encodeURIComponent(id)}&estado=${estadoActual}`
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    let estadoCell = null;
+                    row.querySelectorAll('td').forEach(td => {
+                        if (td.textContent.includes('Activo') || td.textContent.includes('Inactivo')) {
+                            estadoCell = td;
+                        }
+                    });
+                    if (estadoCell) {
+                        const estadoSpan = estadoCell.querySelector('span');
+                        if (estadoActual) {
+                            btn.classList.remove('fa-toggle-on', 'text-green-600', 'hover:text-green-800');
+                            btn.classList.add('fa-toggle-off', 'text-gray-400', 'hover:text-green-600');
+                            if (estadoSpan) {
+                                estadoSpan.className = 'text-red-600';
+                                estadoSpan.textContent = 'Inactivo';
+                            }
+                        } else {
+                            btn.classList.remove('fa-toggle-off', 'text-gray-400', 'hover:text-green-600');
+                            btn.classList.add('fa-toggle-on', 'text-green-600', 'hover:text-green-800');
+                            if (estadoSpan) {
+                                estadoSpan.className = 'text-green-600';
+                                estadoSpan.textContent = 'Activo';
+                            }
+                        }
+                    }
+                } else {
+                    alert('Error al actualizar el estado: ' + data.msg);
+                }
+            });
+        });
+    });
 }); 

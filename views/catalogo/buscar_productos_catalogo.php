@@ -15,7 +15,6 @@ if ($q === '') {
     exit;
 }
 
-// Modificamos la query para filtrar por nombre
 $sql = "SELECT 
             p.id_producto, 
             p.nombre_producto, 
