@@ -5,7 +5,7 @@
             <h3 class="text-xl font-semibold text-gray-800">Agregar Producto al Catálogo</h3>
             <p class="text-sm text-gray-500">Selecciona un producto para agregarlo al catálogo público</p>
         </div>
-        <form id="formAgregarCatalogo" action="views/productos/catalogo_registrar.php" method="POST">
+        <form id="formAgregarCatalogo" action="views/catalogo/catalogo_registrar.php" method="POST">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <div class="mb-4">

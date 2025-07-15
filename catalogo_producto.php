@@ -106,82 +106,8 @@ if (!$result) {
     </div>
     
     <script>
-        function abrirModalAgregarCatalogo() {
-            document.getElementById('modalBackgroundAgregarCatalogo').classList.remove('hidden');
-            document.getElementById('modalAgregarCatalogo').classList.remove('hidden');
-        }
-
-        function cerrarModalAgregarCatalogo() {
-            document.getElementById('modalBackgroundAgregarCatalogo').classList.add('hidden');
-            document.getElementById('modalAgregarCatalogo').classList.add('hidden');
-        }
-
-        document.getElementById('modalBackgroundAgregarCatalogo').addEventListener('click', function() {
-            cerrarModalAgregarCatalogo();
-        });
-
-        document.getElementById('formAgregarCatalogo').addEventListener('submit', function(e) {
-            const estadoOferta = document.getElementById('estado_oferta').value;
-            const limiteOferta = document.getElementById('limite_oferta').value;
-            const oferta = document.getElementById('oferta').value;
-
-            if (estadoOferta === 'true') {
-                if (!limiteOferta) {
-                    e.preventDefault();
-                    alert('La fecha límite de oferta es requerida cuando está en oferta');
-                    return false;
-                }
-                if (!oferta) {
-                    e.preventDefault();
-                    alert('El porcentaje de descuento es requerido cuando está en oferta');
-                    return false;
-                }
-                if (oferta < 0 || oferta > 100) {
-                    e.preventDefault();
-                    alert('El porcentaje de descuento debe estar entre 0 y 100');
-                    return false;
-                }
-            }
-        });
-
-        document.getElementById('estado_oferta').addEventListener('change', function() {
-            const limiteOfertaDiv = document.getElementById('limite_oferta').parentElement;
-            const ofertaDiv = document.getElementById('oferta').parentElement;
-            
-            if (this.value === 'true') {
-                limiteOfertaDiv.style.display = 'block';
-                ofertaDiv.style.display = 'block';
-                document.getElementById('limite_oferta').required = true;
-                document.getElementById('oferta').required = true;
-            } else {
-                limiteOfertaDiv.style.display = 'none';
-                ofertaDiv.style.display = 'none';
-                document.getElementById('limite_oferta').required = false;
-                document.getElementById('oferta').required = false;
-            }
-        });
-
-        function mostrarImagenModal(url) {
-            document.getElementById('imagenModalGrande').src = url;
-            document.getElementById('modalImagen').classList.remove('hidden');
-        }
-        function cerrarModalImagen() {
-            document.getElementById('modalImagen').classList.add('hidden');
-            document.getElementById('imagenModalGrande').src = '';
-        }
-        const modalImagen = document.getElementById('modalImagen');
-        modalImagen.addEventListener('click', function(e) {
-            if (e.target === modalImagen) {
-                cerrarModalImagen();
-            }
-        });
-        window.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                cerrarModalImagen();
-            }
-        });
-       
     </script>
+    <script src="/freestyle-shop/assets/js/catalogo.js"></script>
     
     <?php include_once './includes/footer.php'; ?>
 </body>

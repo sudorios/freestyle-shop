@@ -76,6 +76,125 @@ function seleccionarProductoCatalogo(producto, buscadorProducto, sugerenciasDiv)
     sugerenciasDiv.classList.add('hidden');
 }
 
+function actualizarOfertaSelectUI() {
+    const estadoOfertaInput = document.getElementById('estado_oferta');
+    const limiteOfertaInput = document.getElementById('limite_oferta');
+    const ofertaInput = document.getElementById('oferta');
+    if (!estadoOfertaInput || !limiteOfertaInput || !ofertaInput) return;
+    if (estadoOfertaInput.value === 'true') {
+        limiteOfertaInput.disabled = false;
+        ofertaInput.disabled = false;
+        limiteOfertaInput.classList.remove('bg-gray-100', 'text-gray-400');
+        ofertaInput.classList.remove('bg-gray-100', 'text-gray-400');
+    } else {
+        limiteOfertaInput.disabled = true;
+        ofertaInput.disabled = true;
+        limiteOfertaInput.classList.add('bg-gray-100', 'text-gray-400');
+        ofertaInput.classList.add('bg-gray-100', 'text-gray-400');
+    }
+}
+
+function initCatalogoModalOferta() {
+    const estadoOfertaInput = document.getElementById('estado_oferta');
+    const limiteOfertaDiv = document.getElementById('limite_oferta')?.parentElement;
+    const ofertaDiv = document.getElementById('oferta')?.parentElement;
+    const limiteOferta = document.getElementById('limite_oferta');
+    const oferta = document.getElementById('oferta');
+
+    if (!estadoOfertaInput || !limiteOfertaDiv || !ofertaDiv || !limiteOferta || !oferta) return;
+
+    function actualizarOfertaUI() {
+        if (estadoOfertaInput.value === 'true') {
+            limiteOfertaDiv.style.display = 'block';
+            ofertaDiv.style.display = 'block';
+            limiteOferta.required = true;
+            oferta.required = true;
+        } else {
+            limiteOfertaDiv.style.display = 'none';
+            ofertaDiv.style.display = 'none';
+            limiteOferta.required = false;
+            oferta.required = false;
+        }
+    }
+
+    estadoOfertaInput.addEventListener('change', actualizarOfertaUI);
+    actualizarOfertaUI();
+}
+
+function initCatalogoFormValidation() {
+    const form = document.getElementById('formAgregarCatalogo');
+    if (!form) return;
+    form.addEventListener('submit', function(e) {
+        const estadoOferta = document.getElementById('estado_oferta').value;
+        const limiteOferta = document.getElementById('limite_oferta').value;
+        const oferta = document.getElementById('oferta').value;
+
+        if (estadoOferta === 'true') {
+            if (!limiteOferta) {
+                e.preventDefault();
+                alert('La fecha límite de oferta es requerida cuando está en oferta');
+                return false;
+            }
+            if (!oferta) {
+                e.preventDefault();
+                alert('El porcentaje de descuento es requerido cuando está en oferta');
+                return false;
+            }
+            if (oferta < 0 || oferta > 100) {
+                e.preventDefault();
+                alert('El porcentaje de descuento debe estar entre 0 y 100');
+                return false;
+            }
+        }
+    });
+}
+
+function abrirModalAgregarCatalogo() {
+    document.getElementById('modalBackgroundAgregarCatalogo').classList.remove('hidden');
+    document.getElementById('modalAgregarCatalogo').classList.remove('hidden');
+}
+
+function cerrarModalAgregarCatalogo() {
+    document.getElementById('modalBackgroundAgregarCatalogo').classList.add('hidden');
+    document.getElementById('modalAgregarCatalogo').classList.add('hidden');
+}
+
+function mostrarImagenModal(url) {
+    document.getElementById('imagenModalGrande').src = url;
+    document.getElementById('modalImagen').classList.remove('hidden');
+}
+
+function cerrarModalImagen() {
+    document.getElementById('modalImagen').classList.add('hidden');
+    document.getElementById('imagenModalGrande').src = '';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     initCatalogoBuscador();
+    initCatalogoModalOferta();
+    initCatalogoFormValidation();
+
+    const bgAgregar = document.getElementById('modalBackgroundAgregarCatalogo');
+    if (bgAgregar) {
+        bgAgregar.addEventListener('click', cerrarModalAgregarCatalogo);
+    }
+
+    const modalImagen = document.getElementById('modalImagen');
+    if (modalImagen) {
+        modalImagen.addEventListener('click', function(e) {
+            if (e.target === modalImagen) {
+                cerrarModalImagen();
+            }
+        });
+    }
+    window.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            cerrarModalImagen();
+        }
+    });
+    const estadoOfertaInput = document.getElementById('estado_oferta');
+    if (estadoOfertaInput) {
+        estadoOfertaInput.addEventListener('change', actualizarOfertaSelectUI);
+        actualizarOfertaSelectUI();
+    }
 }); 

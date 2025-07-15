@@ -1,5 +1,4 @@
 <?php
-// Funciones utilitarias para el catálogo de productos
 
 function validarDatosCatalogo($data) {
     $errores = [];
