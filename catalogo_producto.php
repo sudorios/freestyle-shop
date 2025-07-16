@@ -131,20 +131,37 @@ if (!$result) {
                                         <?php echo ($row['precio_con_descuento'] !== null) ? 'S/ ' . number_format($row['precio_con_descuento'], 2) : '<span class="text-gray-400">-</span>'; ?>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
-                                        <form method="POST" class="inline-form" onsubmit="event.preventDefault();">
-                                            <button 
-                                                type="button"
-                                                class="btn-confirmar-desactivar <?php echo ($row['estado'] == 1 || $row['estado'] === 't') ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'; ?> text-white px-3 py-2 rounded shadow"
-                                                title="<?php echo ($row['estado'] == 1 || $row['estado'] === 't') ? 'Desactivar' : 'Activar'; ?>"
-                                                onclick="abrirModalConfirmar({
-                                                    mensaje: '¿Estás seguro que deseas <?php echo ($row['estado'] == 1 || $row['estado'] === 't') ? 'desactivar' : 'activar'; ?> este producto en el catálogo?',
-                                                    action: 'views/catalogo/catalogo_desactivar.php',
-                                                    id: '<?php echo $row['id']; ?>'
-                                                })"
-                                            >
-                                                <i class="fas <?php echo ($row['estado'] == 1 || $row['estado'] === 't') ? 'fa-ban fa-lg' : 'fa-check-circle fa-lg'; ?>"></i>
-                                            </button>
-                                        </form>
+                                        <?php if ($row['estado'] == 1 || $row['estado'] === 't') { ?>
+                                            <form method="POST" class="inline-form" onsubmit="event.preventDefault();">
+                                                <button 
+                                                    type="button"
+                                                    class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded shadow"
+                                                    title="Desactivar"
+                                                    onclick="abrirModalConfirmar({
+                                                        mensaje: '¿Estás seguro que deseas desactivar este producto en el catálogo?',
+                                                        action: 'views/catalogo/catalogo_desactivar.php',
+                                                        id: '<?php echo $row['id']; ?>'
+                                                    })"
+                                                >
+                                                    <i class="fas fa-ban fa-lg"></i>
+                                                </button>
+                                            </form>
+                                        <?php } else { ?>
+                                            <form method="POST" class="inline-form" onsubmit="event.preventDefault();">
+                                                <button 
+                                                    type="button"
+                                                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded shadow"
+                                                    title="Activar"
+                                                    onclick="abrirModalConfirmar({
+                                                        mensaje: '¿Estás seguro que deseas activar este producto en el catálogo?',
+                                                        action: 'views/catalogo/catalogo_activar.php',
+                                                        id: '<?php echo $row['id']; ?>'
+                                                    })"
+                                                >
+                                                    <i class="fas fa-check-circle fa-lg"></i>
+                                                </button>
+                                            </form>
+                                        <?php } ?>
                                     </td>
                                 </tr>
                             <?php } ?>

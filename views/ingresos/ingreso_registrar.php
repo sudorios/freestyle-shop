@@ -59,7 +59,7 @@ if (!$result) {
     exit();
 }
 
-$sql_check_inventario = "SELECT cantidad FROM inventario_sucursal WHERE id_producto = $1 AND id_sucursal = $2";
+$sql_check_inventario = getCantidadInventarioSucursalQuery();
 $res_check = pg_query_params($conn, $sql_check_inventario, array($id_producto, $id_sucursal));
 
 if (!$res_check) {
@@ -70,7 +70,7 @@ if (!$res_check) {
 
 if ($row = pg_fetch_assoc($res_check)) {
     $nueva_cantidad = $row['cantidad'] + $cantidad;
-    $sql_update_inventario = "UPDATE inventario_sucursal SET cantidad = $1, fecha_actualizacion = CURRENT_TIMESTAMP WHERE id_producto = $2 AND id_sucursal = $3";
+    $sql_update_inventario = updateInventarioSucursalQuery();
     $result_update = pg_query_params($conn, $sql_update_inventario, array($nueva_cantidad, $id_producto, $id_sucursal));
     
     if (!$result_update) {
@@ -81,7 +81,7 @@ if ($row = pg_fetch_assoc($res_check)) {
         error_log('Inventario actualizado: producto=' . $id_producto . ', sucursal=' . $id_sucursal . ', cantidad=' . $nueva_cantidad);
     }
 } else {
-    $sql_insert_inventario = "INSERT INTO inventario_sucursal (id_producto, id_sucursal, cantidad, fecha_actualizacion, estado) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, 'CUADRA')";
+    $sql_insert_inventario = insertInventarioSucursalQuery();
     $result_insert = pg_query_params($conn, $sql_insert_inventario, array($id_producto, $id_sucursal, $cantidad));
     
     if (!$result_insert) {
@@ -101,7 +101,8 @@ $params_kardex = array(
     'INGRESO',
     $precio_costo_unidad,
     $fecha_ingreso,
-    $id_usuario
+    $id_usuario,
+    $id_sucursal
 );
 
 $result_kardex = pg_query_params($conn, $sql_insertar_kardex, $params_kardex);

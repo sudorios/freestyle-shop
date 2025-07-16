@@ -1,4 +1,3 @@
-<?php /* Modal para agregar nuevo conteo cíclico */ ?>
 <div id="modalNuevoConteo" class="fixed inset-0 flex items-center justify-center z-50 hidden">
     <div class="absolute inset-0 bg-black opacity-50" onclick="cerrarModalConteo()"></div>
     <div class="relative bg-white rounded-lg shadow-lg w-full max-w-md mx-auto p-8 z-10">
@@ -46,11 +45,9 @@
     document.getElementById('btnNuevoConteo').onclick = function() {
         modalConteo.classList.remove('hidden');
     };
-
     function cerrarModalConteo() {
         modalConteo.classList.add('hidden');
     }
-    // Cerrar con Escape
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') cerrarModalConteo();
     });

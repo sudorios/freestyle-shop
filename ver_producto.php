@@ -169,7 +169,7 @@ if ($res_tallas) {
         actualizarBtnCarrito(false);
 
         function actualizarStock(talla) {
-            fetch(`obtener_stock.php?catalogo_id=${catalogoId}&talla=${encodeURIComponent(talla)}`)
+            fetch(`utils/obtener_stock.php?catalogo_id=${catalogoId}&talla=${encodeURIComponent(talla)}`)
                 .then(res => res.json())
                 .then(data => {
                     const cantidadInput = document.getElementById('cantidad');

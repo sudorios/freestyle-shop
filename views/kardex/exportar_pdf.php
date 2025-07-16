@@ -1,6 +1,7 @@
 <?php
 require_once '../../vendor/autoload.php';
 require_once '../../conexion/cone.php';
+require_once __DIR__ . '/kardex_queries.php';
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -17,20 +18,19 @@ $options = new Options();
 $options->set('isHtml5ParserEnabled', true);
 $dompdf = new Dompdf($options);
 
-// Filtros de fecha
 $fecha_inicio = isset($_GET['fecha_inicio']) && $_GET['fecha_inicio'] !== '' ? $_GET['fecha_inicio'] : null;
 $fecha_fin = isset($_GET['fecha_fin']) && $_GET['fecha_fin'] !== '' ? $_GET['fecha_fin'] : null;
 
 $where = [];
 if ($fecha_inicio) {
-    $where[] = "fecha_movimiento >= '" . pg_escape_string($conn, $fecha_inicio) . "'";
+    $where[] = "k.fecha_movimiento >= '" . pg_escape_string($conn, $fecha_inicio) . "'";
 }
 if ($fecha_fin) {
-    $where[] = "fecha_movimiento <= '" . pg_escape_string($conn, $fecha_fin) . "'";
+    $where[] = "k.fecha_movimiento <= '" . pg_escape_string($conn, $fecha_fin) . "'";
 }
 $where_sql = count($where) ? 'WHERE ' . implode(' AND ', $where) : '';
 
-$sql = "SELECT id_kardex, id_producto, cantidad, tipo_movimiento, precio_costo, fecha_movimiento, id_usuario FROM kardex $where_sql ORDER BY id_kardex ASC";
+$sql = getKardexExportPdfQuery($where_sql);
 $result = pg_query($conn, $sql);
 
 $html = '<!DOCTYPE html>
@@ -67,6 +67,7 @@ $html .= '<table>
                 <th>Precio Costo</th>
                 <th>Fecha Movimiento</th>
                 <th>ID Usuario</th>
+                <th>Sucursal</th>
             </tr>
         </thead>
         <tbody>';
@@ -80,6 +81,7 @@ while ($row = pg_fetch_assoc($result)) {
     $html .= '<td>' . htmlspecialchars($row['precio_costo']) . '</td>';
     $html .= '<td>' . htmlspecialchars($row['fecha_movimiento']) . '</td>';
     $html .= '<td>' . htmlspecialchars($row['id_usuario']) . '</td>';
+    $html .= '<td>' . htmlspecialchars($row['nombre_sucursal'] ?? 'Sin sucursal') . '</td>';
     $html .= '</tr>';
 }
 

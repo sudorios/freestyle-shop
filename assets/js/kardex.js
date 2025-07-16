@@ -26,3 +26,6 @@ function initTablaKardex() {
 document.addEventListener("DOMContentLoaded", function () {
     initTablaKardex();
 });
+
+// Utilidad para manejo de filtros de fechas en Kardex
+// (puedes expandir aquí si necesitas lógica JS para el filtro de fechas)

@@ -3,6 +3,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 include_once './conexion/cone.php';
+include_once 'views/ingresos/ingreso_queries.php';
+include_once 'views/ingresos/ingreso_utils.php';
 
 if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
     header('Location: login.php');
@@ -13,25 +15,12 @@ if (!$conn) {
     die('Error de conexión: ' . pg_last_error($conn));
 }
 
-$fecha_inicio = isset($_GET['fecha_inicio']) && $_GET['fecha_inicio'] !== '' ? $_GET['fecha_inicio'] : '';
-$fecha_fin = isset($_GET['fecha_fin']) && $_GET['fecha_fin'] !== '' ? $_GET['fecha_fin'] : '';
-$where = [];
-if ($fecha_inicio) {
-    $where[] = "i.fecha_ingreso >= '" . pg_escape_string($conn, $fecha_inicio) . "'";
-}
-if ($fecha_fin) {
-    $where[] = "i.fecha_ingreso <= '" . pg_escape_string($conn, $fecha_fin) . "'";
-}
-$where_sql = count($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+$fecha_inicio = $_GET['fecha_inicio'] ?? '';
+$fecha_fin = $_GET['fecha_fin'] ?? '';
 
-$sql = "SELECT i.*, p.nombre_producto, p.talla_producto, s.nombre_sucursal, u.nombre_usuario AS usuario
-        FROM ingreso i
-        JOIN producto p ON i.id_producto = p.id_producto
-        LEFT JOIN sucursal s ON i.id_sucursal = s.id_sucursal
-        JOIN usuario u ON i.id_usuario = u.id_usuario
-        $where_sql
-        ORDER BY i.fecha_ingreso DESC";
+$where_sql = whereFechasIngreso($conn, $fecha_inicio, $fecha_fin);
 
+$sql = getListadoIngresosQuery($where_sql);
 $result = pg_query($conn, $sql);
 
 if (!$result) {

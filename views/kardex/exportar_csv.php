@@ -3,6 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once __DIR__ . '/../../conexion/cone.php';
+require_once __DIR__ . '/kardex_queries.php';
 
 if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
     header('Location: ../../login.php');
@@ -19,10 +20,11 @@ fputcsv($output, [
     'tipo_movimiento',
     'precio_costo',
     'fecha_movimiento',
-    'id_usuario'
+    'id_usuario',
+    'sucursal'
 ]);
 
-$sql = "SELECT id_kardex, id_producto, cantidad, tipo_movimiento, precio_costo, fecha_movimiento, id_usuario FROM kardex ORDER BY id_kardex ASC";
+$sql = getKardexExportCsvQuery();
 $result = pg_query($conn, $sql);
 
 while ($row = pg_fetch_assoc($result)) {
@@ -33,7 +35,8 @@ while ($row = pg_fetch_assoc($result)) {
         $row['tipo_movimiento'],
         $row['precio_costo'],
         $row['fecha_movimiento'],
-        $row['id_usuario']
+        $row['id_usuario'],
+        $row['nombre_sucursal'] ?? 'Sin sucursal'
     ]);
 }
 fclose($output);

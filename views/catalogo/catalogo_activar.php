@@ -11,13 +11,13 @@ if ($id <= 0) {
 }
 
 $sql = setEstadoCatalogoProductoQuery();
-$result = pg_query_params($conn, $sql, ['false', $id]);
+$result = pg_query_params($conn, $sql, ['true', $id]);
 
 if ($result) {
-    header('Location: ../../catalogo_producto.php?success=1&msg=Producto desactivado');
+    header('Location: ../../catalogo_producto.php?success=1&msg=Producto activado');
     exit;
 } else {
-    header('Location: ../../catalogo_producto.php?error=1&msg=Error al desactivar');
+    header('Location: ../../catalogo_producto.php?error=1&msg=Error al activar');
     exit;
 }
 ?> 

@@ -14,8 +14,15 @@ if (!$conn) {
     die('Error de conexión: ' . pg_last_error($conn));
 }
 
-$sql = getInventarioSucursalQuery();
-$result = pg_query($conn, $sql);
+$id_sucursal = isset($_GET['id_sucursal']) && $_GET['id_sucursal'] !== '' ? intval($_GET['id_sucursal']) : null;
+
+if ($id_sucursal) {
+    $sql = getInventarioSucursalQuery($id_sucursal);
+    $result = pg_query_params($conn, $sql, [$id_sucursal]);
+} else {
+    $sql = getInventarioSucursalQuery();
+    $result = pg_query($conn, $sql);
+}
 
 if (!$result) {
     die('Error en la consulta: ' . pg_last_error($conn));
@@ -45,6 +52,18 @@ if (!$result) {
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Inventario por Sucursal</h3>
                 <div class="flex gap-2 items-center">
+                    <form method="get" action="inventario.php" class="inline">
+                        <select name="id_sucursal" onchange="this.form.submit()" class="border rounded px-2 py-1">
+                            <option value="" <?php if (empty($id_sucursal)) echo 'selected'; ?>>Todos</option>
+                            <?php
+                            $res_suc = pg_query($conn, "SELECT id_sucursal, nombre_sucursal FROM sucursal ORDER BY nombre_sucursal ASC");
+                            while ($suc = pg_fetch_assoc($res_suc)) {
+                                $selected = ($suc['id_sucursal'] == $id_sucursal) ? 'selected' : '';
+                                echo "<option value=\"{$suc['id_sucursal']}\" $selected>{$suc['nombre_sucursal']}</option>";
+                            }
+                            ?>
+                        </select>
+                    </form>
                     <input type="text" id="buscadorInventario" placeholder="Buscar Producto..." class="border rounded px-2 py-1">
                     <form method="get" action="views/inventario/exportar_csv.php" style="display:inline;">
                         <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow transition ml-2" title="Exportar a CSV">
