@@ -1,5 +1,4 @@
 <?php
-// Funciones reutilizables para el carrito
 include_once __DIR__ . '/../../conexion/cone.php';
 include_once 'carrito_queries.php';
 

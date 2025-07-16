@@ -117,4 +117,11 @@ function validarFecha($fecha)
     
     return true;
 }
+
+function whereFechasIngreso($conn, $inicio, $fin) {
+    $w = [];
+    if ($inicio) $w[] = "i.fecha_ingreso >= '" . pg_escape_string($conn, $inicio) . "'";
+    if ($fin) $w[] = "i.fecha_ingreso <= '" . pg_escape_string($conn, $fin) . "'";
+    return $w ? 'WHERE ' . implode(' AND ', $w) : '';
+}
 ?> 

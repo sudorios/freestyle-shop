@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once './conexion/cone.php';
+require_once './utils/queries.php';
 include_once './includes/head.php';
 include_once './includes_client/header.php';
 
@@ -19,12 +20,7 @@ if (empty($ids) && $mostrar_formulario) {
 }
 
 $placeholders = implode(',', array_map(function($i) { static $c=1; return '$'.($c++); }, $ids));
-$sql = "SELECT ci.id, ci.producto_id, ci.cantidad, ci.precio_unitario, ci.talla, p.nombre_producto, ip.url_imagen
-        FROM carrito_items ci
-        JOIN producto p ON ci.producto_id = p.id_producto
-        LEFT JOIN catalogo_productos cp ON cp.producto_id = p.id_producto
-        LEFT JOIN imagenes_producto ip ON cp.imagen_id = ip.id
-        WHERE ci.id IN ($placeholders) AND ci.estado = 'activo'";
+$sql = getCarritoItemsByIdsQuery($placeholders);
 $res = $ids ? pg_query_params($conn, $sql, $ids) : false;
 $carrito = [];
 $total = 0;
@@ -43,7 +39,14 @@ $total_final = $total + $envio;
         <?php
         if (isset($_GET['success'])) {
             echo '<div class="mb-4 p-3 bg-green-100 text-green-800 rounded font-semibold text-center">' . htmlspecialchars($_GET['msg'] ?? '¡Pedido registrado correctamente!') . '</div>';
-            echo '<meta http-equiv="refresh" content="3;url=index.php">';
+            if (isset($_GET['id_pedido'])) {
+                $id_pedido = intval($_GET['id_pedido']);
+                echo '<div class="flex flex-col items-center gap-4 mt-6">';
+                echo '<a href="boletas/boleta_' . $id_pedido . '.pdf" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center gap-2" download><i class="fa fa-file-pdf-o"></i> Descargar boleta PDF</a>';
+                echo '<a href="index.php" class="bg-gray-800 hover:bg-black text-white font-bold py-2 px-4 rounded flex items-center gap-2"><i class="fa fa-home"></i> Volver a la tienda</a>';
+                echo '</div>';
+            }
+            echo '<meta http-equiv="refresh" content="10;url=index.php">';
         } elseif (isset($_GET['error'])) {
             echo '<div class="mb-4 p-3 bg-red-100 text-red-800 rounded font-semibold text-center">' . htmlspecialchars($_GET['msg'] ?? 'Ocurrió un error al registrar el pedido.') . '</div>';
         }

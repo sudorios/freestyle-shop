@@ -67,8 +67,8 @@ if ($row = pg_fetch_assoc($res_check_destino)) {
 }
 
 global $sql_insertar_kardex;
-$params_kardex_salida = array($producto, $cantidad, 'SALIDA', 0, $fecha, $id_usuario);
-$params_kardex_ingreso = array($producto, $cantidad, 'INGRESO', 0, $fecha, $id_usuario);
+$params_kardex_salida = array($producto, $cantidad, 'SALIDA', 0, $fecha, $id_usuario, $origen);
+$params_kardex_ingreso = array($producto, $cantidad, 'INGRESO', 0, $fecha, $id_usuario, $destino);
 pg_query_params($conn, $sql_insertar_kardex, $params_kardex_salida);
 pg_query_params($conn, $sql_insertar_kardex, $params_kardex_ingreso);
 

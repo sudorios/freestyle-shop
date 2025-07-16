@@ -35,7 +35,6 @@ function mostrarFormImagenProducto() {
 }
 document.getElementById('btnMostrarFormImagen').onclick = mostrarFormImagenProducto;
 
-// Drag & Drop y preview
 const dropArea = document.getElementById('dropArea');
 const fileInput = document.getElementById('fileInput');
 const dropText = document.getElementById('dropText');
@@ -85,7 +84,6 @@ document.getElementById('formNuevaImagenProducto').addEventListener('submit', fu
     formData.append('id_producto', document.getElementById('idProductoImagenForm').value);
     formData.append('vista_producto', document.getElementById('vistaProductoInput').value);
     
-    // Feedback de carga
     const btn = form.querySelector('button[type="submit"]');
     btn.disabled = true;
     btn.textContent = 'Subiendo...';

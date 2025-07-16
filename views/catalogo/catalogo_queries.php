@@ -77,3 +77,7 @@ function getCatalogoProductosListadoQuery()
     ORDER BY 
         cp.id ASC";
 }
+
+function setEstadoCatalogoProductoQuery() {
+    return "UPDATE catalogo_productos SET estado = $1 WHERE id = $2";
+}
