@@ -92,3 +92,25 @@ function validarFecha($fecha)
     }
     return true;
 } 
+
+function obtenerSucursalesActivas($conn) {
+    $sucursales = [];
+    $res = pg_query($conn, getSucursalesActivasQuery());
+    while ($row = pg_fetch_assoc($res)) {
+        $sucursales[] = $row;
+    }
+    return $sucursales;
+}
+
+function obtenerFiltrosTransferencia() {
+    $fecha_inicio = isset($_GET['fecha_inicio']) && $_GET['fecha_inicio'] !== '' ? $_GET['fecha_inicio'] : '';
+    $fecha_fin = isset($_GET['fecha_fin']) && $_GET['fecha_fin'] !== '' ? $_GET['fecha_fin'] : '';
+    $filtro_origen = isset($_GET['origen']) && $_GET['origen'] !== '' ? $_GET['origen'] : '';
+    $filtro_destino = isset($_GET['destino']) && $_GET['destino'] !== '' ? $_GET['destino'] : '';
+    return [
+        'fecha_inicio' => $fecha_inicio,
+        'fecha_fin' => $fecha_fin,
+        'origen' => $filtro_origen,
+        'destino' => $filtro_destino
+    ];
+} 

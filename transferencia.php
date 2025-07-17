@@ -3,6 +3,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 include_once './conexion/cone.php';
+include_once './views/transferencias/transferencia_queries.php';
+include_once './views/transferencias/transferencia_utils.php';
 
 if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
     header('Location: login.php');
@@ -13,17 +15,11 @@ if (!$conn) {
     die('Error de conexión: ' . pg_last_error($conn));
 }
 
-$sql = "SELECT t.*, p.nombre_producto, 
-        so.nombre_sucursal AS sucursal_origen, 
-        sd.nombre_sucursal AS sucursal_destino,
-        u.nombre_usuario AS usuario
-        FROM transferencia t
-        JOIN producto p ON t.id_producto = p.id_producto
-        JOIN sucursal so ON t.id_sucursal_origen = so.id_sucursal
-        JOIN sucursal sd ON t.id_sucursal_destino = sd.id_sucursal
-        JOIN usuario u ON t.id_usuario = u.id_usuario
-        ORDER BY t.fecha_transferencia DESC";
+$filtros = obtenerFiltrosTransferencia();
+$sucursales = obtenerSucursalesActivas($conn);
 
+$where_sql = getWhereFiltrosTransferencia($conn, $filtros['fecha_inicio'], $filtros['fecha_fin'], $filtros['origen'], $filtros['destino']);
+$sql = getListadoTransferenciasQuery($where_sql);
 $result = pg_query($conn, $sql);
 
 if (!$result) {
@@ -50,6 +46,8 @@ if (!$result) {
                     <span class="block sm:inline">Ocurrió un error. Código: <?php echo htmlspecialchars($_GET['error']); ?></span>
                 </div>
             <?php endif; ?>
+            <hr class="my-4 border-t-2 border-gray-200 rounded-full opacity-80">
+
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Transferencias entre Sucursales</h3>
                 <div class="flex gap-2 items-center">
@@ -61,40 +59,72 @@ if (!$result) {
                     <a href="transferencia_agregar.php" onclick="abrirModalAgregarTransferencia()" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">
                         Nueva Transferencia
                     </a>
+                    <a href="views/transferencias/exportar_csv.php" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3 rounded flex items-center" title="Exportar CSV">
+                        <i class="fas fa-file-csv mr-1"></i> 
+                    </a>
+                    <a href="views/transferencias/exportar_pdf.php" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded flex items-center" title="Exportar PDF">
+                        <i class="fas fa-file-pdf mr-1"></i> 
+                    </a>
                 </div>
             </div>
-            <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <hr class="my-4 border-t-2 border-gray-200 rounded-full opacity-80">
+
+            <div class="flex flex-wrap gap-2 items-center mb-4">
+                <form method="get" action="transferencia.php" class="flex gap-2 items-center">
+                    <input type="date" name="fecha_inicio" class="border rounded px-2 py-1 text-xs" placeholder="Desde" value="<?php echo htmlspecialchars($filtros['fecha_inicio']); ?>">
+                    <input type="date" name="fecha_fin" class="border rounded px-2 py-1 text-xs" placeholder="Hasta" value="<?php echo htmlspecialchars($filtros['fecha_fin']); ?>">
+                    <select name="origen" class="border rounded px-2 py-1 text-xs">
+                        <option value="">Origen</option>
+                        <?php foreach ($sucursales as $suc) { ?>
+                            <option value="<?php echo $suc['id_sucursal']; ?>" <?php if ($filtros['origen'] == $suc['id_sucursal']) echo 'selected'; ?>><?php echo htmlspecialchars($suc['nombre_sucursal']); ?></option>
+                        <?php } ?>
+                    </select>
+                    <select name="destino" class="border rounded px-2 py-1 text-xs">
+                        <option value="">Destino</option>
+                        <?php foreach ($sucursales as $suc) { ?>
+                            <option value="<?php echo $suc['id_sucursal']; ?>" <?php if ($filtros['destino'] == $suc['id_sucursal']) echo 'selected'; ?>><?php echo htmlspecialchars($suc['nombre_sucursal']); ?></option>
+                        <?php } ?>
+                    </select>
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-3 py-1 rounded text-xs">Filtrar</button>
+                    <?php if ($filtros['fecha_inicio'] || $filtros['fecha_fin'] || $filtros['origen'] || $filtros['destino']) { ?>
+                        <a href="transferencia.php" class="ml-2 text-xs text-gray-600 underline">Limpiar filtros</a>
+                    <?php } ?>
+                </form>
+            </div>
+            <hr class="my-4 border-t-2 border-gray-200 rounded-full opacity-80">
+
+            <div class="bg-white rounded-lg overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sucursal Origen</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sucursal Destino</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Transferencia</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
+                                <th class="px-2 py-2 w-20 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
+                                <th class="px-2 py-2 w-40 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Producto</th>
+                                <th class="px-2 py-2 w-40 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Sucursal Origen</th>
+                                <th class="px-2 py-2 w-40 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Sucursal Destino</th>
+                                <th class="px-2 py-2 w-20 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Cantidad</th>
+                                <th class="px-2 py-2 w-32 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Fecha</th>
+                                <th class="px-2 py-2 w-32 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Usuario</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             <?php while ($row = pg_fetch_assoc($result)) { ?>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['id']); ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_producto']); ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-2 py-2 whitespace-nowrap text-xs"><?php echo htmlspecialchars($row['id']); ?></td>
+                                    <td class="px-2 py-2 whitespace-nowrap text-xs"><?php echo htmlspecialchars($row['nombre_producto']); ?></td>
+                                    <td class="px-2 py-2 whitespace-nowrap text-xs">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
                                             <?php echo htmlspecialchars($row['sucursal_origen']); ?>
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-2 py-2 whitespace-nowrap text-xs">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                             <?php echo htmlspecialchars($row['sucursal_destino']); ?>
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo $row['cantidad']; ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo date('d/m/Y H:i', strtotime($row['fecha_transferencia'])); ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['usuario']); ?></td>
+                                    <td class="px-2 py-2 whitespace-nowrap text-xs"><?php echo $row['cantidad']; ?></td>
+                                    <td class="px-2 py-2 whitespace-nowrap text-xs"><?php echo date('d/m/Y H:i', strtotime($row['fecha_transferencia'])); ?></td>
+                                    <td class="px-2 py-2 whitespace-nowrap text-xs"><?php echo htmlspecialchars($row['usuario']); ?></td>
                                 </tr>
                             <?php } ?>
                         </tbody>

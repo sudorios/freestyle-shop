@@ -95,6 +95,8 @@ if ($row = pg_fetch_assoc($res_check)) {
 
 $precio_costo_unidad = $cantidad > 0 ? $precio_costo / $cantidad : 0;
 
+$sql_insertar_kardex = InsertarKardexQuery();
+
 $params_kardex = array(
     $id_producto,
     $cantidad,

@@ -38,7 +38,7 @@ $params = array(
     $id_usuario
 );
 
-global $sql_insertar_transferencia;
+$sql_insertar_transferencia = getInsertarTransferenciaQuery();
 $result = pg_query_params($conn, $sql_insertar_transferencia, $params);
 
 if (!$result) {
@@ -47,26 +47,27 @@ if (!$result) {
     exit();
 }
 
-$sql_check_origen = "SELECT cantidad FROM inventario_sucursal WHERE id_producto = $1 AND id_sucursal = $2";
+$sql_check_origen = getCantidadInventarioSucursalQuery();
 $res_check_origen = pg_query_params($conn, $sql_check_origen, array($producto, $origen));
 if ($row = pg_fetch_assoc($res_check_origen)) {
     $nueva_cantidad = $row['cantidad'] - $cantidad;
-    $sql_update_origen = "UPDATE inventario_sucursal SET cantidad = $1, fecha_actualizacion = CURRENT_TIMESTAMP WHERE id_producto = $2 AND id_sucursal = $3";
+    $sql_update_origen = getActualizarInventarioSucursalQuery();
     pg_query_params($conn, $sql_update_origen, array($nueva_cantidad, $producto, $origen));
 }
 
-$sql_check_destino = "SELECT cantidad FROM inventario_sucursal WHERE id_producto = $1 AND id_sucursal = $2";
+$sql_check_destino = getCantidadInventarioSucursalQuery();
 $res_check_destino = pg_query_params($conn, $sql_check_destino, array($producto, $destino));
 if ($row = pg_fetch_assoc($res_check_destino)) {
     $nueva_cantidad = $row['cantidad'] + $cantidad;
-    $sql_update_destino = "UPDATE inventario_sucursal SET cantidad = $1, fecha_actualizacion = CURRENT_TIMESTAMP WHERE id_producto = $2 AND id_sucursal = $3";
+    $sql_update_destino = getActualizarInventarioSucursalQuery();
     pg_query_params($conn, $sql_update_destino, array($nueva_cantidad, $producto, $destino));
 } else {
-    $sql_insert_destino = "INSERT INTO inventario_sucursal (id_producto, id_sucursal, cantidad, fecha_actualizacion, estado) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, 'CUADRA')";
+    $sql_insert_destino = getInsertarInventarioSucursalQuery();
     pg_query_params($conn, $sql_insert_destino, array($producto, $destino, $cantidad));
 }
 
-global $sql_insertar_kardex;
+$sql_insertar_kardex = InsertarKardexQuery();
+
 $params_kardex_salida = array($producto, $cantidad, 'SALIDA', 0, $fecha, $id_usuario, $origen);
 $params_kardex_ingreso = array($producto, $cantidad, 'INGRESO', 0, $fecha, $id_usuario, $destino);
 pg_query_params($conn, $sql_insertar_kardex, $params_kardex_salida);
