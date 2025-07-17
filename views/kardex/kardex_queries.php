@@ -29,4 +29,8 @@ function getKardexExportCsvQuery() {
             ORDER BY k.id_kardex ASC";
 }
 
+function InsertarKardexQuery() {
+    return "INSERT INTO kardex (id_producto, cantidad, tipo_movimiento, precio_costo, fecha_movimiento, id_usuario, id_sucursal) VALUES ($1, $2, $3, $4, $5, $6, $7)";
+}
+
 ?> 
