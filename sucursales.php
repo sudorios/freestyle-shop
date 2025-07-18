@@ -1,15 +1,11 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+session_start();
+require_once './utils/queries.php';
+check_rol(['developer','admin', 'supervisor']);
 
 include_once './conexion/cone.php';
 include_once './views/sucursales/sucursales_queries.php';
 
-if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
-    header('Location: login.php');
-    exit();
-}
 
 if (!$conn) {
     die('Error de conexión: ' . pg_last_error($conn));
@@ -125,7 +121,6 @@ if (!$result) {
             <div class="mt-3">
                 <h3 class="text-xl font-semibold leading-6 text-gray-900 mb-6 text-center">Detalle de Sucursal</h3>
                 <div class="flex flex-col md:flex-row gap-6">
-                    <!-- Columna de detalles de la sucursal -->
                     <div class="flex-1 flex flex-col gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Nombre de la Sucursal</label>
@@ -146,7 +141,6 @@ if (!$result) {
                             </div>
                         </div>
                     </div>
-                    <!-- Columna de dirección y datos del supervisor -->
                     <div class="flex-1 flex flex-col gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Dirección</label>

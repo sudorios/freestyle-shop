@@ -4,7 +4,6 @@ include_once '../../conexion/cone.php';
 include_once 'conteos_ciclicos_queries.php';
 include_once 'conteo_ciclico_utils.php';
 
-verificarSesionAdmin();
 verificarMetodoPost();
 
 $id_producto = $_POST['id_producto'] ?? '';

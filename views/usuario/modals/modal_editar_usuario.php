@@ -22,20 +22,6 @@
                         <label for="edit_telefono" class="block text-sm font-medium text-gray-700">Teléfono</label>
                         <input type="tel" id="edit_telefono" name="telefono_usuario" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
                     </div>
-                    <div class="mb-4">
-                        <label for="edit_rol" class="block text-sm font-medium text-gray-700">Rol</label>
-                        <select id="edit_rol" name="rol_usuario" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
-                            <option value="cliente">Cliente</option>
-                            <option value="admin">Administrador</option>
-                        </select>
-                    </div>
-                    <div class="mb-4">
-                        <label for="edit_estado" class="block text-sm font-medium text-gray-700">Estado</label>
-                        <select id="edit_estado" name="estado_usuario" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
-                            <option value="true">Activo</option>
-                            <option value="false">Inactivo</option>
-                        </select>
-                    </div>
                 </div>
                 <div class="mb-4">
                     <label for="edit_direccion" class="block text-sm font-medium text-gray-700">Dirección</label>

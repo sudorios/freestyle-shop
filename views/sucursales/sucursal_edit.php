@@ -7,7 +7,6 @@ require_once __DIR__ . '/../../conexion/cone.php';
 require_once __DIR__ . '/sucursales_queries.php';
 require_once __DIR__ . '/sucursales_utils.php';
 
-verificarSesionAdmin();
 verificarMetodoPost();
 
 $id_sucursal = filter_input(INPUT_POST, 'id_sucursal');

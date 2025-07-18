@@ -7,10 +7,10 @@ require_once __DIR__ . '/../../conexion/cone.php';
 require_once __DIR__ . '/ingreso_queries.php';
 require_once __DIR__ . '/ingreso_utils.php';
 
-if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
-    header('Location: ../../ingreso.php');
-    exit();
-}
+// if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
+//     header('Location: ../../login.php');
+//     exit();
+// }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ../../ingreso.php');

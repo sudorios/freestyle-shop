@@ -22,7 +22,6 @@ if ($carrito_id) {
   $row = pg_fetch_assoc($res);
   $total_items = $row && $row['total'] ? (int) $row['total'] : 0;
 }
-// Consulta de categorías activas
 $sql = "SELECT id_categoria, nombre_categoria
 FROM categoria c
 WHERE estado_categoria = true
@@ -53,7 +52,7 @@ while ($row = pg_fetch_assoc($res)) {
     <nav class="hidden lg:flex space-x-6 xl:space-x-8 text-base lg:text-lg font-bold uppercase tracking-wider">
       <a href="index.php"
         class="hover:text-pink-400 text-white border-b-2 border-transparent hover:border-pink-600 transition">Inicio</a>
-      <a href="#novedades"
+      <a href="nosotros.php"
         class="hover:text-pink-400 text-white border-b-2 border-transparent hover:border-pink-600 transition">Nosotros</a>
       <div class="relative group">
         <button
@@ -108,7 +107,7 @@ while ($row = pg_fetch_assoc($res)) {
     <nav class="flex flex-col space-y-3 text-lg font-bold uppercase tracking-wider">
       <a href="index.php"
         class="hover:text-pink-400 text-white border-b-2 border-transparent hover:border-pink-600 transition">Inicio</a>
-      <a href="#novedades"
+      <a href="nosotros.php"
         class="hover:text-pink-400 text-white border-b-2 border-transparent hover:border-pink-600 transition">Nosotros</a>
       <div class="relative">
         <button id="categorias-movil-btn"
@@ -152,14 +151,12 @@ while ($row = pg_fetch_assoc($res)) {
 <script src="assets/js/carrito.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    // Menú móvil principal
     const btn = document.getElementById('menu-movil-btn');
     const menu = document.getElementById('menu-movil');
     
     if (btn && menu) {
       btn.addEventListener('click', () => {
         menu.classList.toggle('hidden');
-        // Cerrar submenú de categorías cuando se cierra el menú principal
         if (menu.classList.contains('hidden')) {
           const categoriasMovil = document.getElementById('categorias-movil');
           const categoriasIcon = document.getElementById('categorias-icon');
@@ -171,7 +168,6 @@ while ($row = pg_fetch_assoc($res)) {
       });
     }
 
-    // Submenú de categorías móvil
     const categoriasBtn = document.getElementById('categorias-movil-btn');
     const categoriasMovil = document.getElementById('categorias-movil');
     const categoriasIcon = document.getElementById('categorias-icon');
@@ -187,7 +183,6 @@ while ($row = pg_fetch_assoc($res)) {
       });
     }
 
-    // Cerrar menú al hacer clic fuera de él
     document.addEventListener('click', (e) => {
       if (!btn.contains(e.target) && !menu.contains(e.target)) {
         menu.classList.add('hidden');
@@ -198,10 +193,8 @@ while ($row = pg_fetch_assoc($res)) {
       }
     });
 
-    // Actualizar contador de carrito
     actualizarContadorCarritoAjax();
     
-    // Función para actualizar contador en móvil también
     window.actualizarContadorCarritoAjax = function() {
       fetch('views/carrito/carrito_contador.php')
         .then(response => response.json())

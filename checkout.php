@@ -42,7 +42,7 @@ $total_final = $total + $envio;
             if (isset($_GET['id_pedido'])) {
                 $id_pedido = intval($_GET['id_pedido']);
                 echo '<div class="flex flex-col items-center gap-4 mt-6">';
-                echo '<a href="boletas/boleta_' . $id_pedido . '.pdf" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center gap-2" download><i class="fa fa-file-pdf-o"></i> Descargar boleta PDF</a>';
+                echo '<a href="views/pedidos/generar_boleta_pdf.php?id_pedido=' . $id_pedido . '" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center gap-2" target="_blank"><i class="fa fa-file-pdf-o"></i> Descargar boleta PDF</a>';
                 echo '<a href="index.php" class="bg-gray-800 hover:bg-black text-white font-bold py-2 px-4 rounded flex items-center gap-2"><i class="fa fa-home"></i> Volver a la tienda</a>';
                 echo '</div>';
             }

@@ -4,7 +4,6 @@ include_once '../../conexion/cone.php';
 include_once 'producto_queries.php';
 include_once 'producto_utils.php';
 
-verificarSesionAdmin();
 verificarMetodoPost();
 
 $ref = trim($_POST['ref_producto'] ?? '');

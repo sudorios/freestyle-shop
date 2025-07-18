@@ -5,11 +5,6 @@ if (session_status() === PHP_SESSION_NONE) {
 include_once './conexion/cone.php';
 include_once 'views/conteos_ciclicos/conteos_ciclicos_queries.php';
 
-if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
-    header('Location: login.php');
-    exit();
-}
-
 $id_producto = isset($_GET['id_producto']) ? intval($_GET['id_producto']) : 0;
 $id_sucursal = isset($_GET['id_sucursal']) ? intval($_GET['id_sucursal']) : 0;
 

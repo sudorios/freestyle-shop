@@ -1,13 +1,5 @@
 <?php
 
-function verificarSesionAdminInventario()
-{
-    if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
-        header('Location: ../../login.php');
-        exit();
-    }
-}
-
 function verificarMetodoPostInventario()
 {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

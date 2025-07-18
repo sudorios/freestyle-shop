@@ -9,10 +9,6 @@ require_once 'producto_queries.php';
 use Cloudinary\Cloudinary;
 use Cloudinary\Configuration\Configuration;
 
-if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
-    echo json_encode(['success' => false, 'error' => 'No autorizado']);
-    exit();
-}
 
 $id_producto = isset($_POST['id_producto']) ? intval($_POST['id_producto']) : 0;
 $vista_producto = isset($_POST['vista_producto']) ? intval($_POST['vista_producto']) : 1;

@@ -6,18 +6,14 @@ include_once './conexion/cone.php';
 include_once './views/transferencias/transferencia_queries.php';
 include_once './views/transferencias/transferencia_utils.php';
 
-if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
-    header('Location: login.php');
-    exit();
-}
+
 
 if (!$conn) {
     die('Error de conexión: ' . pg_last_error($conn));
 }
 
 $filtros = obtenerFiltrosTransferencia();
-$sucursales = obtenerSucursalesActivas($conn);
-
+$sucursales = obtenerSucursalesActivasConTipo($conn);
 $where_sql = getWhereFiltrosTransferencia($conn, $filtros['fecha_inicio'], $filtros['fecha_fin'], $filtros['origen'], $filtros['destino']);
 $sql = getListadoTransferenciasQuery($where_sql);
 $result = pg_query($conn, $sql);

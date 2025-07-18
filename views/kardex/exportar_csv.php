@@ -5,10 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../../conexion/cone.php';
 require_once __DIR__ . '/kardex_queries.php';
 
-if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
-    header('Location: ../../login.php');
-    exit();
-}
+
 
 header('Content-Type: text/csv; charset=utf-8');
 header('Content-Disposition: attachment; filename=kardex.csv');

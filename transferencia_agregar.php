@@ -3,33 +3,22 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 include_once './conexion/cone.php';
+include_once './views/transferencias/transferencia_queries.php';
+include_once './views/transferencias/transferencia_utils.php';
 
-if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
-    header('Location: login.php');
-    exit();
-}
 
 if (!$conn) {
     die('Error de conexión: ' . pg_last_error($conn));
 }
 
-$sql_suc = "SELECT id_sucursal, nombre_sucursal, tipo_sucursal FROM sucursal WHERE estado_sucursal = true ORDER BY nombre_sucursal ASC";
-$res_suc = pg_query($conn, $sql_suc);
-$sucursales = [];
-while ($row = pg_fetch_assoc($res_suc)) {
-    $sucursales[] = $row;
-}
+$sucursales = obtenerSucursalesActivasConTipo($conn);
 
 if (isset($_GET['ajax_stock']) && $_GET['ajax_stock'] == '1' && isset($_GET['producto']) && isset($_GET['sucursal'])) {
-    $id_producto = pg_escape_string($conn, $_GET['producto']);
-    $id_sucursal = pg_escape_string($conn, $_GET['sucursal']);
-    $sql_stock = "SELECT COALESCE(cantidad, 0) AS total_stock FROM inventario_sucursal WHERE id_producto = '$id_producto' AND id_sucursal = '$id_sucursal'";
-    $res_stock = pg_query($conn, $sql_stock);
-    $row_stock = pg_fetch_assoc($res_stock);
-    $total_stock = $row_stock ? $row_stock['total_stock'] : 0;
+    $total_stock = obtenerStockProductoSucursal($conn, $_GET['producto'], $_GET['sucursal']);
     echo $total_stock;
     exit;
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -60,110 +49,102 @@ if (isset($_GET['ajax_stock']) && $_GET['ajax_stock'] == '1' && isset($_GET['pro
             ?>
             <div class="flex items-center justify-center mb-10">
                 <div class="flex flex-col items-center">
-                    <div class="rounded-full p-4 shadow-lg <?php echo $paso1 ? 'bg-purple-500 text-white' : 'bg-gray-300 text-gray-500'; ?>">
+                    <div
+                        class="rounded-full p-4 shadow-lg <?php echo $paso1 ? 'bg-purple-500 text-white' : 'bg-gray-300 text-gray-500'; ?>">
                         <i class="fas fa-warehouse fa-2x"></i>
                     </div>
-                    <span class="mt-2 text-sm font-semibold <?php echo $paso1 ? 'text-purple-700' : 'text-gray-500'; ?>">Origen</span>
+                    <span
+                        class="mt-2 text-sm font-semibold <?php echo $paso1 ? 'text-purple-700' : 'text-gray-500'; ?>">Origen</span>
                 </div>
                 <div class="flex-1 h-1 mx-2 <?php echo $paso2 ? 'bg-purple-400' : 'bg-gray-300'; ?>"></div>
                 <div class="flex flex-col items-center">
-                    <div class="rounded-full p-4 shadow-lg <?php echo $paso2 ? 'bg-purple-500 text-white' : 'bg-gray-300 text-gray-500'; ?>">
+                    <div
+                        class="rounded-full p-4 shadow-lg <?php echo $paso2 ? 'bg-purple-500 text-white' : 'bg-gray-300 text-gray-500'; ?>">
                         <i class="fas fa-store fa-2x"></i>
                     </div>
-                    <span class="mt-2 text-sm font-semibold <?php echo $paso2 ? 'text-purple-700' : 'text-gray-500'; ?>">Destino</span>
+                    <span
+                        class="mt-2 text-sm font-semibold <?php echo $paso2 ? 'text-purple-700' : 'text-gray-500'; ?>">Destino</span>
                 </div>
                 <div class="flex-1 h-1 mx-2 <?php echo $paso3 ? 'bg-purple-400' : 'bg-gray-300'; ?>"></div>
                 <div class="flex flex-col items-center">
-                    <div class="rounded-full p-4 shadow-lg <?php echo $paso3 ? 'bg-purple-500 text-white' : 'bg-gray-300 text-gray-500'; ?>">
+                    <div
+                        class="rounded-full p-4 shadow-lg <?php echo $paso3 ? 'bg-purple-500 text-white' : 'bg-gray-300 text-gray-500'; ?>">
                         <i class="fas fa-truck fa-2x"></i>
                     </div>
-                    <span class="mt-2 text-sm font-semibold <?php echo $paso3 ? 'text-purple-700' : 'text-gray-500'; ?>">Detalles</span>
+                    <span
+                        class="mt-2 text-sm font-semibold <?php echo $paso3 ? 'text-purple-700' : 'text-gray-500'; ?>">Detalles</span>
                 </div>
             </div>
 
             <?php if (!isset($_GET['origen']) || $_GET['origen'] === '' || !isset($_GET['destino']) || $_GET['destino'] === ''): ?>
                 <div class="bg-white shadow-lg rounded-lg p-6">
                     <div class="flex flex-col items-start mb-8">
-                        <?php if(!isset($_GET['origen']) || $_GET['origen'] === ''): ?>
+                        <?php if (!isset($_GET['origen']) || $_GET['origen'] === ''): ?>
                             <form method="GET" action="transferencia_agregar.php">
                                 <span class="text-gray-700 font-medium mb-2 block">Selecciona la sucursal origen</span>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                                    <?php foreach ($sucursales as $suc) { ?>
-                                        <label class="w-full h-full cursor-pointer">
-                                            <input type="radio" name="origen" value="<?php echo $suc['id_sucursal']; ?>" class="hidden">
-                                            <div class="border rounded-lg p-4 flex flex-col items-center transition border-gray-300 bg-white hover:border-purple-400 hover:bg-purple-100">
-                                                <i class="fas <?php echo ($suc['tipo_sucursal'] === 'almacen') ? 'fa-warehouse' : (($suc['tipo_sucursal'] === 'fisica') ? 'fa-store' : 'fa-globe'); ?> fa-2x mb-2"></i>
-                                                <span class="font-semibold text-gray-800"><?php echo htmlspecialchars($suc['nombre_sucursal']); ?></span>
-                                                <span class="text-xs text-gray-500 capitalize"><?php echo $suc['tipo_sucursal']; ?></span>
-                                            </div>
-                                        </label>
-                                    <?php } ?>
+                                    <?php renderRadiosSucursales($sucursales, 'origen', $_GET['origen'] ?? null); ?>
                                 </div>
                                 <div class="flex justify-end">
-                                    <button type="submit" id="btn-siguiente-origen" class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-300 ease-in-out" disabled>Siguiente</button>
+                                    <button type="submit" id="btn-siguiente-origen"
+                                        class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-300 ease-in-out"
+                                        disabled>Siguiente</button>
                                 </div>
                             </form>
                             <script>
-                            const radiosOrigen = document.querySelectorAll('input[name="origen"]');
-                            const btnSiguienteOrigen = document.getElementById('btn-siguiente-origen');
-                            radiosOrigen.forEach(radio => {
-                                radio.addEventListener('change', function() {
-                                    radiosOrigen.forEach(r => r.parentElement.querySelector('div').classList.remove('border-purple-500', 'bg-purple-50', 'shadow-lg'));
-                                    if (this.checked) {
-                                        this.parentElement.querySelector('div').classList.add('border-purple-500', 'bg-purple-50', 'shadow-lg');
+                                const radiosOrigen = document.querySelectorAll('input[name="origen"]');
+                                const btnSiguienteOrigen = document.getElementById('btn-siguiente-origen');
+                                radiosOrigen.forEach(radio => {
+                                    radio.addEventListener('change', function () {
+                                        radiosOrigen.forEach(r => r.parentElement.querySelector('div').classList.remove('border-purple-500', 'bg-purple-50', 'shadow-lg'));
+                                        if (this.checked) {
+                                            this.parentElement.querySelector('div').classList.add('border-purple-500', 'bg-purple-50', 'shadow-lg');
+                                            btnSiguienteOrigen.disabled = false;
+                                        }
+                                    });
+                                });
+                                radiosOrigen.forEach(radio => {
+                                    if (radio.checked) {
+                                        radio.parentElement.querySelector('div').classList.add('border-purple-500', 'bg-purple-50', 'shadow-lg');
                                         btnSiguienteOrigen.disabled = false;
                                     }
                                 });
-                            });
-                            radiosOrigen.forEach(radio => {
-                                if (radio.checked) {
-                                    radio.parentElement.querySelector('div').classList.add('border-purple-500', 'bg-purple-50', 'shadow-lg');
-                                    btnSiguienteOrigen.disabled = false;
-                                }
-                            });
                             </script>
                         <?php endif; ?>
 
-                        <?php if(isset($_GET['origen']) && $_GET['origen'] !== '' && (!isset($_GET['destino']) || $_GET['destino'] === '')): ?>
+                        <?php if (isset($_GET['origen']) && $_GET['origen'] !== '' && (!isset($_GET['destino']) || $_GET['destino'] === '')): ?>
                             <form method="GET" action="transferencia_agregar.php">
                                 <input type="hidden" name="origen" value="<?php echo htmlspecialchars($_GET['origen']); ?>">
                                 <span class="text-gray-700 font-medium mb-2 block">Selecciona la sucursal destino</span>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                                    <?php foreach ($sucursales as $suc) { 
-                                        if ($_GET['origen'] != $suc['id_sucursal']) { ?>
-                                        <label class="w-full h-full cursor-pointer">
-                                            <input type="radio" name="destino" value="<?php echo $suc['id_sucursal']; ?>" class="hidden">
-                                            <div class="border rounded-lg p-4 flex flex-col items-center transition border-gray-300 bg-white hover:border-purple-400 hover:bg-purple-100">
-                                                <i class="fas <?php echo ($suc['tipo_sucursal'] === 'almacen') ? 'fa-warehouse' : (($suc['tipo_sucursal'] === 'fisica') ? 'fa-store' : 'fa-globe'); ?> fa-2x mb-2"></i>
-                                                <span class="font-semibold text-gray-800"><?php echo htmlspecialchars($suc['nombre_sucursal']); ?></span>
-                                                <span class="text-xs text-gray-500 capitalize"><?php echo $suc['tipo_sucursal']; ?></span>
-                                            </div>
-                                        </label>
-                                    <?php }} ?>
+                                    <?php renderRadiosSucursales($sucursales, 'destino', $_GET['destino'] ?? null, $_GET['origen'] ?? null); ?>
                                 </div>
                                 <div class="flex justify-end gap-2">
-                                    <a href="transferencia_agregar.php" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-6 rounded-lg transition duration-300 ease-in-out flex items-center">Atrás</a>
-                                    <button type="submit" id="btn-siguiente-destino" class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-300 ease-in-out" disabled>Siguiente</button>
+                                    <a href="transferencia_agregar.php"
+                                        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-6 rounded-lg transition duration-300 ease-in-out flex items-center">Atrás</a>
+                                    <button type="submit" id="btn-siguiente-destino"
+                                        class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-300 ease-in-out"
+                                        disabled>Siguiente</button>
                                 </div>
                             </form>
                             <script>
-                            const radiosDestino = document.querySelectorAll('input[name="destino"]');
-                            const btnSiguienteDestino = document.getElementById('btn-siguiente-destino');
-                            radiosDestino.forEach(radio => {
-                                radio.addEventListener('change', function() {
-                                    radiosDestino.forEach(r => r.parentElement.querySelector('div').classList.remove('border-purple-500', 'bg-purple-50', 'shadow-lg'));
-                                    if (this.checked) {
-                                        this.parentElement.querySelector('div').classList.add('border-purple-500', 'bg-purple-50', 'shadow-lg');
+                                const radiosDestino = document.querySelectorAll('input[name="destino"]');
+                                const btnSiguienteDestino = document.getElementById('btn-siguiente-destino');
+                                radiosDestino.forEach(radio => {
+                                    radio.addEventListener('change', function () {
+                                        radiosDestino.forEach(r => r.parentElement.querySelector('div').classList.remove('border-purple-500', 'bg-purple-50', 'shadow-lg'));
+                                        if (this.checked) {
+                                            this.parentElement.querySelector('div').classList.add('border-purple-500', 'bg-purple-50', 'shadow-lg');
+                                            btnSiguienteDestino.disabled = false;
+                                        }
+                                    });
+                                });
+                                radiosDestino.forEach(radio => {
+                                    if (radio.checked) {
+                                        radio.parentElement.querySelector('div').classList.add('border-purple-500', 'bg-purple-50', 'shadow-lg');
                                         btnSiguienteDestino.disabled = false;
                                     }
                                 });
-                            });
-                            radiosDestino.forEach(radio => {
-                                if (radio.checked) {
-                                    radio.parentElement.querySelector('div').classList.add('border-purple-500', 'bg-purple-50', 'shadow-lg');
-                                    btnSiguienteDestino.disabled = false;
-                                }
-                            });
                             </script>
                         <?php endif; ?>
                     </div>
@@ -182,42 +163,37 @@ if (isset($_GET['ajax_stock']) && $_GET['ajax_stock'] == '1' && isset($_GET['pro
                         <input type="hidden" name="destino" value="<?php echo htmlspecialchars($_GET['destino']); ?>">
                         <div class="mb-4">
                             <label for="producto" class="block text-gray-700 font-medium mb-1">Producto</label>
-                            <select id="producto" name="producto" class="w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 px-3 py-2 bg-gray-50" required>
+                            <select id="producto" name="producto"
+                                class="w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 px-3 py-2 bg-gray-50"
+                                required>
                                 <option value="">Seleccione un producto...</option>
-                                <?php
-                                $sql_prod = "SELECT id_producto, nombre_producto, talla_producto FROM producto WHERE estado = true ORDER BY nombre_producto ASC";
-                                $res_prod = pg_query($conn, $sql_prod);
-                                $num_prod = pg_num_rows($res_prod);
-                                if ($num_prod == 0) {
-                                    echo '<option disabled>No hay productos activos</option>';
-                                }
-                                while ($prod = pg_fetch_assoc($res_prod)) {
-                                    $selected = (isset($_POST['producto']) && $_POST['producto'] == $prod['id_producto']) ? 'selected' : '';
-                                    $nombre = htmlspecialchars($prod['nombre_producto']);
-                                    $talla = htmlspecialchars($prod['talla_producto']);
-                                    $texto = $nombre . ($talla ? '(' . $talla . ')' : '');
-                                    echo '<option value="' . $prod['id_producto'] . '" ' . $selected . '>' . $texto . '</option>';
-                                }
-                                ?>
+                                <?php renderOpcionesProductos($conn, $_POST['producto'] ?? null); ?>
                             </select>
                             <div id="stock-info" class="mt-2 text-sm text-gray-600"></div>
                         </div>
                         <div class="mb-4">
                             <label for="cantidad" class="block text-gray-700 font-medium mb-1">Cantidad</label>
-                            <input type="number" id="cantidad" name="cantidad" min="1" class="w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 px-3 py-2 bg-gray-50" required>
+                            <input type="number" id="cantidad" name="cantidad" min="1"
+                                class="w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 px-3 py-2 bg-gray-50"
+                                required>
                         </div>
                         <div class="mb-6">
                             <label for="fecha" class="block text-gray-700 font-medium mb-1">Fecha</label>
-                            <input type="date" id="fecha" name="fecha" class="w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 px-3 py-2 bg-gray-50" required value="<?php echo date('Y-m-d'); ?>">
+                            <input type="date" id="fecha" name="fecha"
+                                class="w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 px-3 py-2 bg-gray-50"
+                                required value="<?php echo date('Y-m-d'); ?>">
                         </div>
                         <div class="flex justify-end mt-8 gap-2">
-                            <button type="submit" class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">Registrar Transferencia</button>
+                            <button type="submit"
+                                class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">Registrar
+                                Transferencia</button>
                         </div>
                     </form>
                     <div class="flex justify-end mt-2 gap-2">
                         <form method="GET" action="transferencia_agregar.php" class="m-0">
                             <input type="hidden" name="origen" value="<?php echo htmlspecialchars($_GET['origen']); ?>">
-                            <button type="submit" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-6 rounded-lg transition duration-300 ease-in-out">Atrás</button>
+                            <button type="submit"
+                                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-6 rounded-lg transition duration-300 ease-in-out">Atrás</button>
                         </form>
                     </div>
                 </div>
@@ -226,28 +202,27 @@ if (isset($_GET['ajax_stock']) && $_GET['ajax_stock'] == '1' && isset($_GET['pro
     </main>
     <?php include_once './includes/footer.php'; ?>
     <script>
-    const selectProd = document.getElementById('producto');
-    const stockInfo = document.getElementById('stock-info');
-    const idSucursalOrigen = '<?php echo isset($_GET['origen']) ? htmlspecialchars($_GET['origen']) : ''; ?>';
-    selectProd.addEventListener('change', function() {
-        const id = this.value;
-        if (!id) {
-            stockInfo.textContent = '';
-            return;
-        }
-        stockInfo.textContent = 'Cargando stock...';
-        fetch('transferencia_agregar.php?ajax_stock=1&producto=' + encodeURIComponent(id) + '&sucursal=' + encodeURIComponent(idSucursalOrigen))
-            .then(r => r.text())
-            .then(stock => {
-                stockInfo.innerHTML = 'Stock en sucursal origen: <span class="font-bold text-gray-900">' + stock + '</span>';
-            });
-    });
-    // Si ya hay producto seleccionado al cargar, mostrar stock
-    window.addEventListener('DOMContentLoaded', function() {
-        if (selectProd.value) {
-            selectProd.dispatchEvent(new Event('change'));
-        }
-    });
+        const selectProd = document.getElementById('producto');
+        const stockInfo = document.getElementById('stock-info');
+        const idSucursalOrigen = '<?php echo isset($_GET['origen']) ? htmlspecialchars($_GET['origen']) : ''; ?>';
+        selectProd.addEventListener('change', function () {
+            const id = this.value;
+            if (!id) {
+                stockInfo.textContent = '';
+                return;
+            }
+            stockInfo.textContent = 'Cargando stock...';
+            fetch('transferencia_agregar.php?ajax_stock=1&producto=' + encodeURIComponent(id) + '&sucursal=' + encodeURIComponent(idSucursalOrigen))
+                .then(r => r.text())
+                .then(stock => {
+                    stockInfo.innerHTML = 'Stock en sucursal origen: <span class="font-bold text-gray-900">' + stock + '</span>';
+                });
+        });
+        window.addEventListener('DOMContentLoaded', function () {
+            if (selectProd.value) {
+                selectProd.dispatchEvent(new Event('change'));
+            }
+        });
     </script>
 </body>
 

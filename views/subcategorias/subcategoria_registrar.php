@@ -7,8 +7,6 @@ require_once __DIR__ . '/../../conexion/cone.php';
 require_once __DIR__ . '/subcategoria_utils.php';
 require_once __DIR__ . '/subcategoria_queries.php';
 
-verificarSesionAdmin();
-
 verificarMetodoPost();
 
 $nombre = trim($_POST['nombre_subcategoria'] ?? '');
@@ -29,7 +27,6 @@ manejarResultadoConsulta($result, $conn, '../../subcategoria.php?success=2', '..
 
 if (isset($_GET['eliminar'])) {
     require_once __DIR__ . '/subcategoria_utils.php';
-    verificarSesionAdmin();
     $id = $_GET['eliminar'];
     verificarIdSubcategoria($id);
     require_once __DIR__ . '/subcategoria_queries.php';

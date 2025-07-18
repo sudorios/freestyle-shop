@@ -4,8 +4,7 @@ include_once '../../conexion/cone.php';
 include_once 'ingreso_utils.php';
 include_once 'ingreso_queries.php';
 include_once '../kardex/kardex_queries.php';
-
-verificarSesionAdmin();
+// verificarSesionAdmin();
 verificarMetodoPost();
 
 $referencia = trim($_POST['ref'] ?? '');

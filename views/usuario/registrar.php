@@ -1,5 +1,7 @@
 <?php
-
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 include_once __DIR__ . '/../../conexion/cone.php';
 include_once __DIR__ . '/usuario_queries.php';
 
@@ -20,13 +22,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $result = pg_query_params($conn, $query, array($correo));
 
     if (pg_num_rows($result) > 0) {
-        echo "El correo electrónico ya está registrado...";
+        header('Location: ../../login_add.php?error=correo');
+        exit;
     } else {
         $query2 = getUsuarioByNickname();
         $result2 = pg_query_params($conn, $query2, array($nickname));
 
         if (pg_num_rows($result2) > 0) {
-            echo "El nickname ya está en uso...";
+            header('Location: ../../login_add.php?error=nick');
+            exit;
         } else {
             $query3 = insertUsuario();
             $result3 = pg_query_params($conn, $query3, array(
@@ -42,14 +46,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             ));
 
             if ($result3) {
-                echo "Usuario registrado correctamente.";
-                header("refresh:2;url=login.php");
+                header('Location: ../../login_add.php?success=1');
+                exit;
             } else {
-                echo "Error al registrar al usuario.";
+                header('Location: ../../login_add.php?error=registro');
+                exit;
             }
         }
         pg_free_result($result2);
     }
     pg_free_result($result);
 }
-?>

@@ -2,6 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+$rol = $_SESSION['rol'] ?? '';
 ?>
 <header class="bg-gray-900 text-white fixed top-0 left-0 right-0 z-50">
     <div class="container mx-auto px-4">
@@ -40,6 +41,7 @@ if (session_status() === PHP_SESSION_NONE) {
         <span class="text-xl font-black tracking-wider text-white">FREESTYLE ADMIN</span>
     </a>
     <div>
+        <?php if (in_array($rol, ['developer', 'admin', 'almacen'])): ?>
         <div class="flex items-center cursor-pointer group collapsible-toggle">
             <i class="fas fa-box text-white w-5 h-5 mr-2"></i>
             <h6 class="text-white group-hover:text-blue-400 text-[15px] font-semibold px-2 flex-1">Productos</h6>
@@ -59,6 +61,8 @@ if (session_status() === PHP_SESSION_NONE) {
                     class="flex items-center text-gray-300 hover:text-blue-400 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i
                         class="fas fa-box-open w-4 h-4 mr-2"></i>Catálogo</a></li>
         </ul>
+        <?php endif; ?>
+        <?php if (in_array($rol, ['developer', 'admin'])): ?>
         <div class="flex items-center cursor-pointer group collapsible-toggle mt-4">
             <i class="fas fa-store text-white w-5 h-5 mr-2"></i>
             <h6 class="text-white group-hover:text-blue-400 text-[15px] font-semibold px-2 flex-1">Sucursales</h6>
@@ -69,6 +73,8 @@ if (session_status() === PHP_SESSION_NONE) {
                     class="flex items-center text-gray-300 hover:text-blue-400 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i
                         class="fas fa-store w-4 h-4 mr-2"></i>Gestionar Sucursales</a></li>
         </ul>
+        <?php endif; ?>
+        <?php if (in_array($rol, ['developer', 'admin', 'supervisor', 'almacen'])): ?>
         <div class="flex items-center cursor-pointer group collapsible-toggle mt-4">
             <i class="fas fa-clipboard-list text-white w-5 h-5 mr-2"></i>
             <h6 class="text-white group-hover:text-blue-400 text-[15px] font-semibold px-2 flex-1">Movimientos</h6>
@@ -88,16 +94,32 @@ if (session_status() === PHP_SESSION_NONE) {
                     class="flex items-center text-gray-300 hover:text-blue-400 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i
                         class="fas fa-warehouse w-4 h-4 mr-2"></i>Inventario</a></li>
         </ul>
+        <?php endif; ?>
+        <?php if (in_array($rol, ['developer', 'admin', 'supervisor', 'almacen'])): ?>
         <div class="flex items-center cursor-pointer group collapsible-toggle mt-4">
             <i class="fas fa-shopping-bag text-white w-5 h-5 mr-2"></i>
             <h6 class="text-white group-hover:text-blue-400 text-[15px] font-semibold px-2 flex-1">Pedidos</h6>
             <i class="fas fa-chevron-down text-gray-400 arrow transition-all rotate-90"></i>
         </div>
         <ul class="space-y-1 mt-2 pl-7 max-h-[500px] overflow-hidden transition-all duration-300">
-                            <li><a href="pedido.php"
+            <li><a href="pedido.php"
                     class="flex items-center text-gray-300 hover:text-blue-400 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i
                         class="fas fa-list w-4 h-4 mr-2"></i>Todos los Pedidos</a></li>
         </ul>
+        <?php endif; ?>
+        <?php if (in_array($rol, ['developer', 'analista'])): ?>
+        <div class="flex items-center cursor-pointer group collapsible-toggle mt-4">
+            <i class="fas fa-chart-bar text-white w-5 h-5 mr-2"></i>
+            <h6 class="text-white group-hover:text-blue-400 text-[15px] font-semibold px-2 flex-1">Reportes</h6>
+            <i class="fas fa-chevron-down text-gray-400 arrow transition-all rotate-90"></i>
+        </div>
+        <ul class="space-y-1 mt-2 pl-7 max-h-[500px] overflow-hidden transition-all duration-300">
+            <li><a href="reportes.php"
+                    class="flex items-center text-gray-300 hover:text-blue-400 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i
+                        class="fas fa-chart-bar w-4 h-4 mr-2"></i>Reportes</a></li>
+        </ul>
+        <?php endif; ?>
+        <?php if (in_array($rol, ['developer', 'admin'])): ?>
         <div class="flex items-center cursor-pointer group collapsible-toggle mt-4">
             <i class="fas fa-users text-white w-5 h-5 mr-2"></i>
             <h6 class="text-white group-hover:text-blue-400 text-[15px] font-semibold px-2 flex-1">Usuarios</h6>
@@ -111,16 +133,8 @@ if (session_status() === PHP_SESSION_NONE) {
                     class="flex items-center text-gray-300 hover:text-blue-400 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i
                         class="fas fa-user w-4 h-4 mr-2"></i>Clientes</a></li>
         </ul>
-        <div class="flex items-center cursor-pointer group collapsible-toggle mt-4">
-            <i class="fas fa-chart-bar text-white w-5 h-5 mr-2"></i>
-            <h6 class="text-white group-hover:text-blue-400 text-[15px] font-semibold px-2 flex-1">Reportes</h6>
-            <i class="fas fa-chevron-down text-gray-400 arrow transition-all rotate-90"></i>
-        </div>
-        <ul class="space-y-1 mt-2 pl-7 max-h-[500px] overflow-hidden transition-all duration-300">
-            <li><a href="reportes.php"
-                    class="flex items-center text-gray-300 hover:text-blue-400 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i
-                        class="fas fa-chart-bar w-4 h-4 mr-2"></i>Reportes</a></li>
-        </ul>
+        <?php endif; ?>
+        <?php if (in_array($rol, ['developer', 'admin', 'supervisor', 'almacen', 'analista'])): ?>
         <div class="flex items-center cursor-pointer group collapsible-toggle mt-4">
             <i class="fas fa-cog text-white w-5 h-5 mr-2"></i>
             <h6 class="text-white group-hover:text-blue-400 text-[15px] font-semibold px-2 flex-1">Configuración</h6>
@@ -134,6 +148,7 @@ if (session_status() === PHP_SESSION_NONE) {
                     class="flex items-center text-red-600 hover:text-red-700 font-medium transition-all text-[15px] hover:bg-gray-800 rounded-md px-3 py-2"><i
                         class="fas fa-sign-out-alt w-4 h-4 mr-2"></i>Cerrar Sesión</a></li>
         </ul>
+        <?php endif; ?>
     </div>
 </nav>
 
@@ -155,7 +170,7 @@ if (session_status() === PHP_SESSION_NONE) {
     document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll(".collapsible-toggle").forEach((toggle) => {
             toggle.addEventListener("click", function () {
-                let menu = this.nextElementSibling; // The submenu <ul>
+                let menu = this.nextElementSibling; 
                 let arrowIcon = this.querySelector(".arrow");
 
                 if (menu.offsetHeight !== 0) {

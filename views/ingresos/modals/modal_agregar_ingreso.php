@@ -55,7 +55,6 @@
                         <label for="fecha_ingreso" class="block text-sm font-medium text-gray-700">Fecha de Ingreso</label>
                         <input type="date" id="fecha_ingreso" name="fecha_ingreso" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" required>
                     </div>
-                    <!-- Campos automáticos ocultos -->
                     <input type="hidden" id="precio_costo_unidad" name="precio_costo_unidad">
                     <input type="hidden" id="precio_costo_con_igv" name="precio_costo_con_igv">
                     <input type="hidden" id="precio_venta" name="precio_venta">
@@ -75,10 +74,9 @@
 </div>
 
 <script>
-    const igv = 0.18; // 18% IGV
-    const margen = 0.20; // 20% margen de ganancia
+    const igv = 0.18; 
+    const margen = 0.20; 
 
-    // Establecer fecha actual por defecto
     document.addEventListener('DOMContentLoaded', function() {
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('fecha_ingreso').value = today;
@@ -88,19 +86,15 @@
         const precioCostoTotal = parseFloat(document.getElementById('precio_costo').value) || 0;
         const cantidad = parseInt(document.getElementById('cantidad').value) || 1;
 
-        // 1. Calcular el costo por unidad
         const precioCostoUnidad = cantidad > 0 ? +(precioCostoTotal / cantidad).toFixed(2) : 0;
         document.getElementById('precio_costo_unidad').value = precioCostoUnidad;
 
-        // 2. Calcular costo por unidad con IGV
         const precioCostoConIgvUnidad = +(precioCostoUnidad * (1 + igv)).toFixed(2);
         document.getElementById('precio_costo_con_igv').value = precioCostoConIgvUnidad;
 
-        // 3. Calcular el precio de venta por unidad
         const precioVenta = +(precioCostoConIgvUnidad * (1 + margen)).toFixed(2);
         document.getElementById('precio_venta').value = precioVenta;
 
-        // 4. Calcular utilidades (por unidad y total)
         const utilidadEsperadaUnidad = +(precioVenta - precioCostoUnidad).toFixed(2);
         const utilidadEsperadaTotal = +(utilidadEsperadaUnidad * cantidad).toFixed(2);
         document.getElementById('utilidad_esperada_unidad').value = utilidadEsperadaUnidad;
@@ -111,7 +105,6 @@
         document.getElementById('utilidad_neta_unidad').value = utilidadNetaUnidad;
         document.getElementById('utilidad_neta_total').value = utilidadNetaTotal;
 
-        // 5. Calcular precio_costo_igv del paquete completo
         const precioCostoIgvPaquete = +(precioCostoTotal * (1 + igv)).toFixed(2);
         document.getElementById('precio_costo_igv_paquete').value = precioCostoIgvPaquete;
     }

@@ -10,7 +10,6 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
-verificarSesionAdminInventario();
 
 $sql = getInventarioSucursalQuery();
 $result = pg_query($conn, $sql);

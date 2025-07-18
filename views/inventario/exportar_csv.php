@@ -6,7 +6,6 @@ require_once __DIR__ . '/../../conexion/cone.php';
 require_once __DIR__ . '/inventario_queries.php';
 require_once __DIR__ . '/inventario_utils.php';
 
-verificarSesionAdminInventario();
 
 $sql = getInventarioSucursalQuery();
 $result = pg_query($conn, $sql);

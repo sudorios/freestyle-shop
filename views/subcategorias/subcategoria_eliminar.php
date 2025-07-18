@@ -6,8 +6,6 @@ require_once __DIR__ . '/../../conexion/cone.php';
 require_once __DIR__ . '/subcategoria_utils.php';
 require_once __DIR__ . '/subcategoria_queries.php';
 
-verificarSesionAdmin();
-
 $id = $_POST['id'] ?? $_POST['id_subcategoria'] ?? $_GET['id'] ?? $_GET['id_subcategoria'] ?? null;
 if (!$id || !is_numeric($id)) {
     header('Location: ../../subcategoria.php?error=2');

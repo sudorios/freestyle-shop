@@ -7,6 +7,28 @@ include_once 'includes/head.php';
     <div class="bg-white p-8 w-[600px] border-2 border-black">
         <h2 class="text-3xl font-black mb-8 text-center tracking-wider">CREAR CUENTA</h2>
 
+        <?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
+            <div class='bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4 text-center font-bold uppercase tracking-wider'>
+                Usuario registrado correctamente. Redirigiendo...
+            </div>
+            <meta http-equiv="refresh" content="2;url=login.php">
+        <?php endif; ?>
+        <?php if (isset($_GET['error'])): ?>
+            <div class='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 text-center font-bold uppercase tracking-wider'>
+                <?php
+                if ($_GET['error'] === 'correo') {
+                    echo 'El correo electrónico ya está registrado.';
+                } elseif ($_GET['error'] === 'nick') {
+                    echo 'El nickname ya está en uso.';
+                } elseif ($_GET['error'] === 'registro') {
+                    echo 'Error al registrar al usuario.';
+                } else {
+                    echo 'Ocurrió un error.';
+                }
+                ?>
+            </div>
+        <?php endif; ?>
+
         <form action="views/usuario/registrar.php" method="POST" class="space-y-6">
             <div class="grid grid-cols-2 gap-6">
                 <div>

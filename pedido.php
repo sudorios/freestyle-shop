@@ -3,66 +3,14 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 include_once './conexion/cone.php';
+include_once './views/pedidos/pedido_queries.php';
+include_once './views/pedidos/pedido_utils.php';
 
-// Filtros
-$fecha_desde = $_GET['fecha_desde'] ?? '';
-$fecha_hasta = $_GET['fecha_hasta'] ?? '';
-$estado = $_GET['estado'] ?? '';
-$orden_precio = $_GET['orden_precio'] ?? '';
-$busqueda = $_GET['busqueda'] ?? '';
+$filtros = get_pedido_filters_from_get();
+list($where_sql, $params) = build_pedido_where_sql_and_params($filtros);
+$order_sql = get_pedido_order_sql($filtros['orden_precio']);
 
-$where = [];
-$params = [];
-$paramIdx = 1;
-
-if ($fecha_desde) {
-    $where[] = "p.fecha >= $" . $paramIdx;
-    $params[] = $fecha_desde;
-    $paramIdx++;
-}
-if ($fecha_hasta) {
-    $where[] = "p.fecha <= $" . $paramIdx;
-    $params[] = $fecha_hasta;
-    $paramIdx++;
-}
-if ($estado) {
-    $where[] = "p.estado = $" . $paramIdx;
-    $params[] = $estado;
-    $paramIdx++;
-}
-if ($busqueda) {
-    $where[] = "(CAST(p.id_pedido AS TEXT) ILIKE $" . $paramIdx . " OR u.nombre_usuario ILIKE $" . $paramIdx . ")";
-    $params[] = '%' . $busqueda . '%';
-    $paramIdx++;
-}
-
-$where_sql = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
-
-$order_sql = 'ORDER BY p.fecha DESC';
-if ($orden_precio === 'mayor') {
-    $order_sql = 'ORDER BY p.total DESC';
-} elseif ($orden_precio === 'menor') {
-    $order_sql = 'ORDER BY p.total ASC';
-}
-
-// Paginación
-$limite = isset($_GET['limite']) ? max(1, intval($_GET['limite'])) : 10;
-$pagina = isset($_GET['pagina']) ? max(1, intval($_GET['pagina'])) : 1;
-$offset = ($pagina - 1) * $limite;
-
-// Contar total de pedidos para paginación
-$sql_count = "SELECT COUNT(*) FROM pedido p LEFT JOIN usuario u ON p.id_usuario = u.id_usuario $where_sql";
-$res_count = pg_query_params($conn, $sql_count, $params);
-$total_pedidos = $res_count ? intval(pg_fetch_result($res_count, 0, 0)) : 0;
-$total_paginas = ceil($total_pedidos / $limite);
-
-// Consulta principal con paginación
-$sql = "SELECT p.id_pedido, u.nombre_usuario, p.fecha, p.total, p.estado
-        FROM pedido p
-        LEFT JOIN usuario u ON p.id_usuario = u.id_usuario
-        $where_sql
-        $order_sql
-        LIMIT $limite OFFSET $offset";
+$sql = query_listar_pedidos($where_sql, $order_sql);
 $res = pg_query_params($conn, $sql, $params);
 $pedidos = [];
 if ($res) {
@@ -104,32 +52,28 @@ if ($res) {
             <form method="get" class="mb-6 flex flex-wrap gap-4 items-end bg-gray-50 p-4 rounded-lg shadow">
                 <div>
                     <label class="block text-xs font-semibold mb-1">Fecha desde</label>
-                    <input type="date" name="fecha_desde" value="<?= htmlspecialchars($fecha_desde) ?>" class="border rounded px-2 py-1">
+                    <input type="date" name="fecha_desde" value="<?= htmlspecialchars($filtros['fecha_desde']) ?>" class="border rounded px-2 py-1">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold mb-1">Fecha hasta</label>
-                    <input type="date" name="fecha_hasta" value="<?= htmlspecialchars($fecha_hasta) ?>" class="border rounded px-2 py-1">
+                    <input type="date" name="fecha_hasta" value="<?= htmlspecialchars($filtros['fecha_hasta']) ?>" class="border rounded px-2 py-1">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold mb-1">Estado</label>
                     <select name="estado" class="border rounded px-2 py-1">
                         <option value="">Todos</option>
-                        <option value="PENDIENTE" <?= $estado === 'PENDIENTE' ? 'selected' : '' ?>>Pendiente</option>
-                        <option value="RECIBIDO" <?= $estado === 'RECIBIDO' ? 'selected' : '' ?>>Recibido</option>
-                        <option value="CANCELADO" <?= $estado === 'CANCELADO' ? 'selected' : '' ?>>Cancelado</option>
+                        <option value="PENDIENTE" <?= $filtros['estado'] === 'PENDIENTE' ? 'selected' : '' ?>>Pendiente</option>
+                        <option value="RECIBIDO" <?= $filtros['estado'] === 'RECIBIDO' ? 'selected' : '' ?>>Recibido</option>
+                        <option value="CANCELADO" <?= $filtros['estado'] === 'CANCELADO' ? 'selected' : '' ?>>Cancelado</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold mb-1">Ordenar por precio</label>
                     <select name="orden_precio" class="border rounded px-2 py-1">
                         <option value="">Por fecha</option>
-                        <option value="mayor" <?= $orden_precio === 'mayor' ? 'selected' : '' ?>>Mayor a menor</option>
-                        <option value="menor" <?= $orden_precio === 'menor' ? 'selected' : '' ?>>Menor a mayor</option>
+                        <option value="mayor" <?= $filtros['orden_precio'] === 'mayor' ? 'selected' : '' ?>>Mayor a menor</option>
+                        <option value="menor" <?= $filtros['orden_precio'] === 'menor' ? 'selected' : '' ?>>Menor a mayor</option>
                     </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold mb-1">Pedidos por página</label>
-                    <input type="number" name="limite" min="1" value="<?= $limite ?>" class="border rounded px-2 py-1 w-20">
                 </div>
                 <div>
                     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Filtrar</button>
@@ -138,7 +82,7 @@ if ($res) {
             <hr class="my-4 border-t-2 border-gray-200 rounded-full opacity-80">
             <div class="bg-white shadow-md rounded-lg overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table id="tablaPedidos" class="min-w-full divide-y divide-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
@@ -149,7 +93,7 @@ if ($res) {
                                 <th class="px-6 py-3"></th>
                             </tr>
                         </thead>
-                        <tbody id="tbodyPedidos" class="bg-white divide-y divide-gray-200">
+                        <tbody class="bg-white divide-y divide-gray-200">
                             <?php foreach ($pedidos as $pedido): ?>
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap font-semibold text-gray-800"><?php echo htmlspecialchars($pedido['id_pedido']); ?></td>
@@ -180,8 +124,8 @@ if ($res) {
                                         <?php if (in_array($pedido['estado'], ['PENDIENTE', 'RECIBIDO'])): ?>
                                             <form method="post" action="views/pedidos/cancelar_pedido.php" class="inline-block ml-2 form-cancelar-pedido">
                                                 <input type="hidden" name="id_pedido" value="<?= htmlspecialchars($pedido['id_pedido']) ?>">
-                                                <button type="button" title="Cancelar pedido"
-                                                    class="inline-flex items-center bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 rounded shadow transition btn-cancelar-pedido">
+                                                <button type="submit" title="Cancelar pedido"
+                                                    class="inline-flex cursor-pointer items-center bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 rounded shadow transition btn-cancelar-pedido">
                                                     <i class="fas fa-times"></i>
                                                 </button>
                                             </form>
@@ -203,22 +147,6 @@ if ($res) {
     <script src="assets/js/pedido.js"></script>
     <script src="assets/js/tabla_utils.js"></script>
     <script src="assets/js/modal_confirmar.js"></script>
-    <script>
-        document.querySelectorAll('.btn-cancelar-pedido').forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const form = btn.closest('form');
-                abrirModalConfirmar({
-                    mensaje: '¿Seguro que deseas cancelar este pedido? Esta acción devolverá el stock.',
-                    action: form.action,
-                    id: form.querySelector('input[name="id_pedido"]').value,
-                    idField: 'id_pedido',
-                    method: 'POST',
-                    extraFields: []
-                });
-            });
-        });
-    </script>
     <?php include_once './includes/footer.php'; ?>
 </body>
 </html> 

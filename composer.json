@@ -1,6 +1,7 @@
 {
     "require": {
         "cloudinary/cloudinary_php": "*",
-        "dompdf/dompdf": "*"
+        "dompdf/dompdf": "*",
+        "vlucas/phpdotenv": "^5.6"
     }
 }

@@ -36,8 +36,6 @@ function initEditarUsuario() {
             document.getElementById('edit_nickname').value = nickname;
             document.getElementById('edit_telefono').value = telefono;
             document.getElementById('edit_direccion').value = direccion;
-            document.getElementById('edit_rol').value = rol;
-            document.getElementById('edit_estado').value = estado;
 
             abrirModal();
         });

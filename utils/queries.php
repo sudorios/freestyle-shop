@@ -46,7 +46,6 @@ function getProductosPorCategoriaQuery()
         ORDER BY cp.id ASC";
 }
 
-// Consultas de pedidos
 function getPedidosQuery($where_sql = '', $order_sql = 'ORDER BY p.fecha DESC', $limit_offset = '')
 {
     return "SELECT p.id_pedido, u.nombre_usuario, p.fecha, p.total, p.estado
@@ -142,4 +141,130 @@ function obtenerStockPorCatalogoYTalla($conn, $catalogo_id, $talla) {
     $sql = getStockPorCatalogoYTallaQuery();
     $result = pg_query_params($conn, $sql, [$catalogo_id, $talla]);
     return pg_fetch_assoc($result);
+} 
+
+function getSucursalesActivasQuery() {
+    return "SELECT id_sucursal, nombre_sucursal FROM sucursal WHERE estado_sucursal = true ORDER BY nombre_sucursal ASC";
+} 
+
+function getProductoPorIdQuery() {
+    return "SELECT 
+        cp.id,
+        p.id_producto AS producto_id,
+        p.nombre_producto,
+        p.descripcion_producto,
+        p.talla_producto,
+        c.nombre_categoria,
+        s.nombre_subcategoria,
+        ip.url_imagen,
+        i.precio_venta,
+        cp.limite_oferta,
+        cp.oferta,
+        (i.precio_venta * (1 - (cp.oferta / 100))) AS precio_con_descuento
+    FROM 
+        catalogo_productos cp
+    JOIN 
+        producto p ON cp.producto_id = p.id_producto
+    JOIN 
+        ingreso i ON cp.ingreso_id = i.id
+    JOIN 
+        imagenes_producto ip ON cp.imagen_id = ip.id
+    LEFT JOIN 
+        subcategoria s ON p.id_subcategoria = s.id_subcategoria
+    LEFT JOIN 
+        categoria c ON s.id_categoria = c.id_categoria
+    WHERE
+        cp.sucursal_id = 7
+        AND (cp.estado = true OR cp.estado = 't')
+        AND cp.id = $1
+    ORDER BY 
+        cp.id ASC
+    LIMIT 1;";
+}
+
+function obtenerProductoPorId($conn, $catalogo_id) {
+    $sql = getProductoPorIdQuery();
+    $result = pg_query_params($conn, $sql, [$catalogo_id]);
+    return pg_fetch_assoc($result);
+} 
+
+function getTallasPorCatalogoIdQuery() {
+    return "SELECT DISTINCT p.talla_producto  
+    FROM catalogo_productos cp
+    JOIN producto p ON cp.producto_id = p.id_producto
+    JOIN inventario_sucursal isuc ON p.id_producto = isuc.id_producto
+    WHERE cp.sucursal_id = 7  
+      AND isuc.cantidad > 0  
+      AND cp.id = $1
+    ORDER BY p.talla_producto ASC;";
+}
+
+function obtenerTallasPorCatalogoId($conn, $catalogo_id) {
+    $sql = getTallasPorCatalogoIdQuery();
+    $res = pg_query_params($conn, $sql, [$catalogo_id]);
+    $tallas = [];
+    if ($res) {
+        while ($row = pg_fetch_assoc($res)) {
+            if (!empty($row['talla_producto'])) {
+                $tallas[] = $row['talla_producto'];
+            }
+        }
+    }
+    return $tallas;
+} 
+
+function getImagenesPorProductoIdQuery() {
+    return "SELECT * FROM imagenes_producto WHERE producto_id = $1 ORDER BY creado_en DESC";
+}
+
+function obtenerImagenesPorProductoId($conn, $producto_id) {
+    $sql = getImagenesPorProductoIdQuery();
+    $res = pg_query_params($conn, $sql, [$producto_id]);
+    $imagenes = [];
+    if ($res && pg_num_rows($res) > 0) {
+        while ($img = pg_fetch_assoc($res)) {
+            $imagenes[] = $img;
+        }
+    }
+    return $imagenes;
+} 
+
+function check_rol($roles_permitidos) {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    if (!isset($_SESSION['rol']) || !in_array($_SESSION['rol'], $roles_permitidos)) {
+        header('Location: /freestyle-shop/login.php');
+        exit();
+    }
+} 
+
+function getTotalProductosQuery() {
+    return "SELECT COUNT(*) FROM producto";
+}
+function getTotalPedidosQuery() {
+    return "SELECT COUNT(*) FROM pedido";
+}
+function getTotalIngresosQuery() {
+    return "SELECT COUNT(*) FROM ingreso";
+}
+function getTotalUsuariosQuery() {
+    return "SELECT COUNT(*) FROM usuario";
+}
+function getProductosPorEstadoQuery() {
+    return "SELECT estado, COUNT(*) as cantidad FROM inventario_sucursal GROUP BY estado ORDER BY estado";
+}
+function getPedidosPorMesQuery() {
+    return "SELECT TO_CHAR(fecha, 'YYYY-MM') AS mes, COUNT(*) AS cantidad FROM pedido GROUP BY mes ORDER BY mes";
+}
+function getIngresosPorMesQuery() {
+    return "SELECT TO_CHAR(fecha_ingreso, 'YYYY-MM') AS mes, COUNT(*) AS cantidad FROM ingreso GROUP BY mes ORDER BY mes";
+}
+function getTopProductosVendidosQuery($limit = 5) {
+    return "SELECT p.nombre_producto, SUM(dp.cantidad) as total_vendidos
+        FROM pedido_detalle dp
+        JOIN producto p ON dp.id_producto = p.id_producto
+        GROUP BY p.nombre_producto
+        ORDER BY total_vendidos DESC
+        LIMIT $limit";
 } 

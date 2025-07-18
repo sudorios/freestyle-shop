@@ -1,5 +1,4 @@
 <?php
-// Centraliza las consultas relacionadas con pedidos y detalle_pedido
 
 function query_insertar_pedido() {
     return "INSERT INTO pedido (id_usuario, total, estado, direccion_envio, metodo_pago, observaciones) 
@@ -13,4 +12,12 @@ function query_insertar_detalle_pedido() {
 
 function query_actualizar_stock_producto() {
     return "UPDATE inventario_sucursal SET cantidad = cantidad - $1 WHERE id_producto = $2 AND id_sucursal = $3";
+} 
+
+function query_listar_pedidos($where_sql, $order_sql) {
+    return "SELECT p.id_pedido, u.nombre_usuario, p.fecha, p.total, p.estado
+            FROM pedido p
+            LEFT JOIN usuario u ON p.id_usuario = u.id_usuario
+            $where_sql
+            $order_sql";
 } 

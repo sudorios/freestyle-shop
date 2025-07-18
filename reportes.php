@@ -1,15 +1,9 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+session_start();
+require_once './utils/queries.php';
+check_rol(['developer','analista']);
 include_once './conexion/cone.php';
 
-if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
-    header('Location: login.php');
-    exit();
-}
-
-// Consulta para obtener el conteo de productos por estado
 $sql = "SELECT estado, COUNT(*) as cantidad FROM inventario_sucursal GROUP BY estado ORDER BY estado";
 $result = pg_query($conn, $sql);
 
@@ -20,7 +14,6 @@ while ($row = pg_fetch_assoc($result)) {
     $cantidades[] = (int)$row['cantidad'];
 }
 
-// Consulta para pedidos por mes
 $sql_pedidos_mes = "SELECT TO_CHAR(fecha, 'YYYY-MM') AS mes, COUNT(*) AS cantidad FROM pedido GROUP BY mes ORDER BY mes";
 $res_pedidos_mes = pg_query($conn, $sql_pedidos_mes);
 $meses = [];
@@ -64,9 +57,9 @@ while ($row = pg_fetch_assoc($res_pedidos_mes)) {
                     label: 'Cantidad de productos',
                     data: <?php echo json_encode($cantidades); ?>,
                     backgroundColor: [
-                        'rgba(34,197,94,0.7)', // verde
-                        'rgba(234,179,8,0.7)', // amarillo
-                        'rgba(239,68,68,0.7)'  // rojo
+                        'rgba(34,197,94,0.7)',
+                        'rgba(234,179,8,0.7)', 
+                        'rgba(239,68,68,0.7)' 
                     ],
                     borderColor: [
                         'rgba(34,197,94,1)',

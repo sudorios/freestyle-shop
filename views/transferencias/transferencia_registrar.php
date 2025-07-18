@@ -1,11 +1,13 @@
 <?php
-session_start();
-include_once '../../conexion/cone.php';
-include_once 'transferencia_utils.php';
-include_once 'transferencia_queries.php';
-include_once '../kardex/kardex_queries.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-verificarSesionAdmin();
+require_once __DIR__ . '/../../conexion/cone.php';
+require_once __DIR__ . '/transferencia_utils.php';
+require_once __DIR__ . '/transferencia_queries.php';
+require_once __DIR__ . '/../kardex/kardex_queries.php';
+
 verificarMetodoPost();
 
 $origen = $_POST['origen'] ?? '';

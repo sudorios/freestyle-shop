@@ -4,7 +4,7 @@ include_once __DIR__ . '/../../conexion/cone.php';
 include_once __DIR__ . '/usuario_queries.php';
 include_once __DIR__ . '/usuario_utils.php';
 
-verificarSesionAdmin();
+
 verificarMetodoPost();
 verificarIdUsuario($_POST['id_usuario']);
 

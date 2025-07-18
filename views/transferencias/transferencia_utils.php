@@ -1,13 +1,4 @@
 <?php
-// Funciones auxiliares para transferencias 
-
-function verificarSesionAdmin()
-{
-    if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
-        header('Location: login.php');
-        exit();
-    }
-}
 
 function verificarMetodoPost()
 {
@@ -93,9 +84,9 @@ function validarFecha($fecha)
     return true;
 } 
 
-function obtenerSucursalesActivas($conn) {
+function obtenerSucursalesActivasConTipo($conn) {
     $sucursales = [];
-    $res = pg_query($conn, getSucursalesActivasQuery());
+    $res = pg_query($conn, getSucursalesActivasConTipoQuery());
     while ($row = pg_fetch_assoc($res)) {
         $sucursales[] = $row;
     }
@@ -114,3 +105,61 @@ function obtenerFiltrosTransferencia() {
         'destino' => $filtro_destino
     ];
 } 
+
+function obtenerTipoSucursal($sucursales, $id_sucursal) {
+    foreach ($sucursales as $suc) {
+        if ($suc['id_sucursal'] == $id_sucursal) {
+            return $suc['tipo_sucursal'] ?? '';
+        }
+    }
+    return '';
+}
+
+function renderOpcionesSucursales($sucursales, $selected = null, $excluir = null) {
+    foreach ($sucursales as $suc) {
+        if ($excluir !== null && $suc['id_sucursal'] == $excluir) continue;
+        $isSelected = ($selected == $suc['id_sucursal']) ? 'selected' : '';
+        echo '<option value="' . $suc['id_sucursal'] . '" ' . $isSelected . '>' . htmlspecialchars($suc['nombre_sucursal']) . '</option>';
+    }
+}
+
+function renderOpcionesProductos($conn, $selected = null) {
+    $sql_prod = getProductosActivosQuery();
+    $res_prod = pg_query($conn, $sql_prod);
+    $num_prod = pg_num_rows($res_prod);
+    if ($num_prod == 0) {
+        echo '<option disabled>No hay productos activos</option>';
+    }
+    while ($prod = pg_fetch_assoc($res_prod)) {
+        $isSelected = ($selected == $prod['id_producto']) ? 'selected' : '';
+        $nombre = htmlspecialchars($prod['nombre_producto']);
+        $talla = htmlspecialchars($prod['talla_producto']);
+        $texto = $nombre . ($talla ? '(' . $talla . ')' : '');
+        echo '<option value="' . $prod['id_producto'] . '" ' . $isSelected . '>' . $texto . '</option>';
+    }
+} 
+
+function renderRadiosSucursales($sucursales, $name, $selected = null, $excluir = null) {
+    foreach ($sucursales as $suc) {
+        if ($excluir !== null && $suc['id_sucursal'] == $excluir) continue;
+        $isChecked = ($selected == $suc['id_sucursal']) ? 'checked' : '';
+        $icon = ($suc['tipo_sucursal'] === 'almacen') ? 'fa-warehouse' : (($suc['tipo_sucursal'] === 'fisica') ? 'fa-store' : 'fa-globe');
+        echo '<label class="w-full h-full cursor-pointer">';
+        echo '<input type="radio" name="' . $name . '" value="' . $suc['id_sucursal'] . '" class="hidden" ' . $isChecked . '>';
+        echo '<div class="border rounded-lg p-4 flex flex-col items-center transition border-gray-300 bg-white hover:border-purple-400 hover:bg-purple-100">';
+        echo '<i class="fas ' . $icon . ' fa-2x mb-2"></i>';
+        echo '<span class="font-semibold text-gray-800">' . htmlspecialchars($suc['nombre_sucursal']) . '</span>';
+        echo '<span class="text-xs text-gray-500 capitalize">' . htmlspecialchars($suc['tipo_sucursal']) . '</span>';
+        echo '</div>';
+        echo '</label>';
+    }
+} 
+
+function obtenerStockProductoSucursal($conn, $producto, $sucursal) {
+    $id_producto = pg_escape_string($conn, $producto);
+    $id_sucursal = pg_escape_string($conn, $sucursal);
+    $sql_stock = "SELECT COALESCE(cantidad, 0) AS total_stock FROM inventario_sucursal WHERE id_producto = '$id_producto' AND id_sucursal = '$id_sucursal'";
+    $res_stock = pg_query($conn, $sql_stock);
+    $row_stock = pg_fetch_assoc($res_stock);
+    return $row_stock ? $row_stock['total_stock'] : 0;
+}

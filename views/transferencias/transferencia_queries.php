@@ -69,8 +69,8 @@ function getListadoTransferenciasQuery($where_sql = '') {
         ORDER BY t.fecha_transferencia DESC";
 } 
 
-function getSucursalesActivasQuery() {
-    return "SELECT id_sucursal, nombre_sucursal FROM sucursal WHERE estado_sucursal = true ORDER BY nombre_sucursal ASC";
+function getSucursalesActivasConTipoQuery() {
+    return "SELECT id_sucursal, nombre_sucursal, tipo_sucursal FROM sucursal WHERE estado_sucursal = true ORDER BY nombre_sucursal ASC";
 }
 
 function getWhereFiltrosTransferencia($conn, $fecha_inicio, $fecha_fin, $origen, $destino) {
@@ -92,4 +92,8 @@ function getWhereFiltrosTransferencia($conn, $fecha_inicio, $fecha_fin, $origen,
         $where_sql = 'WHERE ' . implode(' AND ', $where);
     }
     return $where_sql;
+} 
+
+function getProductosActivosQuery() {
+    return "SELECT id_producto, nombre_producto, talla_producto FROM producto WHERE estado = true ORDER BY nombre_producto ASC";
 } 

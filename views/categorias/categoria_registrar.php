@@ -7,7 +7,6 @@ require_once __DIR__ . '/../../conexion/cone.php';
 require_once __DIR__ . '/categoria_queries.php';
 require_once __DIR__ . '/categoria_utils.php';
 
-verificarSesionAdmin();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ../../categoria.php');

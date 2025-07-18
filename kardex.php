@@ -3,13 +3,10 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 include_once './conexion/cone.php';
+include_once './utils/queries.php';
 include_once 'views/kardex/kardex_queries.php';
 include_once 'views/kardex/kardex_utils.php';
 
-if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
-    header('Location: login.php');
-    exit();
-}
 
 $fecha_inicio = isset($_GET['fecha_inicio']) && $_GET['fecha_inicio'] !== '' ? $_GET['fecha_inicio'] : '';
 $fecha_fin = isset($_GET['fecha_fin']) && $_GET['fecha_fin'] !== '' ? $_GET['fecha_fin'] : '';

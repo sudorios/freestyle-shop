@@ -276,7 +276,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Toggle estado catálogo
     document.querySelectorAll('table .fa-toggle-on, table .fa-toggle-off').forEach(function(btn) {
         btn.parentElement.addEventListener('click', function(e) {
             e.preventDefault();

@@ -2,77 +2,53 @@
 include_once './includes/head.php';
 include_once './includes_client/header.php';
 include_once './conexion/cone.php';
+include_once './utils/queries.php';
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if ($id <= 0) {
     die('Producto no válido.');
 }
 
-$sql = "SELECT 
-    cp.id,
-    p.nombre_producto,
-    p.descripcion_producto,
-    p.talla_producto,
-    c.nombre_categoria,
-    s.nombre_subcategoria,
-    ip.url_imagen,
-    i.precio_venta,
-    cp.limite_oferta,
-    cp.oferta,
-    (i.precio_venta * (1 - (cp.oferta / 100))) AS precio_con_descuento
-FROM 
-    catalogo_productos cp
-JOIN 
-    producto p ON cp.producto_id = p.id_producto
-JOIN 
-    ingreso i ON cp.ingreso_id = i.id
-JOIN 
-    imagenes_producto ip ON cp.imagen_id = ip.id
-LEFT JOIN 
-    subcategoria s ON p.id_subcategoria = s.id_subcategoria
-LEFT JOIN 
-    categoria c ON s.id_categoria = c.id_categoria
-WHERE
-    cp.sucursal_id = 7
-    AND (cp.estado = true OR cp.estado = 't')
-    AND cp.id = $1
-ORDER BY 
-    cp.id ASC
-LIMIT 1;";
-
-$result = pg_query_params($conn, $sql, [$id]);
-$producto = pg_fetch_assoc($result);
+$producto = obtenerProductoPorId($conn, $id);
 if (!$producto) {
     die('Producto no encontrado o no está en oferta.');
 }
 
-$sql_tallas = "SELECT DISTINCT p.talla_producto  
-FROM catalogo_productos cp
-JOIN producto p ON cp.producto_id = p.id_producto
-JOIN inventario_sucursal isuc ON p.id_producto = isuc.id_producto
-WHERE cp.sucursal_id = 7  
-  AND isuc.cantidad > 0  
-  AND cp.id = $1
-ORDER BY p.talla_producto ASC;";
-$res_tallas = pg_query_params($conn, $sql_tallas, [$id]);
-$tallas_disponibles = [];
-if ($res_tallas) {
-    while ($row = pg_fetch_assoc($res_tallas)) {
-        if (!empty($row['talla_producto'])) {
-            $tallas_disponibles[] = $row['talla_producto'];
-        }
-    }
-}
+$tallas_disponibles = obtenerTallasPorCatalogoId($conn, $id);
 ?>
 <!DOCTYPE html>
 <html lang="es">
 
 <body class="bg-gray-100 min-h-screen">
     <main class="container mx-auto py-10 px-4 flex flex-col md:flex-row items-center md:items-start gap-0">
-        <div class="w-full md:w-1/2 flex justify-center">
-            <img src="<?php echo htmlspecialchars($producto['url_imagen']); ?>"
-                alt="<?php echo htmlspecialchars($producto['nombre_producto']); ?>"
-                class="rounded-lg shadow-lg max-w-xs md:max-w-md w-full object-cover aspect-square bg-white" />
+        <div class="w-full md:w-1/2 flex flex-col items-center">
+            <?php
+            $imagenes = obtenerImagenesPorProductoId($conn, $producto['producto_id']);
+            ?>
+            <?php if (count($imagenes) > 0): ?>
+                <div class="mb-4">
+                    <img id="imgPrincipal" src="<?php echo htmlspecialchars($imagenes[0]['url_imagen']); ?>"
+                        alt="<?php echo htmlspecialchars($producto['nombre_producto']); ?>"
+                        class="rounded-lg shadow-lg max-w-xs md:max-w-md w-full object-cover aspect-square bg-white border border-gray-200" />
+                </div>
+                <?php if (count($imagenes) > 1): ?>
+                    <div class="mb-2 w-full max-w-md">
+                        <div class="text-sm font-semibold text-gray-700 mb-1">Galería de imágenes</div>
+                        <div class="grid grid-cols-4 sm:grid-cols-6 gap-2 p-2 rounded bg-gray-100">
+                            <?php foreach ($imagenes as $idx => $img): ?>
+                                <img src="<?php echo htmlspecialchars($img['url_imagen']); ?>"
+                                    alt="Miniatura <?php echo $idx+1; ?>"
+                                    class="w-16 h-16 object-cover rounded border border-gray-300 shadow-sm cursor-pointer hover:scale-105 transition-transform duration-150 bg-white"
+                                    onclick="document.getElementById('imgPrincipal').src=this.src" />
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            <?php else: ?>
+                <img src="<?php echo htmlspecialchars($producto['url_imagen']); ?>"
+                    alt="<?php echo htmlspecialchars($producto['nombre_producto']); ?>"
+                    class="rounded-lg shadow-lg max-w-xs md:max-w-md w-full object-cover aspect-square bg-white" />
+            <?php endif; ?>
         </div>
         <div class="hidden md:block w-px h-[420px] bg-gray-200 mx-2"></div>
         <div class="w-full md:w-1/2 flex flex-col items-start md:pl-0 md:pr-8">
@@ -150,108 +126,9 @@ if ($res_tallas) {
     </main>
     <?php include_once './includes/footer.php'; ?>
     <script>
-        const catalogoId = <?php echo (int) $producto['id']; ?>;
-        let stockDisponible = 0;
-        let tallaSeleccionada = null;
-
-        function actualizarBtnCarrito(habilitar) {
-            const btn = document.getElementById('btnCarrito');
-            if (habilitar) {
-                btn.disabled = false;
-                btn.classList.remove('bg-gray-300', 'text-gray-400', 'cursor-not-allowed');
-                btn.classList.add('bg-blue-600', 'hover:bg-blue-700', 'text-white', 'cursor-pointer');
-            } else {
-                btn.disabled = true;
-                btn.classList.add('bg-gray-300', 'text-gray-400', 'cursor-not-allowed');
-                btn.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'text-white', 'cursor-pointer');
-            }
-        }
-        actualizarBtnCarrito(false);
-
-        function actualizarStock(talla) {
-            fetch(`utils/obtener_stock.php?catalogo_id=${catalogoId}&talla=${encodeURIComponent(talla)}`)
-                .then(res => res.json())
-                .then(data => {
-                    const cantidadInput = document.getElementById('cantidad');
-                    const btnCarrito = document.getElementById('btnCarrito');
-                    const stockMsg = document.getElementById('stockMsg');
-                    if (data.success && data.cantidad > 0) {
-                        stockDisponible = data.cantidad;
-                        cantidadInput.max = stockDisponible;
-                        if (parseInt(cantidadInput.value) > stockDisponible) {
-                            cantidadInput.value = stockDisponible;
-                        }
-                        cantidadInput.disabled = false;
-                        actualizarBtnCarrito(true);
-                        btnCarrito.textContent = 'Añadir al carrito';
-                        stockMsg.textContent = `Stock disponible: ${stockDisponible}`;
-                        stockMsg.className = 'text-sm text-green-600 mt-1';
-                    } else {
-                        stockDisponible = 0;
-                        cantidadInput.value = 1;
-                        cantidadInput.max = 1;
-                        cantidadInput.disabled = true;
-                        actualizarBtnCarrito(false);
-                        btnCarrito.textContent = 'Sin stock';
-                        stockMsg.textContent = 'Sin stock para esta talla';
-                        stockMsg.className = 'text-sm text-red-600 mt-1';
-                    }
-                });
-        }
-
-        document.querySelectorAll('.talla-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                document.querySelectorAll('.talla-btn').forEach(b => b.classList.remove('bg-blue-600'));
-                this.classList.add('bg-blue-600');
-                tallaSeleccionada = this.getAttribute('data-talla');
-                actualizarStock(tallaSeleccionada);
-            });
-        });
-
-        function cambiarCantidad(delta) {
-            const input = document.getElementById('cantidad');
-            let val = parseInt(input.value) || 1;
-            val += delta;
-            if (val < 1) val = 1;
-            if (stockDisponible > 0 && val > stockDisponible) val = stockDisponible;
-            input.value = val;
-        }
-
-        document.getElementById('formCarrito').addEventListener('submit', function (e) {
-            e.preventDefault();
-            if (!tallaSeleccionada || stockDisponible < 1) {
-                return;
-            }
-            const cantidad = parseInt(document.getElementById('cantidad').value) || 1;
-            fetch('views/carrito/carrito_registrar.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `catalogo_id=${encodeURIComponent(catalogoId)}&talla=${encodeURIComponent(tallaSeleccionada)}&cantidad=${encodeURIComponent(cantidad)}`
-            })
-                .then(res => res.json())
-                .then(data => {
-                    const msg = document.getElementById('msgCarrito');
-                    if (data.success) {
-                        msg.textContent = '¡Producto agregado al carrito exitosamente!';
-                        msg.classList.remove('hidden', 'text-red-600');
-                        msg.classList.add('text-green-600');
-                        if (typeof actualizarContadorCarritoAjax === 'function') actualizarContadorCarritoAjax();
-                    } else {
-                        msg.textContent = data.error || 'Error al añadir al carrito';
-                        msg.classList.remove('hidden', 'text-green-600');
-                        msg.classList.add('text-red-600');
-                    }
-                    setTimeout(() => { msg.classList.add('hidden'); }, 3000);
-                })
-                .catch(() => {
-                    const msg = document.getElementById('msgCarrito');
-                    msg.textContent = 'Error de conexión con el servidor';
-                    msg.classList.remove('hidden', 'text-green-600');
-                    msg.classList.add('text-red-600');
-                    setTimeout(() => { msg.classList.add('hidden'); }, 2000);
-                });
-        });
+        window.catalogoId = <?php echo (int) $producto['id']; ?>;
     </script>
+    <script src="assets/js/ver_producto.js"></script>
 </body>
 
 </html>

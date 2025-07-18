@@ -6,8 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../../conexion/cone.php';
 require_once __DIR__ . '/producto_queries.php';
 require_once __DIR__ . '/producto_utils.php';
-
-verificarSesionAdmin();
+// verificarSesionAdmin();
 verificarMetodoPost();
 
 $ref_producto = trim(filter_input(INPUT_POST, 'ref_producto'));

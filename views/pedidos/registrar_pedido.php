@@ -78,8 +78,5 @@ use Dompdf\Options;
 $usuario_nombre = $_SESSION['nombre'] ?? 'Cliente';
 $fecha_pedido = date('d/m/Y H:i');
 
-require_once 'generar_boleta_pdf.php';
-generar_boleta_pdf($id_pedido, $usuario_nombre, $fecha_pedido, $direccion_envio, $productos, $total);
-
 header('Location: ../../checkout.php?success=1&id_pedido=' . $id_pedido . '&msg=Pedido registrado correctamente');
 exit(); 

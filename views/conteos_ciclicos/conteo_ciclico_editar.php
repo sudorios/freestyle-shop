@@ -6,8 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../../conexion/cone.php';
 require_once __DIR__ . '/conteos_ciclicos_queries.php';
 require_once __DIR__ . '/conteo_ciclico_utils.php';
-
-verificarSesionAdmin();
+// verificarSesinAdmin();
 verificarMetodoPost();
 
 $id_conteo = filter_input(INPUT_POST, 'id_conteo', FILTER_VALIDATE_INT);

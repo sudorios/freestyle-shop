@@ -1,17 +1,15 @@
 <?php
+require_once __DIR__ . '/core/Database.php';
+$conn = Database::getConexion();
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-include_once './conexion/cone.php';
 include_once './views/productos/producto_queries.php';
 
-if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
-    header('Location: login.php');
-    exit();
-}
 
 if (!$conn) {
-    die('Error de conexión: ' . pg_last_error($conn));
+    die('Error de conexión: ' . pg_last_error());
 }
 
 if (isset($_GET['listar']) && $_GET['listar'] == 1) {

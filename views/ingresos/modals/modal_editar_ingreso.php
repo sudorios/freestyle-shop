@@ -53,15 +53,11 @@
     function calcularCamposAutomaticosEditar() {
         const precioCostoIgv = parseFloat(document.getElementById('editar_precio_costo_igv').value) || 0;
         const cantidad = parseInt(document.getElementById('editar_cantidad_ingreso').value) || 1;
-        // 1. Calcular el costo por unidad (sin IGV)
         const precioCostoUnidad = cantidad > 0 ? +(precioCostoIgv / (1 + igvEdit) / cantidad).toFixed(2) : 0;
         document.getElementById('editar_precio_costo_unidad').value = precioCostoUnidad;
-        // 2. Calcular costo por unidad con IGV (ya lo tiene)
         document.getElementById('editar_precio_costo_con_igv').value = +(precioCostoIgv / cantidad).toFixed(2);
-        // 3. Calcular el precio de venta por unidad
         const precioVenta = +( (precioCostoIgv / cantidad) * (1 + margenEdit) ).toFixed(2);
         document.getElementById('editar_precio_venta').value = precioVenta;
-        // 4. Calcular utilidades (por unidad y total)
         const utilidadEsperadaUnidad = +(precioVenta - precioCostoUnidad).toFixed(2);
         const utilidadEsperadaTotal = +(utilidadEsperadaUnidad * cantidad).toFixed(2);
         document.getElementById('editar_utilidad_esperada_unidad').value = utilidadEsperadaUnidad;
@@ -70,11 +66,9 @@
         const utilidadNetaTotal = +(utilidadNetaUnidad * cantidad).toFixed(2);
         document.getElementById('editar_utilidad_neta_unidad').value = utilidadNetaUnidad;
         document.getElementById('editar_utilidad_neta_total').value = utilidadNetaTotal;
-        // 5. Calcular precio_costo_igv del paquete completo
         document.getElementById('editar_precio_costo_igv_paquete').value = +(precioCostoIgv).toFixed(2);
     }
     document.getElementById('editar_precio_costo_igv').addEventListener('input', calcularCamposAutomaticosEditar);
     document.getElementById('editar_cantidad_ingreso').addEventListener('input', calcularCamposAutomaticosEditar);
-    // Llenar los campos automáticos al abrir el modal
     document.getElementById('modalEditarIngreso').addEventListener('show', calcularCamposAutomaticosEditar);
 </script> 

@@ -13,12 +13,10 @@ if ($id_pedido <= 0) {
     exit();
 }
 
-// Cambiar estado a CANCELADO
 $sql = "UPDATE pedido SET estado = 'CANCELADO' WHERE id_pedido = $1";
 $res = pg_query_params($conn, $sql, [$id_pedido]);
 
-// Devolver stock de los productos
-$id_sucursal = 7; // Sucursal fija, ajusta si es necesario
+$id_sucursal = 7; 
 $sql_det = "SELECT id_producto, cantidad FROM detalle_pedido WHERE id_pedido = $1";
 $res_det = pg_query_params($conn, $sql_det, [$id_pedido]);
 if ($res_det) {

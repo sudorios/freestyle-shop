@@ -5,10 +5,10 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../../conexion/cone.php';
 require_once __DIR__ . '/sucursales_queries.php';
 
-if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
-    header('Location: ../../login.php');
-    exit();
-}
+// if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
+//     header('Location: ../../login.php');
+//     exit();
+// }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ../../sucursales.php?error=2');

@@ -1,10 +1,12 @@
 <?php
-session_start();
-include_once '../../conexion/cone.php';
-include_once 'sucursales_utils.php';
-include_once 'sucursales_queries.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-verificarSesionAdmin();
+require_once __DIR__ . '/../../conexion/cone.php';
+require_once __DIR__ . '/sucursales_utils.php';
+require_once __DIR__ . '/sucursales_queries.php';
+
 verificarMetodoPost();
 
 $nombre = trim($_POST['nombre_sucursal'] ?? '');

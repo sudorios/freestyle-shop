@@ -6,7 +6,6 @@ require_once __DIR__ . '/../../conexion/cone.php';
 require_once __DIR__ . '/categoria_queries.php';
 require_once __DIR__ . '/categoria_utils.php';
 
-verificarSesionAdmin();
 verificarMetodoPost();
 
 $id_categoria = filter_input(INPUT_POST, 'id_categoria');

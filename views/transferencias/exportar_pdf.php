@@ -6,7 +6,6 @@ include_once 'transferencia_queries.php';
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
-// Obtener filtros desde GET
 $fecha_inicio = isset($_GET['fecha_inicio']) && $_GET['fecha_inicio'] !== '' ? $_GET['fecha_inicio'] : '';
 $fecha_fin = isset($_GET['fecha_fin']) && $_GET['fecha_fin'] !== '' ? $_GET['fecha_fin'] : '';
 $filtro_origen = isset($_GET['origen']) && $_GET['origen'] !== '' ? $_GET['origen'] : '';

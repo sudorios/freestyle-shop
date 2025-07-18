@@ -1,3 +1,5 @@
+let confirmarCallback = null;
+
 function abrirModalConfirmar({mensaje, action, id, idField = 'id'}) {
     document.getElementById('modalConfirmarMensaje').textContent = mensaje || '¿Seguro que deseas continuar?';
     document.getElementById('formConfirmar').action = action;
@@ -9,4 +11,14 @@ function abrirModalConfirmar({mensaje, action, id, idField = 'id'}) {
 function cerrarModalConfirmar() {
     document.getElementById('modalConfirmar').classList.add('hidden');
     document.getElementById('modalConfirmarBackground').classList.add('hidden');
-} 
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const btnSi = document.getElementById('btnConfirmarSi');
+    if (btnSi) {
+        btnSi.onclick = function() {
+            cerrarModalConfirmar();
+            if (confirmarCallback) confirmarCallback();
+        };
+    }
+}); 

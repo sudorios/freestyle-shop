@@ -9,10 +9,7 @@ use Dompdf\Options;
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
-    header('Location: ../../login.php');
-    exit();
-}
+
 
 $options = new Options();
 $options->set('isHtml5ParserEnabled', true);

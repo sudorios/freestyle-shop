@@ -7,7 +7,6 @@ require_once __DIR__ . '/../../conexion/cone.php';
 require_once __DIR__ . '/subcategoria_queries.php';
 require_once __DIR__ . '/subcategoria_utils.php';
 
-verificarSesionAdmin();
 verificarMetodoPost();
 
 $id_subcategoria = filter_input(INPUT_POST, 'id_subcategoria');

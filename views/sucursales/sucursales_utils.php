@@ -1,13 +1,5 @@
 <?php
 
-function verificarSesionAdmin()
-{
-    if (!isset($_SESSION['usuario']) || !isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
-        header('Location: ../../login.php');
-        exit();
-    }
-}
-
 function verificarMetodoPost()
 {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
