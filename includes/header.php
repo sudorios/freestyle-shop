@@ -74,8 +74,8 @@ function getActiveClass($controller, $action = null) {
                 </a>
             </li>
             <li>
-                <a href="catalogo_producto.php" 
-                   class="flex items-center font-medium transition-all text-[15px] hover:bg-gray-700 rounded-md px-3 py-2 text-gray-300 hover:text-blue-400">
+                <a href="index.php?controller=catalogo&action=listar" 
+                   class="flex items-center font-medium transition-all text-[15px] hover:bg-gray-700 rounded-md px-3 py-2 <?php echo getActiveClass('catalogo', 'listar'); ?>">
                     <i class="fas fa-box-open w-4 h-4 mr-2"></i>Catálogo
                 </a>
             </li>

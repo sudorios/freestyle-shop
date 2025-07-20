@@ -5,7 +5,7 @@
             <h3 class="text-xl font-semibold text-gray-800">Agregar Producto al Catálogo</h3>
             <p class="text-sm text-gray-500">Selecciona un producto para agregarlo al catálogo público</p>
         </div>
-        <form id="formAgregarCatalogo" action="views/catalogo/catalogo_registrar.php" method="POST">
+        <form id="formAgregarCatalogo" action="index.php?controller=catalogo&action=registrar" method="POST">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <div class="mb-4">
@@ -87,12 +87,8 @@
 <script>
     const productos = [
         <?php
-        global $conn;
-        include_once(__DIR__ . '/../catalogo_queries.php');
-        $sql = getProductoQuery();
-        $result = pg_query($conn, $sql);
         $first = true;
-        while ($row = pg_fetch_assoc($result)) {
+        foreach ($productosDisponibles as $row) {
             if (!$first)
                 echo ",\n";
             else

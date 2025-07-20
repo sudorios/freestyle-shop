@@ -1,39 +1,28 @@
-<?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-include_once './conexion/cone.php';
-require_once './views/catalogo/catalogo_queries.php';
+<!DOCTYPE html>
+<html lang="es">
 
-if (!$conn) {
-    die('Error de conexión: ' . pg_last_error($conn));
-}
-
-$sql = getCatalogoProductosListadoQuery();
-$result = pg_query($conn, $sql);
-if (!$result) {
-    die('Error en la consulta: ' . pg_last_error($conn));
-}
-?>
-
-<?php include_once './includes/head.php'; ?>
+<?php include_once __DIR__ . '/../../includes/head.php'; ?>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 
 <body id="main-content" class="ml-72 mt-20">
-    <?php include_once './includes/header.php'; ?>
+    <?php include_once __DIR__ . '/../../includes/header.php'; ?>
     <main>
         <div class="container mx-auto px-4 mt-6">
-            <?php
-            if (isset($_GET['success'])) {
-                $msg = $_GET['msg'] ?? 'Operación exitosa';
-                echo '<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">' . htmlspecialchars($msg) . '</div>';
-                echo '<meta http-equiv="refresh" content="1;url=catalogo_producto.php">';
-            }
-            if (isset($_GET['error'])) {
-                $msg = $_GET['msg'] ?? 'Error en la operación';
-                echo '<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">' . htmlspecialchars($msg) . '</div>';
-                echo '<meta http-equiv="refresh" content="1;url=catalogo_producto.php">';
-            }
-            ?>
+            <?php if (isset($_GET['success']) || isset($_GET['error'])): ?>
+                <meta http-equiv="refresh" content="3;url=index.php?controller=catalogo&action=listar">
+            <?php endif; ?>
+            <?php if (isset($_GET['success'])): ?>
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                    <?php echo htmlspecialchars($_GET['msg'] ?? 'Operación exitosa'); ?>
+                </div>
+            <?php endif; ?>
+            <?php if (isset($_GET['error'])): ?>
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    <?php echo htmlspecialchars($_GET['msg'] ?? 'Error en la operación'); ?>
+                </div>
+            <?php endif; ?>
             <hr class="my-4 border-t-2 border-gray-200 rounded-full opacity-80">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Catálogo de Productos</h3>
@@ -65,31 +54,24 @@ if (!$result) {
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Imagen</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Nombre</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Precio Venta</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Estado</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Oferta</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Precio con Descuento</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Acciones</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            <?php while ($row = pg_fetch_assoc($result)) { ?>
+                            <?php foreach ($catalogo as $row) { ?>
                                 <tr data-id="<?php echo $row['id']; ?>">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <?php if ($row['url_imagen']) { ?>
@@ -139,7 +121,7 @@ if (!$result) {
                                                     title="Desactivar"
                                                     onclick="abrirModalConfirmar({
                                                         mensaje: '¿Estás seguro que deseas desactivar este producto en el catálogo?',
-                                                        action: 'views/catalogo/catalogo_desactivar.php',
+                                                        action: 'index.php?controller=catalogo&action=desactivar',
                                                         id: '<?php echo $row['id']; ?>'
                                                     })"
                                                 >
@@ -154,7 +136,7 @@ if (!$result) {
                                                     title="Activar"
                                                     onclick="abrirModalConfirmar({
                                                         mensaje: '¿Estás seguro que deseas activar este producto en el catálogo?',
-                                                        action: 'views/catalogo/catalogo_activar.php',
+                                                        action: 'index.php?controller=catalogo&action=activar',
                                                         id: '<?php echo $row['id']; ?>'
                                                     })"
                                                 >
@@ -167,14 +149,13 @@ if (!$result) {
                             <?php } ?>
                         </tbody>
                     </table>
-
                 </div>
             </div>
             <div id="paginacionCatalogo" class="flex justify-center items-center mt-4 gap-2"></div>
         </div>
     </main>
 
-    <?php include_once './views/catalogo/modals/modal_agregar_catalogo.php'; ?>
+    <?php include_once __DIR__ . '/modals/modal_agregar_catalogo.php'; ?>
 
     <div id="modalImagen" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 hidden">
         <div class="relative bg-white rounded-lg shadow-lg p-4 max-w-2xl w-full flex flex-col items-center">
@@ -184,11 +165,11 @@ if (!$result) {
         </div>
     </div>
 
-    <?php include './includes/modal_confirmar.php'; ?>
-    <script src="assets/js/modal_confirmar.js"></script>
-    <script src="/freestyle-shop/assets/js/catalogo.js"></script>
-    <script src="assets/js/tabla_utils.js"></script>
-    <?php include_once './includes/footer.php'; ?>
+    <?php include __DIR__ . '/../../includes/modal_confirmar.php'; ?>
+    <script src="/freestyle-shop/assets/js/modal_confirmar.js?v=1"></script>
+    <script src="/freestyle-shop/assets/js/catalogo.js?v=1"></script>
+    <script src="/freestyle-shop/assets/js/tabla_utils.js?v=1"></script>
+    <?php include_once __DIR__ . '/../../includes/footer.php'; ?>
 </body>
 
-</html>
+</html> 
