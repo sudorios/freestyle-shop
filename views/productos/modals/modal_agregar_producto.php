@@ -1,9 +1,13 @@
+<?php
+require_once __DIR__ . '/../../../core/Database.php';
+$conn = Database::getConexion();
+?>
 <div id="modalBackgroundAgregarProducto" class="fixed inset-0 bg-black opacity-75 hidden z-20"></div>
 <div id="modalAgregarProducto" class="fixed inset-0 hidden overflow-y-auto h-full w-full z-30">
     <div class="relative top-20 mx-auto p-3 border w-full max-w-lg shadow-lg rounded-md bg-white">
         <div class="mt-3">
             <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Agregar Producto</h3>
-            <form id="formAgregarProducto" action="views/productos/producto_registrar.php" method="POST">
+            <form id="formAgregarProducto" action="index.php?controller=producto&action=registrar" method="POST">
                 <div class="grid grid-cols-1 gap-4">
                     <div class="mb-4">
                         <label for="agregar_ref_producto" class="block text-sm font-medium text-gray-700">Referencia</label>
@@ -22,7 +26,6 @@
                         <select id="id_subcategoria" name="id_subcategoria" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" required>
                             <option value="">Seleccione una subcategoría</option>
                             <?php
-                                global $conn;
                                 $sql = "SELECT s.id_subcategoria, s.nombre_subcategoria, c.nombre_categoria FROM subcategoria s JOIN categoria c ON s.id_categoria = c.id_categoria WHERE s.estado = true AND c.estado_categoria = true ORDER BY c.nombre_categoria, s.nombre_subcategoria ASC";
                                 $result = pg_query($conn, $sql);
                                 while ($row = pg_fetch_assoc($result)) {

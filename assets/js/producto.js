@@ -86,7 +86,7 @@ function abrirModalImagenesProducto(idProducto) {
   document.getElementById("formNuevaImagenProducto").classList.add("hidden");
   document.getElementById("btnMostrarFormImagen").classList.add("hidden");
   fetch(
-    "views/productos/obtener_imagenes_producto.php?id_producto=" + idProducto
+    "index.php?controller=producto&action=obtenerImagenes&id_producto=" + idProducto
   )
     .then((response) => response.text())
     .then((html) => {

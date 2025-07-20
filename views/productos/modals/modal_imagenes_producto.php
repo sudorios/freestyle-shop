@@ -89,7 +89,7 @@ document.getElementById('formNuevaImagenProducto').addEventListener('submit', fu
     btn.textContent = 'Subiendo...';
     preview.innerHTML += '<div class="text-sm text-gray-400 mt-2">Subiendo imagen...</div>';
 
-    fetch('views/productos/subir_imagen_producto.php', {
+    fetch('index.php?controller=producto&action=subirImagen', {
         method: 'POST',
         body: formData
     })
@@ -119,7 +119,9 @@ function cargarImagenesProducto() {
     const id = document.getElementById('idProductoImagenForm').value;
     const cont = document.getElementById('listaImagenesProducto');
     cont.innerHTML = '<p class="text-gray-500">Cargando imágenes...</p>';
-    fetch('views/productos/obtener_imagenes_producto.php?id_producto=' + encodeURIComponent(id))
+    fetch(
+      "index.php?controller=producto&action=obtenerImagenes&id_producto=" + id
+    )
         .then(res => res.text())
         .then(html => cont.innerHTML = html);
 }

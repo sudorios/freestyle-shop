@@ -1,33 +1,14 @@
-<?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-include_once './conexion/cone.php';
-include_once './views/categorias/categoria_queries.php';
-
-
-if (!$conn) {
-    die('Error de conexión: ' . pg_last_error($conn));
-}
-
-$sql = getAllCategoriasQuery();
-$result = pg_query($conn, $sql);
-
-if (!$result) {
-    die('Error en la consulta: ' . pg_last_error($conn));
-}
-?>
 <!DOCTYPE html>
 <html lang="es">
 
-<?php include_once './includes/head.php'; ?>
+<?php include_once __DIR__ . '/../../includes/head.php'; ?>
 
 <body id="main-content" class="ml-72 mt-20">
-    <?php include_once './includes/header.php'; ?>
+    <?php include_once __DIR__ . '/../../includes/header.php'; ?>
     <main>
         <div class="container mx-auto px-4 mt-6">
             <?php if (isset($_GET['success']) || isset($_GET['error'])): ?>
-                <meta http-equiv="refresh" content="3;url=categoria.php">
+                <meta http-equiv="refresh" content="3;url=index.php?controller=categoria&action=listar">
             <?php endif; ?>
             <?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
                 <div class='bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4'>
@@ -92,7 +73,7 @@ if (!$result) {
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        <?php while ($row = pg_fetch_assoc($result)) { ?>
+                        <?php foreach ($categorias as $row) { ?>
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap"><?php echo $row['id_categoria']; ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap"><?php echo $row['nombre_categoria']; ?></td>
@@ -106,7 +87,7 @@ if (!$result) {
                                         <i class="fas fa-edit"></i> Editar
                                     </button>
                                     <button type="button" class="cursor-pointer bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
-                                        onclick="abrirModalConfirmar({mensaje: '¿Seguro que deseas eliminar esta categoría?', action: 'views/categorias/eliminar_categoria.php', id: '<?php echo $row['id_categoria']; ?>', idField: 'id_categoria'})">
+                                        onclick="abrirModalConfirmar({mensaje: '¿Seguro que deseas eliminar esta categoría?', action: 'index.php?controller=categoria&action=eliminar', id: '<?php echo $row['id_categoria']; ?>', idField: 'id_categoria'})">
                                         <i class="fas fa-trash"></i> Eliminar
                                     </button>
                                 </td>
@@ -119,13 +100,13 @@ if (!$result) {
         </div>
         </div>
     </main>
-    <?php include_once './views/categorias/modals/modal_editar_categoria.php'; ?>
-    <?php include_once './views/categorias/modals/modal_agregar_categoria.php'; ?>
-    <?php include './includes/modal_confirmar.php'; ?>
-    <?php include './includes/footer.php'; ?>
-    <script src="assets/js/categorias.js"></script>
-    <script src="assets/js/modal_confirmar.js"></script>
-    <script src="assets/js/tabla_utils.js"></script>
+    <?php include_once __DIR__ . '/modals/modal_editar_categoria.php'; ?>
+    <?php include_once __DIR__ . '/modals/modal_agregar_categoria.php'; ?>
+    <?php include __DIR__ . '/../../includes/modal_confirmar.php'; ?>
+    <?php include_once __DIR__ . '/../../includes/footer.php'; ?>
+    <script src="/freestyle-shop/assets/js/categorias.js"></script>
+    <script src="/freestyle-shop/assets/js/modal_confirmar.js"></script>
+    <script src="/freestyle-shop/assets/js/tabla_utils.js"></script>
 </body>
 
-</html>
+</html> 

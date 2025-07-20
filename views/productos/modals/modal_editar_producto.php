@@ -3,7 +3,7 @@
   <div class="relative top-20 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
     <div class="mt-3">
       <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Editar Producto</h3>
-      <form id="formEditarProducto" method="POST" action="views/productos/editar_producto.php">
+      <form id="formEditarProducto" method="POST" action="index.php?controller=producto&action=editar">
         <input type="hidden" name="id_producto" id="editar_id_producto">
         
         <div class="mb-4">
