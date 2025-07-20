@@ -106,8 +106,8 @@ function getActiveClass($controller, $action = null) {
         </div>
         <ul class="space-y-1 mt-2 pl-7 max-h-[500px] overflow-hidden transition-all duration-300">
             <li>
-                <a href="kardex.php" 
-                   class="flex items-center font-medium transition-all text-[15px] hover:bg-gray-700 rounded-md px-3 py-2 text-gray-300 hover:text-blue-400">
+                <a href="index.php?controller=kardex&action=listar" 
+                   class="flex items-center font-medium transition-all text-[15px] hover:bg-gray-700 rounded-md px-3 py-2 text-gray-300 hover:text-blue-400 <?php echo (isset($_GET['controller']) && $_GET['controller'] === 'kardex') ? 'bg-gray-700 text-blue-400' : ''; ?>">
                     <i class="fas fa-clipboard-list w-4 h-4 mr-2"></i>Movimientos
                 </a>
             </li>
