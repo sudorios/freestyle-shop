@@ -2,32 +2,11 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-include_once './conexion/cone.php';
-include_once 'views/inventario/inventario_queries.php';
-
-if (!$conn) {
-    die('Error de conexión: ' . pg_last_error($conn));
-}
-
 $id_sucursal = isset($_GET['id_sucursal']) && $_GET['id_sucursal'] !== '' ? intval($_GET['id_sucursal']) : null;
-
-if ($id_sucursal) {
-    $sql = getInventarioSucursalQuery($id_sucursal);
-    $result = pg_query_params($conn, $sql, [$id_sucursal]);
-} else {
-    $sql = getInventarioSucursalQuery();
-    $result = pg_query($conn, $sql);
-}
-
-if (!$result) {
-    die('Error en la consulta: ' . pg_last_error($conn));
-}
 ?>
 <!DOCTYPE html>
 <html lang="es">
-
 <?php include_once './includes/head.php'; ?>
-
 <body id="main-content" class="ml-72 mt-20">
     <?php include_once './includes/header.php'; ?>
     <main>
@@ -36,7 +15,7 @@ if (!$result) {
                 <div class='bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4'>
                     <span class="block sm:inline">Operación realizada con éxito</span>
                 </div>
-                <meta http-equiv="refresh" content="3;url=inventario.php">
+                <meta http-equiv="refresh" content="3;url=index.php?controller=inventario&action=listar">
             <?php endif; ?>
             <?php if (isset($_GET['error'])): ?>
                 <div class='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4'>
@@ -47,29 +26,23 @@ if (!$result) {
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Inventario por Sucursal</h3>
                 <div class="flex gap-2 items-center">
-                    <form method="get" action="inventario.php" class="inline">
+                    <form method="get" action="index.php" class="inline">
+                        <input type="hidden" name="controller" value="inventario">
+                        <input type="hidden" name="action" value="listar">
                         <select name="id_sucursal" onchange="this.form.submit()" class="border rounded px-2 py-1">
                             <option value="" <?php if (empty($id_sucursal)) echo 'selected'; ?>>Todos</option>
-                            <?php
-                            $res_suc = pg_query($conn, "SELECT id_sucursal, nombre_sucursal FROM sucursal ORDER BY nombre_sucursal ASC");
-                            while ($suc = pg_fetch_assoc($res_suc)) {
-                                $selected = ($suc['id_sucursal'] == $id_sucursal) ? 'selected' : '';
-                                echo "<option value=\"{$suc['id_sucursal']}\" $selected>{$suc['nombre_sucursal']}</option>";
-                            }
-                            ?>
+                            <?php foreach ($sucursales as $suc): ?>
+                                <option value="<?php echo $suc['id_sucursal']; ?>" <?php if ($suc['id_sucursal'] == $id_sucursal) echo 'selected'; ?>><?php echo htmlspecialchars($suc['nombre_sucursal']); ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </form>
                     <input type="text" id="buscadorInventario" placeholder="Buscar Producto..." class="border rounded px-2 py-1">
-                    <form method="get" action="views/inventario/exportar_csv.php" style="display:inline;">
-                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow transition ml-2" title="Exportar a CSV">
-                            <i class="fas fa-file-csv"></i>
-                        </button>
-                    </form>
-                    <form method="get" action="views/inventario/exportar_pdf.php" style="display:inline;">
-                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded shadow transition ml-2" title="Exportar a PDF">
-                            <i class="fas fa-file-pdf"></i>
-                        </button>
-                    </form>
+                    <a href="index.php?controller=inventario&action=exportarCSV<?php echo ($id_sucursal ? '&id_sucursal=' . urlencode($id_sucursal) : ''); ?>" target="_blank" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow transition ml-2" title="Exportar a CSV">
+                        <i class="fas fa-file-csv"></i>
+                    </a>
+                    <a href="index.php?controller=inventario&action=exportarPDF<?php echo ($id_sucursal ? '&id_sucursal=' . urlencode($id_sucursal) : ''); ?>" target="_blank" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded shadow transition ml-2" title="Exportar a PDF">
+                        <i class="fas fa-file-pdf"></i>
+                    </a>
                 </div>
             </div>
             <hr class="my-4 border-t-2 border-gray-200 rounded-full opacity-80">
@@ -89,12 +62,11 @@ if (!$result) {
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            <?php while ($row = pg_fetch_assoc($result)) { ?>
+                            <?php foreach ($inventario as $row): ?>
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_producto'] . ($row['talla_producto'] ? '(' . $row['talla_producto'] . ')' : '')); ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_sucursal']); ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap <?php echo ($row['cantidad'] < 10) ? 'bg-red-100 text-red-800 font-semibold' : ''; ?>"><?php echo $row['cantidad']; ?></td>
-                            
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo isset($row['fecha_actualizacion']) ? date('d/m/Y H:i', strtotime($row['fecha_actualizacion'])) : '-'; ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <?php
@@ -126,7 +98,7 @@ if (!$result) {
                                         </a>
                                     </td>
                                 </tr>
-                            <?php } ?>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
@@ -134,8 +106,8 @@ if (!$result) {
             <div id="paginacionInventario" class="flex justify-center mt-4"></div>
         </div>
     </main>
-    <script src="assets/js/inventario.js"></script>
-    <script src="assets/js/tabla_utils.js"></script>
+    <script src="/freestyle-shop/assets/js/inventario.js?v=1"></script>
+    <script src="/freestyle-shop/assets/js/tabla_utils.js?v=1"></script>
     <?php include_once './includes/footer.php'; ?>
 </body>
 </html> 
