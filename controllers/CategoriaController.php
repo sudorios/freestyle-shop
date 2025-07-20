@@ -95,6 +95,24 @@ class CategoriaController {
         exit();
     }
 
+    public function ver() {
+        $id_categoria = isset($_GET['id_categoria']) ? intval($_GET['id_categoria']) : 0;
+        if ($id_categoria <= 0) {
+            die('Categoría no válida.');
+        }
+        $orden = $_GET['orden'] ?? 'nombre_asc';
+        $id_subcategoria = isset($_GET['id_subcategoria']) ? intval($_GET['id_subcategoria']) : 0;
+        $conn = Database::getConexion();
+        $sql_sub = "SELECT id_subcategoria, nombre_subcategoria FROM subcategoria WHERE id_categoria = $1 ORDER BY nombre_subcategoria ASC";
+        $res_sub = pg_query_params($conn, $sql_sub, [$id_categoria]);
+        $subcategorias = [];
+        while ($row = pg_fetch_assoc($res_sub)) {
+            $subcategorias[] = $row;
+        }
+        $productos = Categoria::obtenerProductosPorCategoria($id_categoria, $id_subcategoria, $orden);
+        require __DIR__ . '/../views/categorias/ver.php';
+    }
+
     private function validarCamposCategoria($nombre) {
         $errores = [];
         if (empty($nombre)) {

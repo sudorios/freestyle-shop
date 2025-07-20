@@ -60,4 +60,54 @@ class Categoria {
         }
         return pg_num_rows($result) > 0;
     }
+
+    public static function obtenerProductosPorCategoria($id_categoria, $id_subcategoria = 0, $orden = 'nombre_asc') {
+        $conn = Database::getConexion();
+        switch ($orden) {
+            case 'nombre_desc':
+                $order_by = 'p.nombre_producto DESC';
+                break;
+            case 'precio_asc':
+                $order_by = 'i.precio_venta ASC';
+                break;
+            case 'precio_desc':
+                $order_by = 'i.precio_venta DESC';
+                break;
+            default:
+                $order_by = 'p.nombre_producto ASC';
+        }
+        $sql = "SELECT 
+                cp.id AS id_catalogo,
+                p.nombre_producto,
+                p.descripcion_producto,
+                ip.url_imagen,
+                i.precio_venta,
+                cp.oferta,
+                c.nombre_categoria
+            FROM 
+                catalogo_productos cp
+            JOIN producto p ON cp.producto_id = p.id_producto
+            JOIN ingreso i ON cp.ingreso_id = i.id
+            LEFT JOIN imagenes_producto ip ON cp.imagen_id = ip.id
+            JOIN subcategoria s ON p.id_subcategoria = s.id_subcategoria
+            JOIN categoria c ON s.id_categoria = c.id_categoria
+            WHERE 
+                cp.sucursal_id = 7
+                AND (cp.estado = true OR cp.estado = 't')
+                AND c.id_categoria = $1";
+        $params = [$id_categoria];
+        if ($id_subcategoria > 0) {
+            $sql .= " AND s.id_subcategoria = $2";
+            $params[] = $id_subcategoria;
+        }
+        $sql .= " ORDER BY $order_by";
+        $result = pg_query_params($conn, $sql, $params);
+        $productos = [];
+        if ($result) {
+            while ($row = pg_fetch_assoc($result)) {
+                $productos[] = $row;
+            }
+        }
+        return $productos;
+    }
 } 

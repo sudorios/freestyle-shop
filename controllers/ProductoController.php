@@ -205,6 +205,20 @@ class ProductoController {
         exit();
     }
 
+    public function ver() {
+        $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+        if ($id <= 0) {
+            die('Producto no válido.');
+        }
+        $producto = Producto::obtenerDetallePorCatalogoId($id);
+        if (!$producto) {
+            die('Producto no encontrado o no está en oferta.');
+        }
+        $tallas_disponibles = Producto::obtenerTallasPorCatalogoId($id);
+        $imagenes = Producto::obtenerImagenesPorCatalogo($id);
+        require __DIR__ . '/../views/productos/ver.php';
+    }
+
     private function validarCamposProducto($ref, $nombre, $id_subcategoria, $talla) {
         $errores = [];
         if (empty($ref)) $errores[] = 'Referencia requerida';

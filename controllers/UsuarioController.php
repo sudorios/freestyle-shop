@@ -183,11 +183,7 @@ class UsuarioController {
                 $_SESSION['usuario'] = $usuario;
                 $_SESSION['id'] = $row['id_usuario'];
                 $_SESSION['rol'] = $row['rol_usuario'];
-                if ($_SESSION['rol'] === 'cliente') {
-                    header('Location: index.php');
-                } else {
-                    header('Location: dashboard.php');
-                }
+                header('Location: index.php?controller=reporte&action=listar');
                 exit();
             }
         }
