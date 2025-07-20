@@ -118,8 +118,8 @@ function getActiveClass($controller, $action = null) {
                 </a>
             </li>
             <li>
-                <a href="transferencia.php" 
-                   class="flex items-center font-medium transition-all text-[15px] hover:bg-gray-700 rounded-md px-3 py-2 text-gray-300 hover:text-blue-400">
+                <a href="index.php?controller=transferencia&action=listar" 
+                   class="flex items-center font-medium transition-all text-[15px] hover:bg-gray-700 rounded-md px-3 py-2 text-gray-300 hover:text-blue-400 <?php echo (isset($_GET['controller']) && $_GET['controller'] === 'transferencia') ? 'bg-gray-700 text-blue-400' : ''; ?>">
                     <i class="fas fa-exchange-alt w-4 h-4 mr-2"></i>Transferencias
                 </a>
             </li>
