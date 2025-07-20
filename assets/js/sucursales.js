@@ -196,6 +196,56 @@ function initBuscadorSucursal() {
   });
 }
 
+let sucursalAActivar = null;
+
+function activarSucursal(id) {
+  sucursalAActivar = id;
+  document.getElementById("inputPasswordConfirmActivar").value = "";
+  document.getElementById("errorPasswordConfirmActivar").classList.add("hidden");
+  document
+    .getElementById("modalConfirmarActivacion")
+    .classList.remove("hidden");
+  document.getElementById("modalBackground").classList.remove("hidden");
+}
+
+function cerrarModalConfirmarActivacion() {
+  sucursalAActivar = null;
+  document
+    .getElementById("modalConfirmarActivacion")
+    .classList.add("hidden");
+  document.getElementById("modalBackground").classList.add("hidden");
+}
+
+function confirmarActivacionSucursal() {
+  const password = document.getElementById("inputPasswordConfirmActivar").value;
+  if (!password) {
+    mostrarErrorPasswordActivar("La contraseña es obligatoria");
+    return;
+  }
+  fetch("conexion/validar_password.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "password=" + encodeURIComponent(password),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.valido) {
+        document.getElementById("inputActivarSucursalId").value =
+          sucursalAActivar;
+        document.getElementById("formActivarSucursal").submit();
+      } else {
+        mostrarErrorPasswordActivar("Contraseña incorrecta");
+      }
+    })
+    .catch(() => mostrarErrorPasswordActivar("Error al validar la contraseña"));
+}
+
+function mostrarErrorPasswordActivar(msg) {
+  const errorDiv = document.getElementById("errorPasswordConfirmActivar");
+  errorDiv.textContent = msg;
+  errorDiv.classList.remove("hidden");
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   if (document.getElementById('tablaSucursalesBody')) {
     mostrarPaginaSucursal(paginaActualSuc);

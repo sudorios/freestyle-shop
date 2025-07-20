@@ -3,7 +3,7 @@
     <div class="relative top-20 mx-auto p-5 border w-[500px] shadow-lg rounded-md bg-white">
         <div class="mt-3">
             <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Agregar Sucursal</h3>
-            <form id="formAgregarSucursal" action="views/sucursales/sucursales_registrar.php" method="POST">
+            <form id="formAgregarSucursal" action="index.php?controller=sucursal&action=registrar" method="POST">
                 <div class="mb-4">
                     <label for="nombre_sucursal" class="block text-sm font-medium text-gray-700">Nombre</label>
                     <input type="text" id="nombre_sucursal" name="nombre_sucursal" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" required>
@@ -25,14 +25,9 @@
                     <label for="id_supervisor" class="block text-sm font-medium text-gray-700">Supervisor</label>
                     <select id="id_supervisor" name="id_supervisor" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" required>
                         <option value="">Seleccione...</option>
-                        <?php
-                        include_once '../../../conexion/cone.php';
-                        $sql_usuarios = "SELECT id_usuario, nombre_usuario FROM usuario WHERE rol_usuario = 'admin' ORDER BY nombre_usuario ASC";
-                        $res_usuarios = pg_query($conn, $sql_usuarios);
-                        while ($usuario = pg_fetch_assoc($res_usuarios)) {
-                            echo '<option value="' . $usuario['id_usuario'] . '">' . htmlspecialchars($usuario['nombre_usuario']) . '</option>';
-                        }
-                        ?>
+                        <?php foreach ($supervisores as $supervisor): ?>
+                            <option value="<?php echo $supervisor['id_usuario']; ?>"><?php echo htmlspecialchars($supervisor['nombre_usuario']); ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="flex justify-end mt-6">

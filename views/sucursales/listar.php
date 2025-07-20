@@ -1,43 +1,25 @@
 <?php
 session_start();
-require_once './utils/queries.php';
-check_rol(['developer','admin', 'supervisor']);
-
-include_once './conexion/cone.php';
-include_once './views/sucursales/sucursales_queries.php';
-
-
-if (!$conn) {
-    die('Error de conexión: ' . pg_last_error($conn));
-}
-
-$sql = getAllSucursalesQuery();
-$result = pg_query($conn, $sql);
-
-if (!$result) {
-    die('Error en la consulta: ' . pg_last_error($conn));
-}
+require_once __DIR__ . '/../../utils/queries.php';
 ?>
 <!DOCTYPE html>
 <html lang="es">
 
-<?php include_once './includes/head.php'; ?>
+<?php include_once __DIR__ . '/../../includes/head.php'; ?>
 
 <body id="main-content" class="ml-72 mt-20">
-    <?php include_once './includes/header.php'; ?>
+    <?php include_once __DIR__ . '/../../includes/header.php'; ?>
     <main>
         <div class="container mx-auto px-4 mt-6">
-            <?php if (isset($_GET['success']) && $_GET['success'] == 2): ?>
+            <?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
                 <div class='bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4'>
-                    <span class="block sm:inline">Operación realizada con éxito</span>
+                    <span class="block sm:inline"><?php echo htmlspecialchars($_GET['msg'] ?? 'Operación realizada con éxito'); ?></span>
                 </div>
-                <meta http-equiv="refresh" content="3;url=sucursales.php">
             <?php endif; ?>
             <?php if (isset($_GET['error'])): ?>
                 <div class='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4'>
-                    <span class="block sm:inline">Ocurrió un error. Código: <?php echo htmlspecialchars($_GET['error']); ?></span>
+                    <span class="block sm:inline"><?php echo htmlspecialchars($_GET['msg'] ?? 'Ocurrió un error'); ?></span>
                 </div>
-                <meta http-equiv="refresh" content="3;url=sucursales.php">
             <?php endif; ?>
             <hr class="my-4 border-t-2 border-gray-200 rounded-full opacity-80">
             <div class="flex justify-between items-center mb-6">
@@ -62,7 +44,7 @@ if (!$result) {
                             </tr>
                         </thead>
                         <tbody id="tablaSucursalesBody" class="bg-white divide-y divide-gray-200">
-                            <?php while ($row = pg_fetch_assoc($result)) { 
+                            <?php foreach ($sucursales as $row) { 
                                 $activa = ($row['estado_sucursal'] === true || $row['estado_sucursal'] === 't' || $row['estado_sucursal'] === 1 || $row['estado_sucursal'] === '1');
                             ?>
                                 <tr class="sucursal-row">
@@ -114,7 +96,7 @@ if (!$result) {
             <div class="flex justify-center mt-4" id="paginacionSucursales"></div>
         </div>
     </main>
-    <?php include 'views/sucursales/modals/modal_agregar_sucursal.php'; ?>
+    
     <div id="modalBackground" class="fixed inset-0 bg-black opacity-75 hidden z-20"></div>
     <div id="modalDetalleSucursal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
         <div class="relative mx-auto p-6 border w-[550px] shadow-xl rounded-xl bg-white">
@@ -164,9 +146,14 @@ if (!$result) {
             </div>
         </div>
     </div>
-    <form id="formEliminarSucursal" action="views/sucursales/sucursal_eliminar.php" method="POST" style="display:none;">
+
+    <form id="formEliminarSucursal" action="index.php?controller=sucursal&action=desactivar" method="POST" style="display:none;">
         <input type="hidden" name="id_sucursal" id="inputEliminarSucursalId">
     </form>
+    <form id="formActivarSucursal" action="index.php?controller=sucursal&action=activar" method="POST" style="display:none;">
+        <input type="hidden" name="id_sucursal" id="inputActivarSucursalId">
+    </form>
+
     <div id="modalConfirmarDesactivacion" class="fixed inset-0 flex items-center justify-center z-50 hidden">
         <div class="relative mx-auto p-6 border w-[350px] shadow-xl rounded-xl bg-white">
             <h3 class="text-lg font-semibold mb-4 text-center">Confirmar desactivación</h3>
@@ -179,9 +166,7 @@ if (!$result) {
             </div>
         </div>
     </div>
-    <form id="formActivarSucursal" action="views/sucursales/sucursal_activar.php" method="POST" style="display:none;">
-        <input type="hidden" name="id_sucursal" id="inputActivarSucursalId">
-    </form>
+
     <div id="modalConfirmarActivacion" class="fixed inset-0 flex items-center justify-center z-50 hidden">
         <div class="relative mx-auto p-6 border w-[350px] shadow-xl rounded-xl bg-white">
             <h3 class="text-lg font-semibold mb-4 text-center">Confirmar activación</h3>
@@ -194,53 +179,12 @@ if (!$result) {
             </div>
         </div>
     </div>
-    <script src="assets/js/sucursales.js"></script>
-    <?php include_once './views/sucursales/modals/modal_editar_sucursal.php'; ?>
-    <?php include_once './views/sucursales/modals/modal_agregar_sucursal.php'; ?>
-    <?php include './includes/modal_confirmar.php'; ?>
-    <?php include_once './includes/footer.php'; ?>
-    <script>
-    let sucursalAActivar = null;
-    function activarSucursal(id) {
-        sucursalAActivar = id;
-        document.getElementById('inputPasswordConfirmActivar').value = '';
-        document.getElementById('errorPasswordConfirmActivar').classList.add('hidden');
-        document.getElementById('modalConfirmarActivacion').classList.remove('hidden');
-        document.getElementById('modalBackground').classList.remove('hidden');
-    }
-    function cerrarModalConfirmarActivacion() {
-        sucursalAActivar = null;
-        document.getElementById('modalConfirmarActivacion').classList.add('hidden');
-        document.getElementById('modalBackground').classList.add('hidden');
-    }
-    function confirmarActivacionSucursal() {
-        const password = document.getElementById('inputPasswordConfirmActivar').value;
-        if (!password) {
-            mostrarErrorPasswordActivar('La contraseña es obligatoria');
-            return;
-        }
-        fetch('conexion/validar_password.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: 'password=' + encodeURIComponent(password)
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.valido) {
-                document.getElementById('inputActivarSucursalId').value = sucursalAActivar;
-                document.getElementById('formActivarSucursal').submit();
-            } else {
-                mostrarErrorPasswordActivar('Contraseña incorrecta');
-            }
-        })
-        .catch(() => mostrarErrorPasswordActivar('Error al validar la contraseña'));
-    }
-    function mostrarErrorPasswordActivar(msg) {
-        const errorDiv = document.getElementById('errorPasswordConfirmActivar');
-        errorDiv.textContent = msg;
-        errorDiv.classList.remove('hidden');
-    }
-    </script>
-</body>
 
-</html>
+    <?php include __DIR__ . '/modals/modal_agregar_sucursal.php'; ?>
+    <?php include __DIR__ . '/modals/modal_editar_sucursal.php'; ?>
+    <?php include __DIR__ . '/../../includes/modal_confirmar.php'; ?>
+    <?php include_once __DIR__ . '/../../includes/footer.php'; ?>
+
+    <script src="assets/js/sucursales.js?v=<?php echo time(); ?>"></script>
+</body>
+</html> 
