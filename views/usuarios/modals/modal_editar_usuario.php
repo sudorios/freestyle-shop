@@ -3,7 +3,7 @@
     <div class="relative top-20 mx-auto p-5 border w-[800px] shadow-lg rounded-md bg-white">
         <div class="mt-3">
             <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Editar Usuario</h3>
-            <form id="formEditarUsuario" action="views/usuario/usuario_edit.php" method="POST">
+            <form id="formEditarUsuario" action="index.php?controller=usuario&action=editar" method="POST">
                 <input type="hidden" id="edit_id" name="id_usuario">
                 <div class="grid grid-cols-2 gap-4">
                     <div class="mb-4">

@@ -28,7 +28,7 @@ function getActiveClass($controller, $action = null) {
                 <span class="text-sm text-gray-400">| Panel de Control</span>
             </div>
             <div class="flex items-center space-x-4">
-                <a href="perfil.php" class="hover:text-blue-400 transition-colors">
+                <a href="index.php?controller=usuario&action=perfil" class="hover:text-blue-400 transition-colors">
                     <div class="flex items-center space-x-2 text-sm font-bold uppercase tracking-wider">
                         <i class="fas fa-user-circle text-lg"></i>
                         <span class="hidden md:inline"><?php echo isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario'; ?></span>
@@ -172,8 +172,8 @@ function getActiveClass($controller, $action = null) {
         </div>
         <ul class="space-y-1 mt-2 pl-7 max-h-[500px] overflow-hidden transition-all duration-300">
             <li>
-                <a href="usuario.php" 
-                   class="flex items-center font-medium transition-all text-[15px] hover:bg-gray-700 rounded-md px-3 py-2 text-gray-300 hover:text-blue-400">
+                <a href="index.php?controller=usuario&action=listar" 
+                   class="flex items-center font-medium transition-all text-[15px] hover:bg-gray-700 rounded-md px-3 py-2 <?php echo getActiveClass('usuario', 'listar'); ?>">
                     <i class="fas fa-users w-4 h-4 mr-2"></i>Usuarios
                 </a>
             </li>
@@ -194,8 +194,8 @@ function getActiveClass($controller, $action = null) {
         </div>
         <ul class="space-y-1 mt-2 pl-7 max-h-[500px] overflow-hidden transition-all duration-300">
             <li>
-                <a href="perfil.php" 
-                   class="flex items-center font-medium transition-all text-[15px] hover:bg-gray-700 rounded-md px-3 py-2 text-gray-300 hover:text-blue-400">
+                <a href="index.php?controller=usuario&action=perfil" 
+                   class="flex items-center font-medium transition-all text-[15px] hover:bg-gray-700 rounded-md px-3 py-2 <?php echo getActiveClass('usuario', 'perfil'); ?>">
                     <i class="fas fa-user-cog w-4 h-4 mr-2"></i>Mi Perfil
                 </a>
             </li>
@@ -219,7 +219,7 @@ function getActiveClass($controller, $action = null) {
             <button id="cancelarCerrarSesion" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition-colors">
                 Cancelar
             </button>
-            <a href="cerrar_sesion.php" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors">
+            <a href="index.php?controller=usuario&action=cerrarSesion" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors">
                 Cerrar sesión
             </a>
         </div>

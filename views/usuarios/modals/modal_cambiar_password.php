@@ -3,8 +3,7 @@
     <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-auto flex flex-col items-center">
         <h3 class="text-lg font-medium text-gray-900 mb-6">Cambiar Contraseña</h3>
         
-        <form id="formCambiarPassword" action="views/usuario/usuario_password.php" method="POST" class="w-full space-y-4">
-            <input type="hidden" name="referer" value="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
+        <form id="formCambiarPassword" action="index.php?controller=usuario&action=cambiarPassword" method="POST" class="w-full space-y-4">
             <input type="hidden" id="password_id" name="id_usuario">
 
             <div class="mb-4">
@@ -27,4 +26,4 @@
             </div>
         </form>
     </div>
-</div>
+</div> 

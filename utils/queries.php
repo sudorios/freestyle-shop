@@ -234,7 +234,7 @@ function check_rol($roles_permitidos) {
         session_start();
     }
     if (!isset($_SESSION['rol']) || !in_array($_SESSION['rol'], $roles_permitidos)) {
-        header('Location: /freestyle-shop/login.php');
+        header('Location: /freestyle-shop/index.php?controller=usuario&action=login');
         exit();
     }
 } 

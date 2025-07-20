@@ -1,29 +1,12 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-include_once './conexion/cone.php';
 
-if (!isset($_SESSION['usuario'])) {
-    header('Location: login.php');
-    exit();
-}
-
-$usuario = $_SESSION['usuario'];
-$query = "SELECT * FROM usuario WHERE ref_usuario = $1 OR email_usuario = $1 LIMIT 1";
-$result = pg_query_params($conn, $query, array($usuario));
-
-if (!$result || pg_num_rows($result) === 0) {
-    die('No se encontró el usuario.');
-}
-$row = pg_fetch_assoc($result);
 ?>
 <!DOCTYPE html>
 <html lang="es">
-<?php include_once './includes/head.php'; ?>
+<?php include_once __DIR__ . '/../../includes/head.php'; ?>
 
 <body class="ml-72 mt-16 bg-gray-100">
-    <?php include_once './includes/header.php'; ?>
+    <?php include_once __DIR__ . '/../../includes/header.php'; ?>
     <main class="container mx-auto px-4 py-8">
         <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
             <h2 class="text-2xl font-bold mb-6 flex items-center"><i class="fas fa-user-cog text-blue-500 mr-2"></i>Mi Perfil</h2>
@@ -66,10 +49,10 @@ $row = pg_fetch_assoc($result);
             </div>
         </div>
     </main>
-    <?php include_once 'views/usuario/modals/modal_editar_usuario.php'; ?>
-    <?php include_once 'views/usuario/modals/modal_cambiar_password.php'; ?>
-    <script src="views/usuario/usuarios.js"></script>
-    <?php include_once './includes/footer.php'; ?>
+    <?php include __DIR__ . '/modals/modal_editar_usuario.php'; ?>
+    <?php include __DIR__ . '/modals/modal_cambiar_password.php'; ?>
+    <script src="assets/js/usuarios.js?v=<?php echo time(); ?>"></script>
+    <?php include_once __DIR__ . '/../../includes/footer.php'; ?>
 </body>
 
-</html>
+</html> 

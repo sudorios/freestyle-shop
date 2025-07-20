@@ -85,14 +85,14 @@ while ($row = pg_fetch_assoc($res)) {
           <a href="perfil.php" class="hidden md:inline hover:text-pink-400 transition underline text-sm lg:text-base">
             <?php echo htmlspecialchars($_SESSION['usuario']); ?>
           </a>
-          <a href="cerrar_sesion.php" title="Cerrar sesión"
+          <a href="index.php?controller=usuario&action=cerrarSesion" title="Cerrar sesión"
             class="inline-flex items-center justify-center text-pink-600 hover:text-pink-700 bg-white hover:bg-gray-100 rounded-full p-1.5 sm:p-2 transition"
             style="font-size: 1rem;">
             <i class="fas fa-sign-out-alt"></i>
           </a>
         </span>
       <?php else: ?>
-        <a href="login.php" class="group">
+        <a href="index.php?controller=usuario&action=login" class="group">
           <i class="fas fa-user-circle text-white group-hover:text-pink-400 transition text-xl sm:text-2xl"></i>
         </a>
       <?php endif; ?>
@@ -135,12 +135,12 @@ while ($row = pg_fetch_assoc($res)) {
           <i class="fas fa-user-circle"></i>
           <span><?php echo htmlspecialchars($_SESSION['usuario']); ?></span>
         </a>
-        <a href="cerrar_sesion.php" class="flex items-center space-x-2 hover:text-pink-400 text-white border-b-2 border-transparent hover:border-pink-600 transition">
+        <a href="index.php?controller=usuario&action=cerrarSesion" class="flex items-center space-x-2 hover:text-pink-400 text-white border-b-2 border-transparent hover:border-pink-600 transition">
           <i class="fas fa-sign-out-alt"></i>
           <span>Cerrar Sesión</span>
         </a>
       <?php else: ?>
-        <a href="login.php" class="flex items-center space-x-2 hover:text-pink-400 text-white border-b-2 border-transparent hover:border-pink-600 transition">
+        <a href="index.php?controller=usuario&action=login" class="flex items-center space-x-2 hover:text-pink-400 text-white border-b-2 border-transparent hover:border-pink-600 transition">
           <i class="fas fa-user-circle"></i>
           <span>Iniciar Sesión</span>
         </a>

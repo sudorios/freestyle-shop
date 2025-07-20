@@ -92,4 +92,4 @@ function usuariosInit() {
     initValidarPassword();
 }
 
-document.addEventListener('DOMContentLoaded', usuariosInit);
+document.addEventListener('DOMContentLoaded', usuariosInit); 

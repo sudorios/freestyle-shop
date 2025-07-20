@@ -4,7 +4,7 @@ include_once '../../conexion/cone.php';
 include_once 'pedido_queries.php';
 
 if (!isset($_SESSION['id'])) {
-    header('Location: ../../login.php?error=2&msg=No autenticado');
+    header('Location: ../../index.php?controller=usuario&action=login?error=2&msg=No autenticado');
     exit();
 }
 

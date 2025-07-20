@@ -63,7 +63,7 @@ function manejarResultadoConsulta($result, $conn, $success_url = '../../transfer
 function obtenerIdUsuarioSesion()
 {
     if (!isset($_SESSION['id'])) {
-        header('Location: login.php');
+        header('Location: ../../index.php?controller=usuario&action=login');
         exit();
     }
     return $_SESSION['id'];
