@@ -178,7 +178,7 @@ function getActiveClass($controller, $action = null) {
                 </a>
             </li>
             <li>
-                <a href="cliente.php" 
+                <a href="index.php?controller=cliente&action=listar" 
                    class="flex items-center font-medium transition-all text-[15px] hover:bg-gray-700 rounded-md px-3 py-2 text-gray-300 hover:text-blue-400">
                     <i class="fas fa-user w-4 h-4 mr-2"></i>Clientes
                 </a>

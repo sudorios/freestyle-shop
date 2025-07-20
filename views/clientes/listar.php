@@ -1,34 +1,18 @@
 <?php
-session_start();
-require_once './utils/queries.php';
+require_once __DIR__ . '/../../utils/queries.php';
 check_rol(['developer','admin']);
-include_once './conexion/cone.php';
-
-if (!$conn) {
-    die('Error de conexión: ' . pg_last_error($conn));
-}
-
-$sql = "SELECT * FROM usuario WHERE rol_usuario = 'cliente' ORDER BY id_usuario ASC";
-$result = pg_query($conn, $sql);
-
-if (!$result) {
-    die('Error en la consulta: ' . pg_last_error($conn));
-}
 ?>
 <!DOCTYPE html>
 <html lang="es">
-
-<?php include_once './includes/head.php'; ?>
-
+<?php include_once __DIR__ . '/../../includes/head.php'; ?>
 <body id="main-content" class="ml-72 mt-20">
-    <?php include_once './includes/header.php'; ?>
+    <?php include_once __DIR__ . '/../../includes/header.php'; ?>
     <main>
         <div class="container mx-auto px-4 mt-6">
             <?php if (isset($_GET['success']) && $_GET['success'] == 2): ?>
                 <div class='bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4'>
                     <span class="block sm:inline">Operación realizada con éxito</span>
                 </div>
-                <meta http-equiv="refresh" content="3;url=cliente.php">
             <?php endif; ?>
             <?php if (isset($_GET['success']) && $_GET['success'] == 3): ?>
                 <div class='bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4'>
@@ -64,8 +48,8 @@ if (!$result) {
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            <?php while ($row = pg_fetch_assoc($result)) { ?>
+                        <tbody class="bg-white divide-y divide-gray-200" id="tbody">
+                            <?php foreach ($clientes as $row) { ?>
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['id_usuario']); ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_usuario']); ?></td>
@@ -111,10 +95,9 @@ if (!$result) {
     </main>
     <script src="assets/js/modal_confirmar.js"></script>
     <script src="assets/js/tabla_utils.js"></script>
-    <?php include 'includes/modal_confirmar.php'; ?>
-    <?php include 'views/usuario/modals/modal_cambiar_password.php'; ?>
-    <script src="views/usuario/usuarios.js"></script>
-    <?php include_once './includes/footer.php'; ?>
+    <?php include __DIR__ . '/../../includes/modal_confirmar.php'; ?>
+    <?php include __DIR__ . '/../usuarios/modals/modal_cambiar_password.php'; ?>
+    <script src="assets/js/usuarios.js"></script>
+    <?php include_once __DIR__ . '/../../includes/footer.php'; ?>
 </body>
-
 </html> 
