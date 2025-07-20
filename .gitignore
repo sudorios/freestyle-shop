@@ -2,3 +2,4 @@
 /vendor/
 cloudinary_config.php
 .env
+.cursor/rules

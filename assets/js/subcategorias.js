@@ -23,31 +23,18 @@ function initEditarSubcategoria() {
             document.getElementById('edit_descripcion_subcategoria').value = descripcion;
             document.getElementById('edit_id_categoria').value = categoria;
 
-            abrirModal();
+            abrirModalEditarSubcategoria();
         });
     });
 }
 
-function initFormEditarSubcategoria() {
-    $('#formEditarSubcategoria').submit(function(e) {
-        e.preventDefault();
-        $.ajax({
-            url: 'views/subcategorias/subcategoria_edit.php',
-            type: 'POST',
-            data: $(this).serialize(),
-            success: function() {
-                location.reload();
-            }
-        });
-    });
-}
 
-function abrirModal() {
+function abrirModalEditarSubcategoria() {
     document.getElementById('modalEditarSubcategoria').classList.remove('hidden');
     document.getElementById('modalBackgroundEditar').classList.remove('hidden');
 }
 
-function cerrarModal() {
+function cerrarModalEditarSubcategoria() {
     document.getElementById('modalEditarSubcategoria').classList.add('hidden');
     document.getElementById('modalBackgroundEditar').classList.add('hidden');
 }
@@ -65,7 +52,6 @@ function cerrarModalAgregarSubcategoria() {
 function subcategoriasInit() {
     initTablaSubcategoria();
     initEditarSubcategoria();
-    initFormEditarSubcategoria();
 }
 
 document.addEventListener('DOMContentLoaded', subcategoriasInit); 

@@ -1,43 +1,52 @@
-<?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-include_once './conexion/cone.php';
-include_once './views/subcategorias/subcategoria_queries.php';
-
-
-
-if (!$conn) {
-    die('Error de conexión: ' . pg_last_error($conn));
-}
-
-$sql = getAllSubcategoriasQuery();
-$result = pg_query($conn, $sql);
-
-if (!$result) {
-    die('Error en la consulta: ' . pg_last_error($conn));
-}
-?>
 <!DOCTYPE html>
 <html lang="es">
 
-<?php include_once './includes/head.php'; ?>
+<?php include_once __DIR__ . '/../../includes/head.php'; ?>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 
 <body id="main-content" class="ml-72 mt-20">
-    <?php include_once './includes/header.php'; ?>
+    <?php include_once __DIR__ . '/../../includes/header.php'; ?>
     <main>
         <div class="container mx-auto px-4 mt-6">
+            <?php if (isset($_GET['success']) || isset($_GET['error'])): ?>
+                <meta http-equiv="refresh" content="3;url=index.php?controller=subcategoria&action=listar">
+            <?php endif; ?>
+            <?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
+                <div class='bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4'>
+                    <span class="block sm:inline">Subcategoría registrada correctamente</span>
+                </div>
+            <?php endif; ?>
             <?php if (isset($_GET['success']) && $_GET['success'] == 2): ?>
                 <div class='bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4'>
-                    <span class="block sm:inline">Operación realizada con éxito</span>
+                    <span class="block sm:inline">Subcategoría actualizada correctamente</span>
                 </div>
-                <meta http-equiv="refresh" content="3;url=subcategoria.php">
             <?php endif; ?>
             <?php if (isset($_GET['error'])): ?>
                 <div class='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4'>
-                    <span class="block sm:inline">Ocurrió un error. Código: <?php echo htmlspecialchars($_GET['error']); ?></span>
+                    <span class="block sm:inline">
+                        <?php
+                        if (isset($_GET['msg'])) {
+                            echo htmlspecialchars($_GET['msg']);
+                        } else {
+                            switch ($_GET['error']) {
+                                case 1:
+                                    echo "Error al actualizar la subcategoría";
+                                    break;
+                                case 2:
+                                    echo "ID de subcategoría no válido";
+                                    break;
+                                case 3:
+                                    echo "La subcategoría no existe";
+                                    break;
+                                default:
+                                    echo "Error desconocido";
+                            }
+                        }
+                        ?>
+                    </span>
                 </div>
-                <meta http-equiv="refresh" content="3;url=subcategoria.php">
             <?php endif; ?>
             <hr class="my-4 border-t-2 border-gray-200 rounded-full opacity-80">
             <div class="flex justify-between items-center mb-6">
@@ -64,7 +73,7 @@ if (!$result) {
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        <?php while ($row = pg_fetch_assoc($result)) { ?>
+                        <?php foreach ($subcategorias as $row) { ?>
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap"><?php echo $row['id_subcategoria']; ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_subcategoria']); ?></td>
@@ -78,7 +87,7 @@ if (!$result) {
                                         data-categoria="<?php echo $row['id_categoria']; ?>">
                                         <i class="fas fa-edit"></i> Editar
                                     </button>
-                                    <button onclick="abrirModalConfirmar({mensaje: '¿Seguro que deseas eliminar esta subcategoría?', action: 'views/subcategorias/subcategoria_eliminar.php', id: '<?php echo $row['id_subcategoria']; ?>', idField: 'id_subcategoria'})" class="cursor-pointer bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded btn-eliminar-subcategoria"
+                                    <button onclick="abrirModalConfirmar({mensaje: '¿Seguro que deseas eliminar esta subcategoría?', action: 'index.php?controller=subcategoria&action=eliminar', id: '<?php echo $row['id_subcategoria']; ?>', idField: 'id_subcategoria'})" class="cursor-pointer bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded btn-eliminar-subcategoria"
                                         data-id="<?php echo $row['id_subcategoria']; ?>">
                                         <i class="fas fa-trash"></i> Eliminar
                                     </button>
@@ -91,13 +100,13 @@ if (!$result) {
             <div id="paginacionSubcategoria" class="flex justify-center mt-4"></div>
         </div>
     </main>
-    <?php include 'includes/footer.php'; ?>
-    <?php include 'views/subcategorias/modals/modal_agregar_subcategoria.php'; ?>
-    <?php include 'views/subcategorias/modals/modal_editar_subcategoria.php'; ?>
-    <?php include 'includes/modal_confirmar.php'; ?>
-    <script src="assets/js/modal_confirmar.js"></script>
-    <script src="assets/js/subcategorias.js"></script>
-    <script src="assets/js/tabla_utils.js"></script>
+    <?php include_once __DIR__ . '/../../includes/footer.php'; ?>
+    <?php include_once __DIR__ . '/modals/modal_agregar_subcategoria.php'; ?>
+    <?php include_once __DIR__ . '/modals/modal_editar_subcategoria.php'; ?>
+    <?php include __DIR__ . '/../../includes/modal_confirmar.php'; ?>
+    <script src="/freestyle-shop/assets/js/modal_confirmar.js?v=1"></script>
+    <script src="/freestyle-shop/assets/js/subcategorias.js?v=1"></script>
+    <script src="/freestyle-shop/assets/js/tabla_utils.js?v=1"></script>
 </body>
 
-</html>
+</html> 

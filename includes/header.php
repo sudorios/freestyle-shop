@@ -68,8 +68,8 @@ function getActiveClass($controller, $action = null) {
                 </a>
             </li>
             <li>
-                <a href="subcategoria.php" 
-                   class="flex items-center font-medium transition-all text-[15px] hover:bg-gray-700 rounded-md px-3 py-2 text-gray-300 hover:text-blue-400">
+                <a href="index.php?controller=subcategoria&action=listar" 
+                   class="flex items-center font-medium transition-all text-[15px] hover:bg-gray-700 rounded-md px-3 py-2 <?php echo getActiveClass('subcategoria', 'listar'); ?>">
                     <i class="fas fa-plus w-4 h-4 mr-2"></i>Subcategorías
                 </a>
             </li>
