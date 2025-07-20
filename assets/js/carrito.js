@@ -74,7 +74,7 @@ function renderCarrito() {
                         alert('No hay productos en el carrito.');
                         return;
                     }
-                    window.location.href = 'checkout.php?items=' + encodeURIComponent(ids);
+                    window.location.href = 'index.php?controller=pedido&action=checkout&items=' + encodeURIComponent(ids);
                 });
             }
             asignarEventosCarrito();

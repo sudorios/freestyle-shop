@@ -1,59 +1,31 @@
 <?php
-session_start();
-require_once './conexion/cone.php';
-require_once './utils/queries.php';
-include_once './includes/head.php';
-include_once './includes_client/header.php';
-
-$mostrar_formulario = true;
-if (isset($_GET['success']) || isset($_GET['error'])) {
-    $mostrar_formulario = false;
-}
-
-$ids = isset($_GET['items']) ? explode(',', $_GET['items']) : [];
-$ids = array_filter(array_map('intval', $ids));
-
-if (empty($ids) && $mostrar_formulario) {
-    echo '<div class="text-center mt-10 text-xl">No hay productos seleccionados para el checkout.</div>';
-    include_once './includes/footer.php';
-    exit;
-}
-
-$placeholders = implode(',', array_map(function($i) { static $c=1; return '$'.($c++); }, $ids));
-$sql = getCarritoItemsByIdsQuery($placeholders);
-$res = $ids ? pg_query_params($conn, $sql, $ids) : false;
-$carrito = [];
-$total = 0;
-if ($res) {
-    while ($item = pg_fetch_assoc($res)) {
-        $carrito[] = $item;
-        $total += $item['cantidad'] * $item['precio_unitario'];
-    }
-}
-$envio = $total >= 99 ? 0 : 15;
-$total_final = $total + $envio;
+include_once __DIR__ . '/../../includes/head.php';
+include_once __DIR__ . '/../../includes_client/header.php';
 ?>
-
 <body class="bg-gray-100 min-h-screen">
     <div class="max-w-xl mx-auto bg-white p-8 mt-10 rounded shadow">
         <?php
-        if (isset($_GET['success'])) {
-            echo '<div class="mb-4 p-3 bg-green-100 text-green-800 rounded font-semibold text-center">' . htmlspecialchars($_GET['msg'] ?? '¡Pedido registrado correctamente!') . '</div>';
-            if (isset($_GET['id_pedido'])) {
-                $id_pedido = intval($_GET['id_pedido']);
+        if (isset(
+            $success
+        ) && $success) {
+            echo '<div class="mb-4 p-3 bg-green-100 text-green-800 rounded font-semibold text-center">' . htmlspecialchars($msg ?? '¡Pedido registrado correctamente!') . '</div>';
+            if (isset($id_pedido)) {
                 echo '<div class="flex flex-col items-center gap-4 mt-6">';
-                echo '<a href="views/pedidos/generar_boleta_pdf.php?id_pedido=' . $id_pedido . '" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center gap-2" target="_blank"><i class="fa fa-file-pdf-o"></i> Descargar boleta PDF</a>';
+                echo '<a href="index.php?controller=pedido&action=generarBoletaPDF&id=' . $id_pedido . '" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center gap-2" target="_blank"><i class="fa fa-file-pdf-o"></i> Descargar boleta PDF</a>';
                 echo '<a href="index.php" class="bg-gray-800 hover:bg-black text-white font-bold py-2 px-4 rounded flex items-center gap-2"><i class="fa fa-home"></i> Volver a la tienda</a>';
                 echo '</div>';
             }
             echo '<meta http-equiv="refresh" content="10;url=index.php">';
-        } elseif (isset($_GET['error'])) {
-            echo '<div class="mb-4 p-3 bg-red-100 text-red-800 rounded font-semibold text-center">' . htmlspecialchars($_GET['msg'] ?? 'Ocurrió un error al registrar el pedido.') . '</div>';
+        } elseif (isset($error) && $error) {
+            echo '<div class="mb-4 p-3 bg-red-100 text-red-800 rounded font-semibold text-center">' . htmlspecialchars($msg ?? 'Ocurrió un error al registrar el pedido.') . '</div>';
+            if (isset($debug_log)) {
+                echo '<pre style="background:#222;color:#fff;padding:1em;overflow:auto;font-size:0.9em;">' . htmlspecialchars($debug_log) . '</pre>';
+            }
         }
         ?>
-        <?php if ($mostrar_formulario): ?>
+        <?php if (isset($mostrar_formulario) && $mostrar_formulario): ?>
         <h1 class="text-2xl font-bold mb-6">Finalizar compra</h1>
-        <form id="form-pedido" method="POST" action="views/pedidos/registrar_pedido.php">
+        <form id="form-pedido" method="POST" action="index.php?controller=pedido&action=checkout">
             <div class="mb-4">
                 <label for="direccion_envio" class="block font-semibold mb-1">Dirección de envío</label>
                 <input type="text" name="direccion_envio" id="direccion_envio" class="w-full border p-2 rounded" required>
@@ -113,6 +85,6 @@ $total_final = $total + $envio;
         <?php endif; ?>
         <div id="mensaje-resultado" class="mt-4 text-center"></div>
     </div>
-    <?php include_once './includes/footer.php'; ?>
+    <?php include_once __DIR__ . '/../../includes/footer.php'; ?>
 </body>
 </html> 

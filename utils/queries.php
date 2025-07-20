@@ -268,3 +268,24 @@ function getTopProductosVendidosQuery($limit = 5) {
         ORDER BY total_vendidos DESC
         LIMIT $limit";
 } 
+
+// =====================
+// === PEDIDOS (VENTA) ===
+// =====================
+
+function insertPedidoQuery() {
+    // Inserta un pedido con dirección, método de pago y observaciones
+    return "INSERT INTO pedido (id_usuario, total, estado, direccion_envio, metodo_pago, observaciones) 
+            VALUES ($1, $2, 'PENDIENTE', $3, $4, $5) RETURNING id_pedido";
+}
+
+function insertDetallePedidoQuery() {
+    // Inserta un detalle de pedido
+    return "INSERT INTO detalle_pedido (id_pedido, id_producto, cantidad, precio_unitario) 
+            VALUES ($1, $2, $3, $4)";
+}
+
+function updateStockVentaQuery() {
+    // Actualiza el stock restando cantidad (venta)
+    return "UPDATE inventario_sucursal SET cantidad = cantidad - $1 WHERE id_producto = $2 AND id_sucursal = $3";
+} 
