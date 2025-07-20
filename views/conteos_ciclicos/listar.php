@@ -2,44 +2,15 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-include_once './conexion/cone.php';
-include_once 'views/conteos_ciclicos/conteos_ciclicos_queries.php';
-
-$id_producto = isset($_GET['id_producto']) ? intval($_GET['id_producto']) : 0;
-$id_sucursal = isset($_GET['id_sucursal']) ? intval($_GET['id_sucursal']) : 0;
-
-if ($id_producto <= 0 || $id_sucursal <= 0) {
-    die('Parámetros inválidos.');
-}
-
-$sql_prod = getNombreProductoByIdQuery();
-$res_prod = pg_query_params($conn, $sql_prod, array($id_producto));
-$nombre_producto = '';
-if ($res_prod && pg_num_rows($res_prod) > 0) {
-    $nombre_producto = pg_fetch_result($res_prod, 0, 'nombre_producto');
-}
-
-$sql_suc = getNombreSucursalByIdQuery();
-$res_suc = pg_query_params($conn, $sql_suc, array($id_sucursal));
-$nombre_sucursal = '';
-if ($res_suc && pg_num_rows($res_suc) > 0) {
-    $nombre_sucursal = pg_fetch_result($res_suc, 0, 'nombre_sucursal');
-}
-
-$sql_inv = getCantidadInventarioByProductoSucursalQuery();
-$res_inv = pg_query_params($conn, $sql_inv, array($id_producto, $id_sucursal));
-$cantidad_sistema = '';
-if ($res_inv && pg_num_rows($res_inv) > 0) {
-    $cantidad_sistema = pg_fetch_result($res_inv, 0, 'cantidad');
-}
-
-$nombre_usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : '';
-
+$producto_id = $_GET['id_producto'] ?? '';
+$sucursal_id = $_GET['id_sucursal'] ?? '';
+$nombre_usuario = $_SESSION['usuario'] ?? '';
+$nombre_producto = $nombre_producto ?? '';
+$nombre_sucursal = $nombre_sucursal ?? '';
 ?>
-
+<!DOCTYPE html>
+<html lang="es">
 <?php include_once './includes/head.php'; ?>
-
-
 <body id="main-content" class="ml-72 mt-20">
     <?php include_once './includes/header.php'; ?>
     <main>
@@ -60,48 +31,33 @@ $nombre_usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : '';
                     <h4 class="text-xl font-semibold">Historial de Conteos Cíclicos</h4>
                     <div class="flex gap-2 items-center">
                         <button id="btnNuevoConteo" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition">+ Nuevo Conteo</button>
-                        <form method="get" action="views/conteos_ciclicos/exportar_excel.php" style="display:inline;">
-                                       <input type="text" id="buscadorConteo" placeholder="Buscar Conteo..." class="border rounded px-2 py-1">
-             <input type="hidden" name="id_producto" value="<?php echo htmlspecialchars($id_producto); ?>">
-                            <input type="hidden" name="id_sucursal" value="<?php echo htmlspecialchars($id_sucursal); ?>">
-                            <input type="hidden" name="fecha_desde" value="<?php echo isset($_GET['fecha_desde']) ? htmlspecialchars($_GET['fecha_desde']) : ''; ?>">
-                            <input type="hidden" name="fecha_hasta" value="<?php echo isset($_GET['fecha_hasta']) ? htmlspecialchars($_GET['fecha_hasta']) : ''; ?>">
-                            <input type="hidden" name="usuario" value="<?php echo isset($_GET['usuario']) ? htmlspecialchars($_GET['usuario']) : ''; ?>">
-                            <input type="hidden" name="estado" value="<?php echo isset($_GET['estado']) ? htmlspecialchars($_GET['estado']) : ''; ?>">
-                            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow transition ml-2" title="Exportar a Excel">
-                                <i class="fas fa-file-excel"></i>
-                            </button>
-                        </form>
-                        <form method="get" action="views/conteos_ciclicos/exportar_pdf.php" style="display:inline;">
-                            <input type="hidden" name="id_producto" value="<?php echo htmlspecialchars($id_producto); ?>">
-                            <input type="hidden" name="id_sucursal" value="<?php echo htmlspecialchars($id_sucursal); ?>">
-                            <input type="hidden" name="fecha_desde" value="<?php echo isset($_GET['fecha_desde']) ? htmlspecialchars($_GET['fecha_desde']) : ''; ?>">
-                            <input type="hidden" name="fecha_hasta" value="<?php echo isset($_GET['fecha_hasta']) ? htmlspecialchars($_GET['fecha_hasta']) : ''; ?>">
-                            <input type="hidden" name="usuario" value="<?php echo isset($_GET['usuario']) ? htmlspecialchars($_GET['usuario']) : ''; ?>">
-                            <input type="hidden" name="estado" value="<?php echo isset($_GET['estado']) ? htmlspecialchars($_GET['estado']) : ''; ?>">
-                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded shadow transition ml-2" title="Exportar a PDF">
-                                <i class="fas fa-file-pdf"></i>
-                            </button>
-                        </form>
+                        <a href="index.php?controller=conteociclico&action=exportarCSV&id_producto=<?php echo urlencode($producto_id); ?>&id_sucursal=<?php echo urlencode($sucursal_id); ?>" target="_blank" class="inline-flex items-center bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow transition ml-2" title="Exportar a CSV">
+                            <i class="fas fa-file-csv mr-2"></i> Exportar CSV
+                        </a>
+                        <a href="index.php?controller=conteociclico&action=exportarPDF&id_producto=<?php echo urlencode($producto_id); ?>&id_sucursal=<?php echo urlencode($sucursal_id); ?>" target="_blank" class="inline-flex items-center bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded shadow transition ml-2" title="Exportar a PDF">
+                            <i class="fas fa-file-pdf mr-2"></i> Exportar PDF
+                        </a>
                     </div>
                 </div>
                 <hr class="my-4 border-t-2 border-gray-200 rounded-full opacity-80">
-                <form method="get" class="flex gap-4 mb-4 items-center" id="formFiltros">
-                    <input type="hidden" name="id_producto" value="<?php echo htmlspecialchars($id_producto); ?>">
-                    <input type="hidden" name="id_sucursal" value="<?php echo htmlspecialchars($id_sucursal); ?>">
+                <form method="get" class="flex gap-4 mb-4 items-center" id="formFiltros" action="index.php">
+                    <input type="hidden" name="controller" value="conteociclico">
+                    <input type="hidden" name="action" value="listar">
+                    <input type="hidden" name="id_producto" value="<?php echo htmlspecialchars($producto_id); ?>">
+                    <input type="hidden" name="id_sucursal" value="<?php echo htmlspecialchars($sucursal_id); ?>">
                     <label class="text-sm font-medium text-gray-700">Desde:
-                        <input type="date" name="fecha_desde" value="<?php echo isset($_GET['fecha_desde']) ? htmlspecialchars($_GET['fecha_desde']) : ''; ?>" class="border rounded px-2 py-1 ml-1">
+                        <input type="date" name="fecha_desde" value="<?php echo htmlspecialchars($_GET['fecha_desde'] ?? ''); ?>" class="border rounded px-2 py-1 ml-1">
                     </label>
                     <label class="text-sm font-medium text-gray-700">Hasta:
-                        <input type="date" name="fecha_hasta" value="<?php echo isset($_GET['fecha_hasta']) ? htmlspecialchars($_GET['fecha_hasta']) : ''; ?>" class="border rounded px-2 py-1 ml-1">
+                        <input type="date" name="fecha_hasta" value="<?php echo htmlspecialchars($_GET['fecha_hasta'] ?? ''); ?>" class="border rounded px-2 py-1 ml-1">
                     </label>
                     <button type="button" id="btnMasFiltros" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-1 px-3 rounded ml-2">Más filtros</button>
                     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded ml-2">Filtrar</button>
-                    <a href="conteo_ciclico.php?id_producto=<?php echo $id_producto; ?>&id_sucursal=<?php echo $id_sucursal; ?>" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-3 rounded ml-2">Limpiar</a>
+                    <a href="index.php?controller=conteociclico&action=listar&id_producto=<?php echo $producto_id; ?>&id_sucursal=<?php echo $sucursal_id; ?>" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-3 rounded ml-2">Limpiar</a>
                 </form>
                 <div id="filtrosExtra" class="<?php echo (isset($_GET['usuario']) || isset($_GET['estado'])) ? 'flex gap-4 items-center mb-4' : 'hidden flex gap-4 items-center mb-4'; ?>">
                     <label class="text-sm font-medium text-gray-700">Usuario:
-                        <input type="text" name="usuario" form="formFiltros" value="<?php echo isset($_GET['usuario']) ? htmlspecialchars($_GET['usuario']) : ''; ?>" class="border rounded px-2 py-1 ml-1">
+                        <input type="text" name="usuario" form="formFiltros" value="<?php echo htmlspecialchars($_GET['usuario'] ?? ''); ?>" class="border rounded px-2 py-1 ml-1">
                     </label>
                     <label class="text-sm font-medium text-gray-700">Estado:
                         <select name="estado" form="formFiltros" class="border rounded px-2 py-1 ml-1">
@@ -123,36 +79,6 @@ $nombre_usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : '';
                     }
                 });
                 </script>
-                <?php
-                $fecha_desde = isset($_GET['fecha_desde']) ? $_GET['fecha_desde'] : '';
-                $fecha_hasta = isset($_GET['fecha_hasta']) ? $_GET['fecha_hasta'] : '';
-                $usuario = isset($_GET['usuario']) ? trim($_GET['usuario']) : '';
-                $estado = isset($_GET['estado']) ? trim($_GET['estado']) : '';
-
-                if ($fecha_desde || $fecha_hasta || $usuario || $estado) {
-                    $sql = getConteosCiclicosFiltradosQuery($fecha_desde, $fecha_hasta, $usuario, $estado);
-                    $params = [$id_producto, $id_sucursal];
-                    if ($fecha_desde && $fecha_hasta) {
-                        $params[] = $fecha_desde;
-                        $params[] = $fecha_hasta;
-                    } elseif ($fecha_desde) {
-                        $params[] = $fecha_desde;
-                    } elseif ($fecha_hasta) {
-                        $params[] = $fecha_hasta;
-                    }
-                    if ($usuario) {
-                        $params[] = "%$usuario%";
-                    }
-                    if ($estado) {
-                        $params[] = $estado;
-                    }
-                } else {
-                    $sql = getConteosCiclicosByProductoSucursalQuery();
-                    $params = array($id_producto, $id_sucursal);
-                }
-
-                $result = pg_query_params($conn, $sql, $params);
-                ?>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -177,8 +103,8 @@ $nombre_usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : '';
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            <?php if ($result && pg_num_rows($result) > 0): ?>
-                                <?php while ($row = pg_fetch_assoc($result)) { ?>
+                            <?php if (!empty($conteos)): ?>
+                                <?php foreach ($conteos as $row) { ?>
                                     <tr>
                                         <td class="px-4 py-2 whitespace-nowrap"><?php echo $row['id_conteo']; ?></td>
                                         <td class="px-4 py-2 whitespace-nowrap"><?php echo $row['cantidad_real']; ?></td>
@@ -199,9 +125,7 @@ $nombre_usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : '';
                                             </span>
                                         </td>
                                         <td class="px-4 py-2 whitespace-nowrap"><?php echo date('d/m/Y', strtotime($row['fecha_conteo'])); ?></td>
-                                        <td class="px-4 py-2 whitespace-nowrap">
-                                            <?php echo htmlspecialchars($row['nombre_usuario'] ?? $row['usuario_id']); ?>
-                                        </td>
+                                        <td class="px-4 py-2 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_usuario'] ?? $row['usuario_id']); ?></td>
                                         <td class="px-4 py-2 whitespace-nowrap"><?php echo ucfirst($row['estado_conteo']); ?></td>
                                         <td class="px-4 py-2 whitespace-nowrap"><?php echo $row['fecha_ajuste'] ? date('d/m/Y', strtotime($row['fecha_ajuste'])) : '-'; ?></td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -237,12 +161,12 @@ $nombre_usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : '';
             <div id="paginacionConteo" class="flex justify-center mt-4"></div>
         </div>
     </main>
-    <script src="assets/js/conteo_ciclico.js"></script>
-    <script src="assets/js/tabla_utils.js"></script>
+    <script src="/freestyle-shop/assets/js/conteo_ciclico.js?v=1"></script>
+    <script src="/freestyle-shop/assets/js/tabla_utils.js?v=1"></script>
     <?php include_once './includes/footer.php'; ?>
+    <?php $cantidad_sistema = isset($cantidad_sistema) ? $cantidad_sistema : 0; ?>
     <?php include_once 'views/conteos_ciclicos/modals/modal_nuevo_conteo.php'; ?>
     <?php include_once 'views/conteos_ciclicos/modals/modal_ver_comentario.php'; ?>
     <?php include_once 'views/conteos_ciclicos/modals/modal_editar_conteo.php'; ?>
 </body>
-
-</html>
+</html> 

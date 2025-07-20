@@ -121,7 +121,7 @@ if (!$result) {
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <a href="conteo_ciclico.php?id_producto=<?php echo $row['id_producto']; ?>&id_sucursal=<?php echo $row['id_sucursal']; ?>" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded" title="Conteo Cíclico">
+                                        <a href="index.php?controller=conteociclico&action=listar&id_producto=<?php echo $row['id_producto']; ?>&id_sucursal=<?php echo $row['id_sucursal']; ?>" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded" title="Conteo Cíclico">
                                             <i class="fas fa-clipboard-check"></i>
                                         </a>
                                     </td>

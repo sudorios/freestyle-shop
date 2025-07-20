@@ -2,9 +2,9 @@
     <div class="absolute inset-0 bg-black opacity-50" onclick="cerrarModalConteo()"></div>
     <div class="relative bg-white rounded-lg shadow-lg w-full max-w-md mx-auto p-8 z-10">
         <h3 class="text-xl font-bold mb-6 text-center">Nuevo Conteo Cíclico</h3>
-        <form id="formNuevoConteo" method="POST" action="views/conteos_ciclicos/conteo_ciclico_registrar.php">
-            <input type="hidden" name="id_producto" value="<?php echo htmlspecialchars($id_producto); ?>">
-            <input type="hidden" name="id_sucursal" value="<?php echo htmlspecialchars($id_sucursal); ?>">
+        <form id="formNuevoConteo" method="POST" action="index.php?controller=conteociclico&action=registrar">
+            <input type="hidden" name="id_producto" value="<?php echo htmlspecialchars($producto_id); ?>">
+            <input type="hidden" name="id_sucursal" value="<?php echo htmlspecialchars($sucursal_id); ?>">
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
                 <input type="text" value="<?php echo htmlspecialchars($nombre_usuario); ?>" class="uppercase mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-gray-100 text-gray-700" readonly>
@@ -15,7 +15,7 @@
             </div>
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Cantidad del Sistema</label>
-                <input type="number" value="<?php echo htmlspecialchars($cantidad_sistema); ?>" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-gray-100 text-gray-700" readonly>
+                <input type="number" name="cantidad_sistema" value="<?php echo htmlspecialchars($cantidad_sistema); ?>" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-gray-100 text-gray-700" readonly>
             </div>
             <div class="mb-4">
                 <label for="cantidad_real" class="block text-sm font-medium text-gray-700 mb-1">Cantidad Real</label>

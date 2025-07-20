@@ -3,7 +3,7 @@
   <div class="relative top-20 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
     <div class="mt-3">
       <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Editar Conteo Cíclico</h3>
-      <form id="formEditarConteo" method="POST" action="views/conteos_ciclicos/conteo_ciclico_editar.php">
+      <form id="formEditarConteo" method="POST" action="index.php?controller=conteociclico&action=editar">
         <input type="hidden" name="id_conteo" id="editar_id_conteo">
         <input type="hidden" name="id_producto" id="editar_id_producto">
         <input type="hidden" name="id_sucursal" id="editar_id_sucursal">
