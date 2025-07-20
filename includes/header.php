@@ -112,8 +112,8 @@ function getActiveClass($controller, $action = null) {
                 </a>
             </li>
             <li>
-                <a href="ingreso.php" 
-                   class="flex items-center font-medium transition-all text-[15px] hover:bg-gray-700 rounded-md px-3 py-2 text-gray-300 hover:text-blue-400">
+                <a href="index.php?controller=ingreso&action=listar" 
+                   class="flex items-center font-medium transition-all text-[15px] hover:bg-gray-700 rounded-md px-3 py-2 text-gray-300 hover:text-blue-400 <?php echo (isset($_GET['controller']) && $_GET['controller'] === 'ingreso') ? 'bg-gray-700 text-blue-400' : ''; ?>">
                     <i class="fas fa-truck w-4 h-4 mr-2"></i>Ingreso de Productos
                 </a>
             </li>

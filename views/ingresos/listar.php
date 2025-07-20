@@ -2,25 +2,6 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-include_once './conexion/cone.php';
-include_once 'views/ingresos/ingreso_queries.php';
-include_once 'views/ingresos/ingreso_utils.php';
-
-if (!$conn) {
-    die('Error de conexión: ' . pg_last_error($conn));
-}
-
-$fecha_inicio = $_GET['fecha_inicio'] ?? '';
-$fecha_fin = $_GET['fecha_fin'] ?? '';
-
-$where_sql = whereFechasIngreso($conn, $fecha_inicio, $fecha_fin);
-
-$sql = getListadoIngresosQuery($where_sql);
-$result = pg_query($conn, $sql);
-
-if (!$result) {
-    die('Error en la consulta: ' . pg_last_error($conn));
-}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -35,7 +16,7 @@ if (!$result) {
                 <div class='bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4'>
                     <span class="block sm:inline">Operación realizada con éxito</span>
                 </div>
-                <meta http-equiv="refresh" content="3;url=ingreso.php">
+                <meta http-equiv="refresh" content="3;url=index.php?controller=ingreso&action=listar">
             <?php endif; ?>
             <?php if (isset($_GET['error'])): ?>
                 <div class='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4'>
@@ -50,18 +31,26 @@ if (!$result) {
                     <a href="#" onclick="abrirModalAgregarIngreso()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
                         Agregar Ingreso
                     </a>
+                    <a href="index.php?controller=ingreso&action=exportarCSV<?php echo (isset($_GET['fecha_inicio']) ? '&fecha_inicio=' . urlencode($_GET['fecha_inicio']) : ''); echo (isset($_GET['fecha_fin']) ? '&fecha_fin=' . urlencode($_GET['fecha_fin']) : ''); ?>" target="_blank" class="inline-flex items-center bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow transition ml-2" title="Exportar a CSV">
+                        <i class="fas fa-file-csv mr-2"></i> Exportar CSV
+                    </a>
+                    <a href="index.php?controller=ingreso&action=exportarPDF<?php echo (isset($_GET['fecha_inicio']) ? '&fecha_inicio=' . urlencode($_GET['fecha_inicio']) : ''); echo (isset($_GET['fecha_fin']) ? '&fecha_fin=' . urlencode($_GET['fecha_fin']) : ''); ?>" target="_blank" class="inline-flex items-center bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded shadow transition ml-2" title="Exportar a PDF">
+                        <i class="fas fa-file-pdf mr-2"></i> Exportar PDF
+                    </a>
                 </div>
             </div>
             <hr class="my-4 border-t-2 border-gray-200 rounded-full opacity-80">
             <div class="flex gap-2 items-center mb-6">
-                <form method="get" action="ingreso.php" class="flex gap-2 items-center" style="display:inline;">
-                    <input type="date" name="fecha_inicio" id="fecha_inicio" class="border rounded px-2 py-1" placeholder="Desde" value="<?php echo htmlspecialchars($fecha_inicio); ?>">
-                    <input type="date" name="fecha_fin" id="fecha_fin" class="border rounded px-2 py-1" placeholder="Hasta" value="<?php echo htmlspecialchars($fecha_fin); ?>">
+                <form method="get" action="index.php" class="flex gap-2 items-center" style="display:inline;">
+                    <input type="hidden" name="controller" value="ingreso">
+                    <input type="hidden" name="action" value="listar">
+                    <input type="date" name="fecha_inicio" id="fecha_inicio" class="border rounded px-2 py-1" placeholder="Desde" value="<?php echo htmlspecialchars($_GET['fecha_inicio'] ?? ''); ?>">
+                    <input type="date" name="fecha_fin" id="fecha_fin" class="border rounded px-2 py-1" placeholder="Hasta" value="<?php echo htmlspecialchars($_GET['fecha_fin'] ?? ''); ?>">
                     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition" title="Filtrar">
                         <i class="fas fa-filter"></i> Filtrar
                     </button>
-                    <?php if ($fecha_inicio || $fecha_fin): ?>
-                        <a href="ingreso.php" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded shadow transition" title="Quitar filtros">
+                    <?php if (!empty($_GET['fecha_inicio']) || !empty($_GET['fecha_fin'])): ?>
+                        <a href="index.php?controller=ingreso&action=listar" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded shadow transition" title="Quitar filtros">
                             <i class="fas fa-times"></i>
                         </a>
                     <?php endif; ?>
@@ -84,7 +73,7 @@ if (!$result) {
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            <?php while ($row = pg_fetch_assoc($result)) { ?>
+                            <?php foreach ($ingresos as $row) { ?>
                                 <tr>
                                     <td class="px-3 py-2 whitespace-nowrap"><?php echo htmlspecialchars($row['ref']); ?></td>
                                     <td class="px-3 py-2 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_producto'] . ($row['talla_producto'] ? '(' . $row['talla_producto'] . ')' : '')); ?></td>
@@ -106,7 +95,7 @@ if (!$result) {
                                             <i class="fas fa-eye"></i>
                                         </button>
                                         <button onclick='abrirModalEditarIngresoDesdeTabla(<?php echo htmlspecialchars(json_encode([
-                                            'id' => $row['id'],
+                                            'id' => $row['id_ingreso'] ?? $row['id'],
                                             'ref' => $row['ref'],
                                             'nombre_producto' => $row['nombre_producto'] . ($row['talla_producto'] ? '(' . $row['talla_producto'] . ')' : ''),
                                             'nombre_sucursal' => $row['nombre_sucursal'] ?? 'Sin sucursal',
@@ -131,9 +120,9 @@ if (!$result) {
     <?php include 'views/ingresos/modals/modal_costos_ingreso.php'; ?>
     <?php include 'views/ingresos/modals/modal_editar_ingreso.php'; ?>
     <div id="modalBackground" class="fixed inset-0 bg-black opacity-75 hidden z-20"></div>
-    <script src="assets/js/ingreso.js"></script>
-    <script src="assets/js/tabla_utils.js"></script>
+    <script src="/freestyle-shop/assets/js/ingreso.js?v=1"></script>
+    <script src="/freestyle-shop/assets/js/tabla_utils.js?v=1"></script>
     <?php include_once './includes/footer.php'; ?>
 </body>
 
-</html>
+</html> 
