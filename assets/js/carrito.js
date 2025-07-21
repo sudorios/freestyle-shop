@@ -1,5 +1,5 @@
 function actualizarContadorCarritoAjax() {
-    fetch('views/carrito/carrito_contador.php')
+    fetch('index.php?controller=carrito&action=contador')
       .then(res => res.json())
       .then(data => {
         const badge = document.getElementById('carrito-contador');
@@ -11,7 +11,7 @@ function actualizarContadorCarritoAjax() {
 }
 
 function renderCarrito() {
-    fetch('views/carrito/carrito_datos.php')
+    fetch('index.php?controller=carrito&action=datos')
         .then(res => res.json())
         .then(data => {
             const lista = document.getElementById('carrito-lista');
@@ -88,7 +88,7 @@ function asignarEventosCarrito() {
             const itemDiv = this.closest('[data-item-id]');
             const itemId = itemDiv.getAttribute('data-item-id');
             if (!itemId) return;
-            fetch('views/carrito/carrito_eliminar.php', {
+            fetch('index.php?controller=carrito&action=eliminar', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: 'item_id=' + encodeURIComponent(itemId)
@@ -127,7 +127,7 @@ function asignarEventosCarrito() {
 }
 
 function actualizarCantidadCarrito(itemId, cantidad, inputElem) {
-    fetch('views/carrito/carrito_actualizar.php', {
+    fetch('index.php?controller=carrito&action=actualizar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: 'item_id=' + encodeURIComponent(itemId) + '&cantidad=' + encodeURIComponent(cantidad)

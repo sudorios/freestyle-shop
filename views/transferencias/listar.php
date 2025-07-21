@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../../utils/queries.php';
-check_rol(['developer','admin']);
 ?>
 <!DOCTYPE html>
 <html lang="es">

@@ -1,6 +1,6 @@
 <?php
 include_once __DIR__ . '/../../includes/head.php';
-include_once __DIR__ . '/../../includes_client/header.php';
+$esCliente = true; include_once __DIR__ . '/../../includes/header.php';
 ?>
 <body class="bg-gray-100 min-h-screen">
     <div class="max-w-xl mx-auto bg-white p-8 mt-10 rounded shadow">

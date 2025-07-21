@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../models/Reporte.php';
+require_once __DIR__ . '/../core/Helpers.php';
 
 class ReporteController {
     public function listar() {

@@ -14,5 +14,4 @@ class Cliente extends Usuario {
         }
         return $clientes;
     }
-    // Métodos de editar, cambiarPassword, eliminar pueden reutilizarse de Usuario
 } 

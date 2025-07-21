@@ -6,5 +6,4 @@ class ClienteController {
         $clientes = Cliente::obtenerTodos();
         require __DIR__ . '/../views/clientes/listar.php';
     }
-    // Placeholders para editar, cambiarPassword, eliminar
 } 

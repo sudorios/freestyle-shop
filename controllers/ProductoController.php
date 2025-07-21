@@ -219,6 +219,36 @@ class ProductoController {
         require __DIR__ . '/../views/productos/ver.php';
     }
 
+    public function stock() {
+        header('Content-Type: application/json');
+        $catalogo_id = isset($_GET['catalogo_id']) ? intval($_GET['catalogo_id']) : (isset($_POST['catalogo_id']) ? intval($_POST['catalogo_id']) : 0);
+        $talla = isset($_GET['talla']) ? $_GET['talla'] : (isset($_POST['talla']) ? $_POST['talla'] : '');
+        if ($catalogo_id <= 0 || empty($talla)) {
+            echo json_encode(['success' => false, 'error' => 'Parámetros inválidos']);
+            exit;
+        }
+        $conn = Database::getConexion();
+        $sql = "SELECT s.cantidad, i.precio_venta, (i.precio_venta * (1 - (cp.oferta / 100))) AS precio_con_descuento
+                FROM catalogo_productos cp
+                JOIN ingreso i ON cp.ingreso_id = i.id
+                JOIN inventario_sucursal s ON cp.producto_id = s.id_producto AND cp.sucursal_id = s.id_sucursal
+                JOIN producto p ON cp.producto_id = p.id_producto
+                WHERE cp.id = $1 AND p.talla_producto = $2 AND cp.sucursal_id = 7 AND (cp.estado = true OR cp.estado = 't') LIMIT 1";
+        $res = pg_query_params($conn, $sql, [$catalogo_id, $talla]);
+        $row = pg_fetch_assoc($res);
+        if ($row) {
+            echo json_encode([
+                'success' => true,
+                'cantidad' => intval($row['cantidad']),
+                'precio_venta' => floatval($row['precio_venta']),
+                'precio_con_descuento' => floatval($row['precio_con_descuento'])
+            ]);
+        } else {
+            echo json_encode(['success' => false, 'cantidad' => 0]);
+        }
+        exit;
+    }
+
     private function validarCamposProducto($ref, $nombre, $id_subcategoria, $talla) {
         $errores = [];
         if (empty($ref)) $errores[] = 'Referencia requerida';

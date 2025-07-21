@@ -1,7 +1,4 @@
-<?php
-include_once 'includes/head.php';
-include_once 'includes_client/header.php';
-?>
+<?php $esCliente = true; include_once 'includes/head.php'; include_once 'includes/header.php'; ?>
 <main class="flex flex-col items-center justify-center min-h-[70vh] bg-white py-12 px-4">
     <div class="bg-white rounded-lg shadow-lg p-8 max-w-xl w-full flex flex-col items-center">
         <img src="assets/images/icono.jpg" alt="Logo Freestyle Shop" class="w-32 h-32 mb-6 rounded-full shadow-md border-4 border-red-600 object-cover">
@@ -15,4 +12,4 @@ include_once 'includes_client/header.php';
         </p>
     </div>
 </main>
-<?php include_once 'includes/footer.php'; ?>
+<?php include_once 'includes/footer.php'; ?> 

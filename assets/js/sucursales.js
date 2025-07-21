@@ -97,7 +97,7 @@ function confirmarDesactivacionSucursal() {
     mostrarErrorPassword("La contraseña es obligatoria");
     return;
   }
-  fetch("conexion/validar_password.php", {
+  fetch("index.php?controller=usuario&action=validarPasswordAjax", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: "password=" + encodeURIComponent(password),
@@ -222,7 +222,7 @@ function confirmarActivacionSucursal() {
     mostrarErrorPasswordActivar("La contraseña es obligatoria");
     return;
   }
-  fetch("conexion/validar_password.php", {
+  fetch("index.php?controller=usuario&action=validarPasswordAjax", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: "password=" + encodeURIComponent(password),

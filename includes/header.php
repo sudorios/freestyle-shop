@@ -77,7 +77,7 @@ if ($esCliente):
     <nav class="hidden lg:flex space-x-6 xl:space-x-8 text-base lg:text-lg font-bold uppercase tracking-wider">
       <a href="index.php"
         class="hover:text-pink-400 text-white border-b-2 border-transparent hover:border-pink-600 transition">Inicio</a>
-      <a href="nosotros.php"
+      <a href="index.php?controller=home&action=nosotros"
         class="hover:text-pink-400 text-white border-b-2 border-transparent hover:border-pink-600 transition">Nosotros</a>
       <div class="relative group">
         <button
@@ -97,7 +97,7 @@ if ($esCliente):
       </div>
     </nav>
     <div class="flex items-center space-x-3 sm:space-x-4 lg:space-x-5">
-      <a href="carrito.php" class="relative group">
+      <a href="index.php?controller=carrito&action=listar" class="relative group">
         <i class="fas fa-shopping-cart text-white group-hover:text-pink-400 transition text-xl sm:text-2xl"></i>
         <span id="carrito-contador"
           class="absolute -top-2 -right-2 bg-pink-600 text-xs rounded-full px-1.5 py-0.5 font-bold border-2 border-black"><?php echo $total_items; ?></span>
@@ -146,7 +146,7 @@ if ($esCliente):
           <?php endforeach; ?>
         </div>
       </div>
-      <a href="carrito.php" class="flex items-center space-x-2 hover:text-pink-400 text-white border-b-2 border-transparent hover:border-pink-600 transition">
+      <a href="index.php?controller=carrito&action=listar" class="flex items-center space-x-2 hover:text-pink-400 text-white border-b-2 border-transparent hover:border-pink-600 transition">
         <i class="fas fa-shopping-cart"></i>
         <span>Carrito</span>
         <span id="carrito-contador-movil"

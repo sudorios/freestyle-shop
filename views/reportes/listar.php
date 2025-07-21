@@ -2,7 +2,6 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-include_once './utils/functions.php';
 ?>
 <!DOCTYPE html>
 <html lang="es">

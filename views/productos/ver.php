@@ -1,4 +1,7 @@
-<?php $esCliente = true; include_once 'includes/head.php'; include_once 'includes/header.php'; ?>
+<?php $esCliente = true;
+include_once 'includes/head.php';
+include_once 'includes/header.php'; ?>
+
 <body class="bg-gray-100 min-h-screen">
     <main class="container mx-auto py-10 px-4 flex flex-col md:flex-row items-center md:items-start gap-0">
         <div class="w-full md:w-1/2 flex flex-col items-center">
@@ -13,8 +16,7 @@
                         <div class="text-sm font-semibold text-gray-700 mb-1">Galería de imágenes</div>
                         <div class="grid grid-cols-4 sm:grid-cols-6 gap-2 p-2 rounded bg-gray-100">
                             <?php foreach ($imagenes as $idx => $img): ?>
-                                <img src="<?php echo htmlspecialchars($img['url_imagen']); ?>"
-                                    alt="Miniatura <?php echo $idx+1; ?>"
+                                <img src="<?php echo htmlspecialchars($img['url_imagen']); ?>" alt="Miniatura <?php echo $idx + 1; ?>"
                                     class="w-16 h-16 object-cover rounded border border-gray-300 shadow-sm cursor-pointer hover:scale-105 transition-transform duration-150 bg-white"
                                     onclick="document.getElementById('imgPrincipal').src=this.src" />
                             <?php endforeach; ?>
@@ -30,13 +32,16 @@
         <div class="hidden md:block w-px h-[420px] bg-gray-200 mx-2"></div>
         <div class="w-full md:w-1/2 flex flex-col items-start md:pl-0 md:pr-8">
             <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2 uppercase">
-                <?php echo htmlspecialchars($producto['nombre_producto']); ?></h1>
+                <?php echo htmlspecialchars($producto['nombre_producto']); ?>
+            </h1>
             <div class="flex items-center gap-2 mb-2 text-base text-gray-500 font-medium">
                 <span>Categoría:</span>
-                <span class="text-gray-800 font-semibold"><?php echo htmlspecialchars($producto['nombre_categoria'] ?? '-'); ?></span>
+                <span
+                    class="text-gray-800 font-semibold"><?php echo htmlspecialchars($producto['nombre_categoria'] ?? '-'); ?></span>
                 <?php if (!empty($producto['nombre_subcategoria'])) { ?>
                     <span>/</span>
-                    <span class="text-gray-800 font-semibold"><?php echo htmlspecialchars($producto['nombre_subcategoria']); ?></span>
+                    <span
+                        class="text-gray-800 font-semibold"><?php echo htmlspecialchars($producto['nombre_subcategoria']); ?></span>
                 <?php } ?>
             </div>
             <div class="mb-4 flex items-end gap-3">
@@ -56,7 +61,8 @@
             <div class="mb-6">
                 <h2 class="text-lg font-bold text-gray-800 mb-1">Descripción</h2>
                 <p class="text-gray-700 leading-relaxed">
-                    <?php echo nl2br(htmlspecialchars($producto['descripcion_producto'])); ?></p>
+                    <?php echo nl2br(htmlspecialchars($producto['descripcion_producto'])); ?>
+                </p>
             </div>
             <form id="formCarrito" class="w-full max-w-sm" method="post" action="#" onsubmit="return false;">
                 <div class="mb-4">
@@ -103,6 +109,7 @@
     <script>
         window.catalogoId = <?php echo (int) $producto['id']; ?>;
     </script>
-    <script src="assets/js/ver_producto.js"></script>
+    <script src="/freestyle-shop/assets/js/ver_producto.js"></script>
 </body>
-</html> 
+
+</html>

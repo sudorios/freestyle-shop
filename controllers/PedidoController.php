@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../models/Pedido.php';
+require_once __DIR__ . '/../models/Carrito.php';
 
 class PedidoController {
     public function listar() {
@@ -145,7 +146,6 @@ class PedidoController {
     }
 
     public function checkout() {
-        require_once __DIR__ . '/../utils/queries.php';
         $mostrar_formulario = true;
         $msg = null;
         $success = false;
@@ -192,15 +192,9 @@ class PedidoController {
             $ids = isset($_GET['items']) ? explode(',', $_GET['items']) : [];
             $ids = array_filter(array_map('intval', $ids));
             if (!empty($ids)) {
-                $placeholders = implode(',', array_map(function($i) { static $c=1; return '$'.($c++); }, $ids));
-                $sql = getCarritoItemsByIdsQuery($placeholders);
-                $conn = Database::getConexion();
-                $res = $ids ? pg_query_params($conn, $sql, $ids) : false;
-                if ($res) {
-                    while ($item = pg_fetch_assoc($res)) {
-                        $carrito[] = $item;
-                        $total += $item['cantidad'] * $item['precio_unitario'];
-                    }
+                $carrito = Carrito::obtenerItemsPorIds($ids);
+                foreach ($carrito as $item) {
+                    $total += $item['cantidad'] * $item['precio_unitario'];
                 }
             }
             $envio = $total >= 99 ? 0 : 15;

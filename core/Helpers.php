@@ -34,5 +34,4 @@ function renderCard($color, $valor, $label) {
     echo "<div class='text-2xl font-bold'>$valor</div>";
     echo "<div class='uppercase text-sm mt-2'>$label</div>";
     echo "</div>";
-}
-
+} 

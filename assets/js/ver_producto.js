@@ -17,7 +17,7 @@ function actualizarBtnCarrito(habilitar) {
 actualizarBtnCarrito(false);
 
 function actualizarStock(talla) {
-    fetch(`utils/obtener_stock.php?catalogo_id=${catalogoId}&talla=${encodeURIComponent(talla)}`)
+    fetch(`index.php?controller=producto&action=stock&catalogo_id=${catalogoId}&talla=${encodeURIComponent(talla)}`)
         .then(res => res.json())
         .then(data => {
             const cantidadInput = document.getElementById('cantidad');
@@ -71,7 +71,7 @@ document.getElementById('formCarrito').addEventListener('submit', function (e) {
         return;
     }
     const cantidad = parseInt(document.getElementById('cantidad').value) || 1;
-    fetch('views/carrito/carrito_registrar.php', {
+    fetch('index.php?controller=carrito&action=registrar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `catalogo_id=${encodeURIComponent(catalogoId)}&talla=${encodeURIComponent(tallaSeleccionada)}&cantidad=${encodeURIComponent(cantidad)}`
@@ -91,11 +91,12 @@ document.getElementById('formCarrito').addEventListener('submit', function (e) {
             }
             setTimeout(() => { msg.classList.add('hidden'); }, 3000);
         })
-        .catch(() => {
+        .catch((err) => {
             const msg = document.getElementById('msgCarrito');
-            msg.textContent = 'Error de conexión con el servidor';
+            msg.textContent = 'Error: ' + (err && err.message ? err.message : err);
             msg.classList.remove('hidden', 'text-green-600');
             msg.classList.add('text-red-600');
-            setTimeout(() => { msg.classList.add('hidden'); }, 2000);
+            console.error('Error al añadir al carrito:', err);
+            setTimeout(() => { msg.classList.add('hidden'); }, 4000);
         });
 }); 

@@ -6,4 +6,8 @@ class HomeController {
         $productos = Home::obtenerProductosDestacados();
         require __DIR__ . '/../views/home/index.php';
     }
+
+    public function nosotros() {
+        require __DIR__ . '/../views/home/nosotros.php';
+    }
 } 

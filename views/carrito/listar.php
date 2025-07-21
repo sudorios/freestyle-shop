@@ -1,8 +1,4 @@
-<?php
-session_start();
-include_once './includes/head.php';
-include_once './includes_client/header.php';
-?>
+<?php $esCliente = true; include_once 'includes/head.php'; include_once 'includes/header.php'; ?>
 <body class="bg-gray-100 min-h-screen">
     <main class="container mx-auto py-10 px-4 flex flex-col lg:flex-row gap-8">
         <div class="flex-1 min-w-0">
@@ -18,6 +14,6 @@ include_once './includes_client/header.php';
             </div>
         </aside>
     </main>
-    <?php include_once './includes/footer.php'; ?>
+    <?php include_once 'includes/footer.php'; ?>
     <script src="assets/js/carrito.js"></script>
 </body> 
