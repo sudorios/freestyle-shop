@@ -1,3 +1,6 @@
+let paginaActualCategoria = 1;
+const filasPorPaginaCategoria = 10;
+
 function abrirModal() {
     document.getElementById('modalEditar').classList.remove('hidden');
     document.getElementById('modalBackground').classList.remove('hidden');
@@ -24,12 +27,10 @@ function initEditarCategoria() {
             const id = this.dataset.id;
             const nombre = this.dataset.nombre;
             const descripcion = this.dataset.descripcion;
-            const estado = this.dataset.estado;
 
             document.getElementById('edit_id').value = id;
             document.getElementById('edit_nombre').value = nombre;
             document.getElementById('edit_descripcion').value = descripcion;
-            document.getElementById('edit_estado').value = estado;
 
             abrirModal();
         });
@@ -50,9 +51,18 @@ function initCerrarModal() {
     });
 }
 
+function initTablaCategoria() {
+    document.getElementById('buscadorCategoria').addEventListener('input', function() {
+        paginaActualCategoria = 1;
+        mostrarPaginaTabla('tbody', 'buscadorCategoria', filasPorPaginaCategoria, paginaActualCategoria, 'paginacionCategoria');
+    });
+    mostrarPaginaTabla('tbody', 'buscadorCategoria', filasPorPaginaCategoria, paginaActualCategoria, 'paginacionCategoria');
+}
+
 function categoriasInit() {
     initEditarCategoria();
     initCerrarModal();
+    initTablaCategoria();
 }
 
 document.addEventListener('DOMContentLoaded', categoriasInit); 

@@ -6,20 +6,15 @@
                 <label for="usuario_ingreso" class="block text-sm font-medium text-gray-700">Usuario</label>
                 <input type="text" id="usuario_ingreso" name="usuario_ingreso" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" readonly value="<?php echo isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario'; ?>">
             </div>
-            <form id="formAgregarIngreso" action="views/ingresos/ingreso_registrar.php" method="POST">
+            <form id="formAgregarIngreso" action="index.php?controller=ingreso&action=registrar" method="POST">
                 <div class="grid grid-cols-3 gap-4">
                     <div class="mb-4">
                         <label for="id_sucursal" class="block text-sm font-medium text-gray-700">Sucursal</label>
                         <select id="id_sucursal" name="id_sucursal" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" required>
                             <option value="">Seleccione...</option>
-                            <?php
-                            include_once '../../../conexion/cone.php';
-                            $sql_suc = "SELECT id_sucursal, nombre_sucursal FROM sucursal WHERE estado_sucursal = true ORDER BY nombre_sucursal ASC";
-                            $res_suc = pg_query($conn, $sql_suc);
-                            while ($suc = pg_fetch_assoc($res_suc)) {
-                                echo '<option value="' . $suc['id_sucursal'] . '">' . htmlspecialchars($suc['nombre_sucursal']) . '</option>';
-                            }
-                            ?>
+                            <?php foreach ($sucursales as $suc): ?>
+                                <option value="<?php echo $suc['id_sucursal']; ?>"><?php echo htmlspecialchars($suc['nombre_sucursal']); ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="mb-4">
@@ -30,47 +25,15 @@
                         <label for="id_producto" class="block text-sm font-medium text-gray-700">Producto</label>
                         <select id="id_producto" name="id_producto" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" required>
                             <option value="">Seleccione...</option>
-                            <?php
-                            include_once '../../../conexion/cone.php';
-                            $sql_prod = "SELECT id_producto, nombre_producto FROM producto WHERE estado = true ORDER BY nombre_producto ASC";
-                            $res_prod = pg_query($conn, $sql_prod);
-                            while ($prod = pg_fetch_assoc($res_prod)) {
-                                echo '<option value="' . $prod['id_producto'] . '">' . htmlspecialchars($prod['nombre_producto']) . '</option>';
-                            }
-                            ?>
+                            <?php foreach ($productos as $prod): ?>
+                                <?php $nombre = htmlspecialchars($prod['nombre_producto']); $talla = htmlspecialchars($prod['talla_producto']); $texto = $nombre . ($talla ? ' - Talla: ' . $talla : ''); ?>
+                                <option value="<?php echo $prod['id_producto']; ?>"><?php echo $texto; ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="mb-4">
                         <label for="precio_costo" class="block text-sm font-medium text-gray-700">Precio Costo (total del paquete)</label>
                         <input type="number" step="0.01" id="precio_costo" name="precio_costo" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="precio_costo_unidad" class="block text-sm font-medium text-gray-700">Precio Costo (por unidad)</label>
-                        <input type="number" step="0.01" id="precio_costo_unidad" name="precio_costo_unidad" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" readonly>
-                    </div>
-                    <div class="mb-4">
-                        <label for="precio_costo_con_igv" class="block text-sm font-medium text-gray-700">Precio Costo c/IGV (por unidad)</label>
-                        <input type="number" step="0.01" id="precio_costo_con_igv" name="precio_costo_con_igv" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" required readonly>
-                    </div>
-                    <div class="mb-4">
-                        <label for="precio_venta" class="block text-sm font-medium text-gray-700">Precio Venta (por unidad)</label>
-                        <input type="number" step="0.01" id="precio_venta" name="precio_venta" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" required readonly>
-                    </div>
-                    <div class="mb-4">
-                        <label for="utilidad_esperada_unidad" class="block text-sm font-medium text-gray-700">Utilidad Esperada (por unidad)</label>
-                        <input type="number" step="0.01" id="utilidad_esperada_unidad" name="utilidad_esperada_unidad" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" readonly>
-                    </div>
-                    <div class="mb-4">
-                        <label for="utilidad_esperada_total" class="block text-sm font-medium text-gray-700">Utilidad Esperada (total)</label>
-                        <input type="number" step="0.01" id="utilidad_esperada_total" name="utilidad_esperada_total" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" readonly>
-                    </div>
-                    <div class="mb-4">
-                        <label for="utilidad_neta_unidad" class="block text-sm font-medium text-gray-700">Utilidad Neta (por unidad)</label>
-                        <input type="number" step="0.01" id="utilidad_neta_unidad" name="utilidad_neta_unidad" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" readonly>
-                    </div>
-                    <div class="mb-4">
-                        <label for="utilidad_neta_total" class="block text-sm font-medium text-gray-700">Utilidad Neta (total)</label>
-                        <input type="number" step="0.01" id="utilidad_neta_total" name="utilidad_neta_total" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" readonly>
                     </div>
                     <div class="mb-4">
                         <label for="cantidad" class="block text-sm font-medium text-gray-700">Cantidad de unidades</label>
@@ -80,8 +43,15 @@
                         <label for="fecha_ingreso" class="block text-sm font-medium text-gray-700">Fecha de Ingreso</label>
                         <input type="date" id="fecha_ingreso" name="fecha_ingreso" class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50" required>
                     </div>
+                    <input type="hidden" id="precio_costo_unidad" name="precio_costo_unidad">
+                    <input type="hidden" id="precio_costo_con_igv" name="precio_costo_con_igv">
+                    <input type="hidden" id="precio_venta" name="precio_venta">
+                    <input type="hidden" id="utilidad_esperada_unidad" name="utilidad_esperada_unidad">
+                    <input type="hidden" id="utilidad_esperada_total" name="utilidad_esperada_total">
+                    <input type="hidden" id="utilidad_neta_unidad" name="utilidad_neta_unidad">
+                    <input type="hidden" id="utilidad_neta_total" name="utilidad_neta_total">
+                    <input type="hidden" id="precio_costo_igv_paquete" name="precio_costo_igv_paquete">
                 </div>
-                <input type="hidden" id="precio_costo_igv_paquete" name="precio_costo_igv_paquete">
                 <div class="flex justify-end mt-6">
                     <button type="button" onclick="cerrarModalAgregarIngreso()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded mr-2">Cancelar</button>
                     <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">Guardar</button>
@@ -92,10 +62,9 @@
 </div>
 
 <script>
-    const igv = 0.18; // 18% IGV
-    const margen = 0.20; // 20% margen de ganancia
+    const igv = 0.18; 
+    const margen = 0.20; 
 
-    // Establecer fecha actual por defecto
     document.addEventListener('DOMContentLoaded', function() {
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('fecha_ingreso').value = today;
@@ -105,19 +74,15 @@
         const precioCostoTotal = parseFloat(document.getElementById('precio_costo').value) || 0;
         const cantidad = parseInt(document.getElementById('cantidad').value) || 1;
 
-        // 1. Calcular el costo por unidad
         const precioCostoUnidad = cantidad > 0 ? +(precioCostoTotal / cantidad).toFixed(2) : 0;
         document.getElementById('precio_costo_unidad').value = precioCostoUnidad;
 
-        // 2. Calcular costo por unidad con IGV
         const precioCostoConIgvUnidad = +(precioCostoUnidad * (1 + igv)).toFixed(2);
         document.getElementById('precio_costo_con_igv').value = precioCostoConIgvUnidad;
 
-        // 3. Calcular el precio de venta por unidad
         const precioVenta = +(precioCostoConIgvUnidad * (1 + margen)).toFixed(2);
         document.getElementById('precio_venta').value = precioVenta;
 
-        // 4. Calcular utilidades (por unidad y total)
         const utilidadEsperadaUnidad = +(precioVenta - precioCostoUnidad).toFixed(2);
         const utilidadEsperadaTotal = +(utilidadEsperadaUnidad * cantidad).toFixed(2);
         document.getElementById('utilidad_esperada_unidad').value = utilidadEsperadaUnidad;
@@ -128,7 +93,6 @@
         document.getElementById('utilidad_neta_unidad').value = utilidadNetaUnidad;
         document.getElementById('utilidad_neta_total').value = utilidadNetaTotal;
 
-        // 5. Calcular precio_costo_igv del paquete completo
         const precioCostoIgvPaquete = +(precioCostoTotal * (1 + igv)).toFixed(2);
         document.getElementById('precio_costo_igv_paquete').value = precioCostoIgvPaquete;
     }

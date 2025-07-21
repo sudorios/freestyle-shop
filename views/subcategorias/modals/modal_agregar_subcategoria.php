@@ -3,7 +3,7 @@
     <div class="relative top-20 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
         <div class="mt-3">
             <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Agregar Subcategoría</h3>
-            <form id="formAgregarSubcategoria" action="views/subcategorias/subcategoria_registrar.php" method="POST">
+            <form id="formAgregarSubcategoria" action="index.php?controller=subcategoria&action=registrar" method="POST">
                 <div class="grid grid-cols-1 gap-4">
                     <div class="mb-4">
                         <label for="nombre_subcategoria" class="block text-sm font-medium text-gray-700">Nombre</label>
@@ -17,13 +17,9 @@
                         <label for="id_categoria" class="block text-sm font-medium text-gray-700">Categoría</label>
                         <select id="id_categoria" name="id_categoria" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
                             <option value="">Seleccione una categoría</option>
-                            <?php
-                            global $conn;
-                            $categorias = pg_query($conn, "SELECT * FROM categoria ORDER BY nombre_categoria");
-                            while ($cat = pg_fetch_assoc($categorias)):
-                            ?>
+                            <?php foreach ($categorias as $cat): ?>
                                 <option value="<?php echo $cat['id_categoria']; ?>"><?php echo htmlspecialchars($cat['nombre_categoria']); ?></option>
-                            <?php endwhile; ?>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                 </div>
@@ -31,7 +27,7 @@
                     <button type="button" onclick="cerrarModalAgregarSubcategoria()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
                         Cancelar
                     </button>
-                    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
                         Registrar
                     </button>
                 </div>

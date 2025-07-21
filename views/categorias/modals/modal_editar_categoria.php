@@ -3,7 +3,7 @@
     <div class="relative top-20 mx-auto p-5 border w-[600px] shadow-lg rounded-md bg-white">
         <div class="mt-3">
             <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Editar Categoría</h3>
-            <form id="formEditarCategoria" action="views/categorias/categoria_edit.php" method="POST">
+            <form id="formEditarCategoria" action="index.php?controller=categoria&action=editar" method="POST">
                 <input type="hidden" id="edit_id" name="id_categoria">
                 <div class="mb-4">
                     <label for="edit_nombre" class="block text-sm font-medium text-gray-700">Nombre de la Categoría</label>
@@ -11,20 +11,14 @@
                 </div>
                 <div class="mb-4">
                     <label for="edit_descripcion" class="block text-sm font-medium text-gray-700">Descripción</label>
-                    <textarea id="edit_descripcion" name="descripcion_categoria" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required></textarea>
+                    <textarea id="edit_descripcion" name="descripcion_categoria" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
                 </div>
-                <div class="mb-4">
-                    <label for="edit_estado" class="block text-sm font-medium text-gray-700">Estado</label>
-                    <select id="edit_estado" name="estado_categoria" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
-                        <option value="true">Activa</option>
-                        <option value="false">Inactiva</option>
-                    </select>
-                </div>
+                <input type="hidden" name="estado_categoria" value="1">
                 <div class="flex justify-end space-x-3">
                     <button type="button" onclick="cerrarModal()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
                         Cancelar
                     </button>
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
                         Guardar Cambios
                     </button>
                 </div>
