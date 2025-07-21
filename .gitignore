@@ -1,5 +1,4 @@
 /conexion/cone.php
 /vendor/
-cloudinary_config.php
 .env
-/.cursor/rules
+/.cursor/

@@ -29,7 +29,7 @@
    - Importa el script `bd/freestyle-shop.sql`.
 
 3. **Configura la conexión:**
-   - Edita los archivos de conexión en `conexion/cone.php` con tus credenciales de PostgreSQL.
+   - Crea un archivo `.env` en la raíz del proyecto con tus credenciales de PostgreSQL y Cloudinary (ver ejemplo arriba).
 
 4. **Instala dependencias PHP (si usas Composer):**
    ```bash
@@ -65,10 +65,39 @@
 - Validación de roles para acceso a paneles restringidos.
 - Consultas SQL parametrizadas para evitar inyecciones.
 
+## Configuración de variables de entorno (.env)
+
+El proyecto utiliza un archivo `.env` en la raíz para gestionar credenciales y configuraciones sensibles. Ejemplo de contenido:
+
+```
+DB_HOST=<host>
+DB_USER=<usuario>
+DB_PASS=<password>
+DB_NAME=<nombre_base_de_datos>
+
+CLOUDINARY_CLOUD_NAME=<cloud_name>
+CLOUDINARY_API_KEY=<api_key>
+CLOUDINARY_API_SECRET=<api_secret>
+```
+
+Asegúrate de completar estos valores según tu entorno y tus credenciales de Cloudinary y PostgreSQL.
+
+**Importante:** El archivo `.env` está en `.gitignore` y no debe subirse al repositorio.
+
+## Arquitectura MVC
+
+El proyecto está estructurado bajo el patrón **MVC (Modelo-Vista-Controlador)**:
+
+- **Modelos:** Toda la lógica de acceso a datos y consultas SQL está en la carpeta `models/`.
+- **Controladores:** La lógica de negocio y flujo de la aplicación está en la carpeta `controllers/`.
+- **Vistas:** Todo el HTML y la presentación está en la carpeta `views/`.
+
+Esto permite un código más limpio, mantenible y seguro. Ya no se usan archivos legacy de utilidades ni includes directos de conexión; todo pasa por los modelos y controladores.
+
 ## Personalización
 
 - Puedes modificar los estilos en los archivos de Tailwind o agregar tus propios assets en la carpeta `assets/`.
-- Las consultas SQL están centralizadas en la carpeta `utils/` y en los archivos *_queries.php de cada módulo.
+- Toda la lógica de base de datos y consultas está ahora en los modelos de cada módulo bajo `models/` siguiendo MVC.
 
 ## Créditos
 
