@@ -1,5 +1,0 @@
----
-description: No pongas comentarios cuando generas codigo
-globs:
-alwaysApply: true
----
