@@ -105,7 +105,7 @@ if ($esCliente):
       <?php if (isset($_SESSION['usuario'])): ?>
         <span class="flex items-center space-x-2 text-white font-bold uppercase tracking-wider">
           <i class="fas fa-user-circle text-white group-hover:text-pink-400 transition text-xl sm:text-2xl"></i>
-          <a href="perfil.php" class="hidden md:inline hover:text-pink-400 transition underline text-sm lg:text-base">
+          <a href="http://localhost/freestyle-shop/index.php?controller=producto&action=listar" class="hidden md:inline hover:text-pink-400 transition underline text-sm lg:text-base">
             <?php echo htmlspecialchars($_SESSION['usuario']); ?>
           </a>
           <a href="index.php?controller=usuario&action=cerrarSesion" title="Cerrar sesión"
