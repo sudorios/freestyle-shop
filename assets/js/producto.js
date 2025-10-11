@@ -134,14 +134,14 @@ function initTablaProducto() {
 document.addEventListener("DOMContentLoaded", function () {
   initEditarProducto();
   initTablaProducto();
-  const catAgregar = document.getElementById('id_categoria');
+  const catAgregar = document.getElementById('categoria_id');
   if (catAgregar) {
     catAgregar.addEventListener('change', function() {
       cargarSubcategoriasPorCategoria(this.value, 'id_subcategoria');
     });
   }
 
-  const catEditar = document.getElementById('editar_id_categoria');
+  const catEditar = document.getElementById('editar_categoria_id');
   if (catEditar) {
     catEditar.addEventListener('change', function() {
       cargarSubcategoriasPorCategoria(this.value, 'editar_id_subcategoria');

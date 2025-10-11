@@ -21,7 +21,7 @@ function initEditarSubcategoria() {
             document.getElementById('edit_id_subcategoria').value = id;
             document.getElementById('edit_nombre_subcategoria').value = nombre;
             document.getElementById('edit_descripcion_subcategoria').value = descripcion;
-            document.getElementById('edit_id_categoria').value = categoria;
+            document.getElementById('edit_categoria_id').value = categoria;
 
             abrirModalEditarSubcategoria();
         });

@@ -4,14 +4,14 @@
         <div class="mt-3">
             <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Editar Categoría</h3>
             <form id="formEditarCategoria" action="index.php?controller=categoria&action=editar" method="POST">
-                <input type="hidden" id="edit_id" name="id_categoria">
+                <input type="hidden" id="edit_id" name="categoria_id">
                 <div class="mb-4">
                     <label for="edit_nombre" class="block text-sm font-medium text-gray-700">Nombre de la Categoría</label>
-                    <input type="text" id="edit_nombre" name="nombre_categoria" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    <input type="text" id="edit_nombre" name="nombre" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
                 </div>
                 <div class="mb-4">
                     <label for="edit_descripcion" class="block text-sm font-medium text-gray-700">Descripción</label>
-                    <textarea id="edit_descripcion" name="descripcion_categoria" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                    <textarea id="edit_descripcion" name="descripcion" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
                 </div>
                 <input type="hidden" name="estado_categoria" value="1">
                 <div class="flex justify-end space-x-3">

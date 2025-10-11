@@ -14,11 +14,11 @@
                         <textarea id="descripcion_subcategoria" name="descripcion_subcategoria" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
                     </div>
                     <div class="mb-4">
-                        <label for="id_categoria" class="block text-sm font-medium text-gray-700">Categoría</label>
-                        <select id="id_categoria" name="id_categoria" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                        <label for="categoria_id" class="block text-sm font-medium text-gray-700">Categoría</label>
+                        <select id="categoria_id" name="categoria_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
                             <option value="">Seleccione una categoría</option>
                             <?php foreach ($categorias as $cat): ?>
-                                <option value="<?php echo $cat['id_categoria']; ?>"><?php echo htmlspecialchars($cat['nombre_categoria']); ?></option>
+                                <option value="<?php echo $cat['categoria_id']; ?>"><?php echo htmlspecialchars($cat['nombre']); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

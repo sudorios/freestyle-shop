@@ -37,7 +37,7 @@ include_once 'includes/header.php'; ?>
             <div class="flex items-center gap-2 mb-2 text-base text-gray-500 font-medium">
                 <span>Categoría:</span>
                 <span
-                    class="text-gray-800 font-semibold"><?php echo htmlspecialchars($producto['nombre_categoria'] ?? '-'); ?></span>
+                    class="text-gray-800 font-semibold"><?php echo htmlspecialchars($producto['nombre'] ?? '-'); ?></span>
                 <?php if (!empty($producto['nombre_subcategoria'])) { ?>
                     <span>/</span>
                     <span

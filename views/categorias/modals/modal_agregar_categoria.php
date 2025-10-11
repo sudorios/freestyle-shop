@@ -4,14 +4,14 @@
             <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Agregar Categoría</h3>
             <form id="formAgregarCategoria" action="index.php?controller=categoria&action=registrar" method="POST">
                 <div class="mb-4">
-                    <label for="nombre_categoria" class="block text-sm font-medium text-gray-700">Nombre de la Categoría</label>
-                    <input type="text" id="nombre_categoria" name="nombre_categoria" required
+                    <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre de la Categoría</label>
+                    <input type="text" id="nombre" name="nombre" required
                         class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50">
                 </div>
 
                 <div class="mb-4">
-                    <label for="descripcion_categoria" class="block text-sm font-medium text-gray-700">Descripción</label>
-                    <textarea id="descripcion_categoria" name="descripcion_categoria" rows="4"
+                    <label for="descripcion" class="block text-sm font-medium text-gray-700">Descripción</label>
+                    <textarea id="descripcion" name="descripcion" rows="4"
                         class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50"></textarea>
                 </div>
 

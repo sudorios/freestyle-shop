@@ -86,7 +86,7 @@ class Producto {
             p.nombre_producto,
             p.descripcion_producto,
             p.talla_producto,
-            c.nombre_categoria,
+            c.nombre,
             s.nombre_subcategoria,
             ip.url_imagen,
             i.precio_venta,
@@ -104,7 +104,7 @@ class Producto {
         LEFT JOIN 
             subcategoria s ON p.id_subcategoria = s.id_subcategoria
         LEFT JOIN 
-            categoria c ON s.id_categoria = c.id_categoria
+            categoria c ON s.categoria_id = c.categoria_id
         WHERE
             cp.sucursal_id = 7
             AND (cp.estado = true OR cp.estado = 't')

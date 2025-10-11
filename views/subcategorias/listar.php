@@ -78,13 +78,13 @@
                                 <td class="px-6 py-4 whitespace-nowrap"><?php echo $row['id_subcategoria']; ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_subcategoria']); ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['descripcion_subcategoria']); ?></td>
-                                <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre_categoria']); ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($row['nombre']); ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <button class="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-2 btn-editar"
                                         data-id="<?php echo $row['id_subcategoria']; ?>"
                                         data-nombre="<?php echo htmlspecialchars($row['nombre_subcategoria']); ?>"
                                         data-descripcion="<?php echo htmlspecialchars($row['descripcion_subcategoria']); ?>"
-                                        data-categoria="<?php echo $row['id_categoria']; ?>">
+                                        data-categoria="<?php echo $row['categoria_id']; ?>">
                                         <i class="fas fa-edit"></i> Editar
                                     </button>
                                     <button onclick="abrirModalConfirmar({mensaje: '¿Seguro que deseas eliminar esta subcategoría?', action: 'index.php?controller=subcategoria&action=eliminar', id: '<?php echo $row['id_subcategoria']; ?>', idField: 'id_subcategoria'})" class="cursor-pointer bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded btn-eliminar-subcategoria"

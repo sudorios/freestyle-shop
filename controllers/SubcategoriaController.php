@@ -17,9 +17,9 @@ class SubcategoriaController {
         
         $nombre = trim($_POST['nombre_subcategoria'] ?? '');
         $descripcion = trim($_POST['descripcion_subcategoria'] ?? '');
-        $id_categoria = $_POST['id_categoria'] ?? null;
+        $categoria_id = $_POST['categoria_id'] ?? null;
 
-        $errores = $this->validarCamposSubcategoria($nombre, $id_categoria);
+        $errores = $this->validarCamposSubcategoria($nombre, $categoria_id);
         if (!empty($errores)) {
             $msg = urlencode(implode(', ', $errores));
             header('Location: index.php?controller=subcategoria&action=listar&error=2&msg=' . $msg);
@@ -31,7 +31,7 @@ class SubcategoriaController {
             exit();
         }
 
-        $result = Subcategoria::registrar($nombre, $descripcion, $id_categoria);
+        $result = Subcategoria::registrar($nombre, $descripcion, $categoria_id);
         if ($result) {
             header('Location: index.php?controller=subcategoria&action=listar&success=1');
         } else {
@@ -49,14 +49,14 @@ class SubcategoriaController {
         $id_subcategoria = $_POST['id_subcategoria'] ?? null;
         $nombre = trim($_POST['nombre_subcategoria'] ?? '');
         $descripcion = trim($_POST['descripcion_subcategoria'] ?? '');
-        $id_categoria = $_POST['id_categoria'] ?? null;
+        $categoria_id = $_POST['categoria_id'] ?? null;
 
         if (!$id_subcategoria || !is_numeric($id_subcategoria)) {
             header('Location: index.php?controller=subcategoria&action=listar&error=2&msg=ID inválido');
             exit;
         }
 
-        $errores = $this->validarCamposSubcategoria($nombre, $id_categoria);
+        $errores = $this->validarCamposSubcategoria($nombre, $categoria_id);
         if (!empty($errores)) {
             $msg = urlencode(implode(', ', $errores));
             header('Location: index.php?controller=subcategoria&action=listar&error=2&msg=' . $msg);
@@ -68,7 +68,7 @@ class SubcategoriaController {
             exit();
         }
 
-        $result = Subcategoria::actualizar($id_subcategoria, $nombre, $descripcion, $id_categoria);
+        $result = Subcategoria::actualizar($id_subcategoria, $nombre, $descripcion, $categoria_id);
         if ($result) {
             header('Location: index.php?controller=subcategoria&action=listar&success=2');
         } else {
@@ -98,12 +98,12 @@ class SubcategoriaController {
         exit();
     }
 
-    private function validarCamposSubcategoria($nombre, $id_categoria) {
+    private function validarCamposSubcategoria($nombre, $categoria_id) {
         $errores = [];
         if (empty($nombre)) {
             $errores[] = 'El nombre es obligatorio';
         }
-        if (!$id_categoria || !is_numeric($id_categoria)) {
+        if (!$categoria_id || !is_numeric($categoria_id)) {
             $errores[] = 'La categoría es obligatoria';
         }
         return $errores;
