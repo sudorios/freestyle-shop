@@ -75,19 +75,19 @@
                     <tbody class="bg-white divide-y divide-gray-200">
                         <?php foreach ($categorias as $row) { ?>
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap"><?php echo $row['id_categoria']; ?></td>
-                                <td class="px-6 py-4 whitespace-nowrap"><?php echo $row['nombre_categoria']; ?></td>
-                                <td class="px-6 py-4 whitespace-nowrap"><?php echo $row['descripcion_categoria']; ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap"><?php echo $row['categoria_id']; ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap"><?php echo $row['nombre']; ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap"><?php echo $row['descripcion']; ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <button class="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-2 btn-editar"
-                                        data-id="<?php echo $row['id_categoria']; ?>"
-                                        data-nombre="<?php echo $row['nombre_categoria']; ?>"
-                                        data-descripcion="<?php echo $row['descripcion_categoria']; ?>"
-                                        data-estado="<?php echo $row['estado_categoria']; ?>">
+                                        data-id="<?php echo $row['categoria_id']; ?>"
+                                        data-nombre="<?php echo $row['nombre']; ?>"
+                                        data-descripcion="<?php echo $row['descripcion']; ?>"
+                                        data-estado="<?php echo $row['habilitado']; ?>">
                                         <i class="fas fa-edit"></i> Editar
                                     </button>
                                     <button type="button" class="cursor-pointer bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
-                                        onclick="abrirModalConfirmar({mensaje: '¿Seguro que deseas eliminar esta categoría?', action: 'index.php?controller=categoria&action=eliminar', id: '<?php echo $row['id_categoria']; ?>', idField: 'id_categoria'})">
+                                        onclick="abrirModalConfirmar({mensaje: '¿Seguro que deseas eliminar esta categoría?', action: 'index.php?controller=categoria&action=eliminar', id: '<?php echo $row['categoria_id']; ?>', idField: 'categoria_id'})">
                                         <i class="fas fa-trash"></i> Eliminar
                                     </button>
                                 </td>

@@ -22,10 +22,10 @@
             <option value="">Seleccione una subcategoría</option>
             <?php
               include_once './conexion/cone.php';
-              $sql = "SELECT s.id_subcategoria, s.nombre_subcategoria, c.nombre_categoria FROM subcategoria s JOIN categoria c ON s.id_categoria = c.id_categoria WHERE s.estado = true AND c.estado_categoria = true ORDER BY c.nombre_categoria, s.nombre_subcategoria ASC";
+              $sql = "SELECT s.id_subcategoria, s.nombre_subcategoria, c.nombre FROM subcategoria s JOIN categoria c ON s.categoria_id = c.categoria_id WHERE s.estado = true AND c.estado_categoria = true ORDER BY c.nombre, s.nombre_subcategoria ASC";
               $result = pg_query($conn, $sql);
               while ($row = pg_fetch_assoc($result)) {
-                echo '<option value="' . htmlspecialchars($row['id_subcategoria']) . '">' . htmlspecialchars($row['nombre_subcategoria']) . ' (' . htmlspecialchars($row['nombre_categoria']) . ')</option>';
+                echo '<option value="' . htmlspecialchars($row['id_subcategoria']) . '">' . htmlspecialchars($row['nombre_subcategoria']) . ' (' . htmlspecialchars($row['nombre']) . ')</option>';
               }
             ?>
           </select>

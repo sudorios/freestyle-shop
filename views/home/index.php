@@ -51,7 +51,7 @@
                 }
                 echo '</div>';
                 echo '<div class="text-center mt-8">';
-                echo '<a href="index.php?controller=categoria&action=ver&id_categoria=2" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition shadow-lg">Ver Todos los Productos</a>';
+                echo '<a href="index.php?controller=categoria&action=ver&categoria_id=2" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition shadow-lg">Ver Todos los Productos</a>';
                 echo '</div>';
             } else {
                 echo '<div class="text-center py-8">';

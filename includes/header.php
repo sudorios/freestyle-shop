@@ -42,20 +42,20 @@ function obtenerTotalItemsCarrito() {
 }
 function obtenerCategoriasActivas() {
     $conn = Database::getConexion();
-    $sql = "SELECT id_categoria, nombre_categoria
+    $sql = "SELECT categoria_id, nombre
     FROM categoria c
-    WHERE estado_categoria = true
-      AND id_categoria > 0
+    WHERE habilitado = true
+      AND categoria_id > 0
       AND EXISTS (
         SELECT 1
         FROM producto p
         JOIN catalogo_productos cp ON cp.producto_id = p.id_producto
         JOIN subcategoria s ON p.id_subcategoria = s.id_subcategoria
-        WHERE s.id_categoria = c.id_categoria
+        WHERE s.categoria_id = c.categoria_id
           AND cp.sucursal_id = 7
           AND (cp.estado = true OR cp.estado = 't')
       )
-    ORDER BY nombre_categoria ASC";
+    ORDER BY nombre ASC";
     $res = pg_query($conn, $sql);
     $categorias = [];
     while ($row = pg_fetch_assoc($res)) {
@@ -88,9 +88,9 @@ if ($esCliente):
         <div
           class="absolute left-0 mt-2 w-48 lg:w-52 bg-gray-900 border-2 border-pink-600 rounded shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity z-50">
           <?php foreach ($categorias as $cat): ?>
-            <a href="index.php?controller=categoria&action=ver&id_categoria=<?php echo $cat['id_categoria']; ?>"
+            <a href="index.php?controller=categoria&action=ver&categoria_id=<?php echo $cat['categoria_id']; ?>"
               class="block px-4 py-2 text-white hover:bg-pink-600 hover:text-black transition">
-              <?php echo htmlspecialchars($cat['nombre_categoria']); ?>
+              <?php echo htmlspecialchars($cat['nombre']); ?>
             </a>
           <?php endforeach; ?>
         </div>
@@ -139,9 +139,9 @@ if ($esCliente):
         </button>
         <div id="categorias-movil" class="ml-4 mt-1 flex flex-col space-y-1 hidden">
           <?php foreach ($categorias as $cat): ?>
-            <a href="index.php?controller=categoria&action=ver&id_categoria=<?php echo $cat['id_categoria']; ?>"
+            <a href="index.php?controller=categoria&action=ver&categoria_id=<?php echo $cat['categoria_id']; ?>"
               class="block px-2 py-1 text-white hover:bg-pink-600 hover:text-black rounded transition">
-              <?php echo htmlspecialchars($cat['nombre_categoria']); ?>
+              <?php echo htmlspecialchars($cat['nombre']); ?>
             </a>
           <?php endforeach; ?>
         </div>

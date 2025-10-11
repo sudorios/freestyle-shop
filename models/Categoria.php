@@ -4,7 +4,7 @@ require_once __DIR__ . '/../core/Database.php';
 class Categoria {
     public static function obtenerTodas() {
         $conn = Database::getConexion();
-        $sql = "SELECT * FROM categoria WHERE estado_categoria = true ORDER BY id_categoria DESC";
+        $sql = "SELECT * FROM categoria WHERE habilitado = true ORDER BY categoria_id DESC";
         $result = pg_query($conn, $sql);
         $categorias = [];
         if ($result) {
@@ -15,10 +15,10 @@ class Categoria {
         return $categorias;
     }
 
-    public static function obtenerPorId($id_categoria) {
+    public static function obtenerPorId($categoria_id) {
         $conn = Database::getConexion();
-        $sql = "SELECT * FROM categoria WHERE id_categoria = $1";
-        $result = pg_query_params($conn, $sql, [$id_categoria]);
+        $sql = "SELECT * FROM categoria WHERE categoria_id = $1";
+        $result = pg_query_params($conn, $sql, [$categoria_id]);
         if ($result && pg_num_rows($result) > 0) {
             return pg_fetch_assoc($result);
         }
@@ -27,41 +27,41 @@ class Categoria {
 
     public static function registrar($nombre, $descripcion) {
         $conn = Database::getConexion();
-        $sql = "INSERT INTO categoria(nombre_categoria, descripcion_categoria, estado_categoria, creado_en) VALUES ($1, $2, $3, $4)";
+        $sql = "INSERT INTO categoria(nombre, descripcion, habilitado, creado) VALUES ($1, $2, $3, $4)";
         $params = [$nombre, $descripcion, true, date('Y-m-d H:i:s')];
         $result = pg_query_params($conn, $sql, $params);
         return $result;
     }
 
-    public static function actualizar($id_categoria, $nombre, $descripcion, $estado) {
+    public static function actualizar($categoria_id, $nombre, $descripcion, $estado) {
         $conn = Database::getConexion();
-        $sql = "UPDATE categoria SET nombre_categoria = $1, descripcion_categoria = $2, estado_categoria = $3 WHERE id_categoria = $4";
-        $params = [$nombre, $descripcion, $estado, $id_categoria];
+        $sql = "UPDATE categoria SET nombre = $1, descripcion = $2, habilitado = $3 WHERE categoria_id = $4";
+        $params = [$nombre, $descripcion, $estado, $categoria_id];
         $result = pg_query_params($conn, $sql, $params);
         
         return $result;
     }
 
-    public static function eliminar($id_categoria) {
+    public static function eliminar($categoria_id) {
         $conn = Database::getConexion();
-        $sql = "UPDATE categoria SET estado_categoria = false WHERE id_categoria = $1";
-        $result = pg_query_params($conn, $sql, [$id_categoria]);
+        $sql = "UPDATE categoria SET habilitado = false WHERE categoria_id = $1";
+        $result = pg_query_params($conn, $sql, [$categoria_id]);
         return $result;
     }
 
     public static function existePorNombre($nombre, $excluir_id = null) {
         $conn = Database::getConexion();
         if ($excluir_id) {
-            $sql = "SELECT id_categoria FROM categoria WHERE nombre_categoria = $1 AND id_categoria != $2";
+            $sql = "SELECT categoria_id FROM categoria WHERE nombre = $1 AND categoria_id != $2";
             $result = pg_query_params($conn, $sql, [$nombre, $excluir_id]);
         } else {
-            $sql = "SELECT id_categoria FROM categoria WHERE nombre_categoria = $1";
+            $sql = "SELECT categoria_id FROM categoria WHERE nombre = $1";
             $result = pg_query_params($conn, $sql, [$nombre]);
         }
         return pg_num_rows($result) > 0;
     }
 
-    public static function obtenerProductosPorCategoria($id_categoria, $id_subcategoria = 0, $orden = 'nombre_asc') {
+    public static function obtenerProductosPorCategoria($categoria_id, $id_subcategoria = 0, $orden = 'nombre_asc') {
         $conn = Database::getConexion();
         switch ($orden) {
             case 'nombre_desc':
@@ -83,19 +83,19 @@ class Categoria {
                 ip.url_imagen,
                 i.precio_venta,
                 cp.oferta,
-                c.nombre_categoria
+                c.nombre
             FROM 
                 catalogo_productos cp
             JOIN producto p ON cp.producto_id = p.id_producto
             JOIN ingreso i ON cp.ingreso_id = i.id
             LEFT JOIN imagenes_producto ip ON cp.imagen_id = ip.id
             JOIN subcategoria s ON p.id_subcategoria = s.id_subcategoria
-            JOIN categoria c ON s.id_categoria = c.id_categoria
+            JOIN categoria c ON s.categoria_id = c.categoria_id
             WHERE 
                 cp.sucursal_id = 7
                 AND (cp.estado = true OR cp.estado = 't')
-                AND c.id_categoria = $1";
-        $params = [$id_categoria];
+                AND c.categoria_id = $1";
+        $params = [$categoria_id];
         if ($id_subcategoria > 0) {
             $sql .= " AND s.id_subcategoria = $2";
             $params[] = $id_subcategoria;

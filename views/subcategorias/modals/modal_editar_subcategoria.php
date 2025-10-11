@@ -16,12 +16,12 @@
                         class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50"></textarea>
                 </div>
                 <div class="mb-4">
-                    <label for="edit_id_categoria" class="block text-sm font-medium text-gray-700">Categoría</label>
-                    <select id="edit_id_categoria" name="id_categoria" required
+                    <label for="edit_categoria_id" class="block text-sm font-medium text-gray-700">Categoría</label>
+                    <select id="edit_categoria_id" name="categoria_id" required
                         class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition duration-150 ease-in-out shadow-sm px-3 py-2 bg-gray-50">
                         <option value="">Seleccione una categoría</option>
                         <?php foreach ($categorias as $cat): ?>
-                            <option value="<?php echo $cat['id_categoria']; ?>"><?php echo htmlspecialchars($cat['nombre_categoria']); ?></option>
+                            <option value="<?php echo $cat['categoria_id']; ?>"><?php echo htmlspecialchars($cat['nombre']); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

@@ -2,13 +2,13 @@
 <body class="bg-gray-100 min-h-screen">
     <main class="container mx-auto py-10 px-4">
         <h1 class="text-3xl font-extrabold text-gray-900 mb-4 uppercase tracking-wide border-b-4 border-pink-600 pb-2">
-            <?php echo htmlspecialchars($productos[0]['nombre_categoria'] ?? 'Categoría'); ?>
+            <?php echo htmlspecialchars($productos[0]['nombre'] ?? 'Categoría'); ?>
         </h1>
         <hr class="my-6 border-gray-300">
         <form method="get" class="mb-8 flex flex-wrap gap-4 items-end bg-white p-4 rounded-lg shadow">
             <input type="hidden" name="controller" value="categoria">
             <input type="hidden" name="action" value="ver">
-            <input type="hidden" name="id_categoria" value="<?php echo $id_categoria; ?>">
+            <input type="hidden" name="categoria_id" value="<?php echo $categoria_id; ?>">
             <div>
                 <label class="block text-sm font-bold mb-1 text-gray-700">Subcategoría</label>
                 <select name="id_subcategoria" class="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
